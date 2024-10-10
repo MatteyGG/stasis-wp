@@ -1,8 +1,9 @@
 export default function Login() {
     return (
-    <section className="auth m-8 flex flex-col items-center justify-center">
+    <div className="flex min-h-screen items-center justify-center">
+    <section className="auth backdrop-blur-sm rounded-6xl shadow-xl">
     <h1 className="text-3xl">Войти</h1>
-    <form className="flex flex-col gap-4">
+    <form className="flex flex-col gap-4 ">
       <label>
         <span>Почта</span>
         <input
@@ -35,5 +36,6 @@ export default function Login() {
     </button>
     </div>
   </section>
+  </div>
 );
 }
