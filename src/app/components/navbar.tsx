@@ -10,7 +10,7 @@ export default function Navbar() {
           <Link href="/">Главная</Link>
         </li>
         <li className="mr-6">
-          <Link href="/about">Вики</Link>
+          <Link href="/wiki">Вики</Link>
         </li>
         <li className="mr-6">
           <Link href="/about">В работе</Link>
