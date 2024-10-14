@@ -38,3 +38,5 @@ next-env.d.ts
 #discordjs
 .env
 config.json
+
+.vscode

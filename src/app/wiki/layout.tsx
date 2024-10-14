@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "../globals.css";
+import "@mdxeditor/editor/style.css";
 import { Inter } from "next/font/google";
 
 import Navbar from "../components/navbar";

@@ -9,7 +9,8 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@discordjs/next": "^0.1.1-dev.1673526225-a580768.0",
+    "@mdxeditor/editor": "^3.14.0",
+    "jodit-react": "^4.1.2",
     "next": "14.2.13",
     "react": "^18",
     "react-dom": "^18"

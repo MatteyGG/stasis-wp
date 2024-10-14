@@ -29,6 +29,46 @@ body {
   }
 }
 
+.Editor{
+  @apply px-1 shadow-md bg-gradient-to-br from-white to-blue-100 rounded-xl ;
+}
+
+.Editor h1{
+  @apply text-4xl text-primaly;
+}
+
+.Editor h2{
+  @apply text-3xl text-primaly;
+}
+
+.Editor h3{
+  @apply text-2xl text-primaly;
+}
+
+.Editor h4{
+  @apply text-xl text-primaly;
+}
+
+.Editor h5{
+  @apply text-lg text-primaly;
+}
+
+.Editor h6{
+  @apply text-base text-primaly;
+}
+
+.Editor p{
+  @apply text-base text-primaly;
+}
+
+.Editor img{
+  @apply rounded-md;
+}
+
+.Editor blockquote{
+  @apply italic text-2xl text-primaly;
+}
+
 .auth {
   @apply flex flex-col p-4  items-center justify-center border border-slate-500 rounded-md;
 }
