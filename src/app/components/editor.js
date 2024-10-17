@@ -10,4 +10,6 @@ const YourComponent = forwardRef((props, ref) => {
   return <JoditEditor ref={ref} {...props} />;
 });
 
-export default YourComponent
+YourComponent.displayName = "JoditEditor";
+
+export default YourComponent;

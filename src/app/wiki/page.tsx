@@ -1,26 +1,85 @@
-import Image from "next/image";
-import dynamic from "next/dynamic";
-import { Suspense } from "react";
+import WikiCard from "../components/wikicard";
 
-
-const EditorComp = dynamic(() => import("../components/EditorComponent"), { ssr: false });
-
-const markdown = `
-# Hello **world**!
-`;
-
-export default function Home() {
+export default function Wiki_main() {
   return (
-    <>
-      <section className="flex flex-col items-center justify-center">
-        <h1 className="text-4xl">Edit wiki page</h1>
-        <p>Enter your markdown here</p>
-        <div className="Editor">
-          <Suspense fallback={null}>
-            <EditorComp markdown={markdown} />
-          </Suspense>
+    <div className="wiki container shadow-2xl mt-12 mx-auto flex flex-wrap p-4 rounded-lg  backdrop-blur-md text-white">
+      <h1 className="text-6xl text-primaly text-center w-full my-6">
+        <b>Wiki</b>
+      </h1>
+      <div className="wiki-title w-full flex justify-center">
+        <div className="wiki-container grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 text-pretty">
+          <WikiCard
+            name="Авиация Гайд"
+            category="Army"
+            description="Авиация — это самый важный и мощный юнит в игре. Контроль воздушного пространства определяет успех на земле."
+            img={{ src: "/placeholder.jpg", alt: "Image" }}
+            link="https://www.google.com"
+          />
+          <WikiCard
+            name="Авиация Гайд"
+            category="Army"
+            description="Авиация — это самый важный и мощный юнит в игре. Контроль воздушного пространства определяет успех на земле."
+            img={{ src: "/placeholder.jpg", alt: "Image" }}
+            link="https://www.google.com"
+          />
+          <WikiCard
+            name="Авиация Гайд"
+            category="Army"
+            description="Авиация — это самый важный и мощный юнит в игре. Контроль воздушного пространства определяет успех на земле."
+            img={{ src: "/placeholder.jpg", alt: "Image" }}
+            link="https://www.google.com"
+          />
+          <WikiCard
+            name="Авиация Гайд"
+            category="Army"
+            description="Авиация — это самый важный и мощный юнит в игре. Контроль воздушного пространства определяет успех на земле."
+            img={{ src: "/placeholder.jpg", alt: "Image" }}
+            link="https://www.google.com"
+          />
+          <WikiCard
+            name="Авиация Гайд"
+            category="Army"
+            description="Авиация — это самый важный и мощный юнит в игре. Контроль воздушного пространства определяет успех на земле."
+            img={{ src: "/placeholder.jpg", alt: "Image" }}
+            link="https://www.google.com"
+          />
+          <WikiCard
+            name="Авиация Гайд"
+            category="Army"
+            description="Авиация — это самый важный и мощный юнит в игре. Контроль воздушного пространства определяет успех на земле."
+            img={{ src: "/placeholder.jpg", alt: "Image" }}
+            link="https://www.google.com"
+          />
+          <WikiCard
+            name="Авиация Гайд"
+            category="Army"
+            description="Авиация — это самый важный и мощный юнит в игре. Контроль воздушного пространства определяет успех на земле."
+            img={{ src: "/placeholder.jpg", alt: "Image" }}
+            link="https://www.google.com"
+          />
+          <WikiCard
+            name="Авиация Гайд"
+            category="Army"
+            description="Авиация — это самый важный и мощный юнит в игре. Контроль воздушного пространства определяет успех на земле."
+            img={{ src: "/placeholder.jpg", alt: "Image" }}
+            link="https://www.google.com"
+          />
+          <WikiCard
+            name="Авиация Гайд"
+            category="Army"
+            description="Авиация — это самый важный и мощный юнит в игре. Контроль воздушного пространства определяет успех на земле."
+            img={{ src: "/placeholder.jpg", alt: "Image" }}
+            link="https://www.google.com"
+          />
+          <WikiCard
+            name="Авиация Гайд"
+            category="Army"
+            description="Авиация — это самый важный и мощный юнит в игре. Контроль воздушного пространства определяет успех на земле."
+            img={{ src: "/placeholder.jpg", alt: "Image" }}
+            link="https://www.google.com"
+          />
         </div>
-      </section>
-    </>
+      </div>
+    </div>
   );
 }

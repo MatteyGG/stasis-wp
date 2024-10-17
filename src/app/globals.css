@@ -62,7 +62,7 @@ body {
 }
 
 .Editor img{
-  @apply rounded-md;
+  @apply rounded-md p-5;
 }
 
 .Editor blockquote{
