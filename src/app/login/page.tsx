@@ -18,7 +18,7 @@ export default async function SignInPage(props: {
               await signIn("credentials", formData);
             } catch (error) {
               if (error instanceof AuthError) {
-                return console.log('- error: ', error);
+                return console.log("- error: ", error);
               }
               throw error;
             }
@@ -32,7 +32,9 @@ export default async function SignInPage(props: {
             Password
             <input name="password" id="password" />
           </label>
-          <input type="submit" value="Sign In" />
+          <button type="submit">
+            <span>Sign in</span>
+          </button>
         </form>
         <p className="text-center">
           <b>или</b>

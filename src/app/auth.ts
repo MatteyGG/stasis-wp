@@ -2,8 +2,7 @@ import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import type { Provider } from "next-auth/providers";
 import { PrismaAdapter } from "@auth/prisma-adapter";
-import { prisma } from "@/prisma";
-
+import { Prisma } from "@prisma/client";
 
 import Yandex from "next-auth/providers/yandex";
 import Discord from "next-auth/providers/discord";
@@ -38,7 +37,7 @@ export const providerMap = providers
   .filter((provider) => provider.id !== "credentials");
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
-  adapter: PrismaAdapter(prisma),
+  adapter: PrismaAdapter(Prisma),
   providers,
   pages: {
     signIn: "/signin",
