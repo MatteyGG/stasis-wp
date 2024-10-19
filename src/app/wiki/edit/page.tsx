@@ -1,3 +1,5 @@
+'use client'
+
 import Image from "next/image";
 import dynamic from "next/dynamic";
 import { Suspense } from "react";
@@ -9,7 +11,21 @@ const markdown = `
 # Hello **world**!
 `;
 
-export default function Home() {
+export default function Editor() {
+  const EditorSave = async function (ev) {
+    ev.preventDefault();
+    console.log({ markdown });
+    const response = await fetch("/api/markdownNew", {
+      method: "POST",
+      body: JSON.stringify({ markdown }),
+    });
+    if (response.ok) {
+      console.log("Saved markdown: ", response);
+    } else {
+      console.error("Failed to save markdown: ", response);
+    }
+  };
+
   return (
     <>
       <section className="flex flex-col items-center justify-center">
@@ -19,6 +35,7 @@ export default function Home() {
           <Suspense fallback={null}>
             <EditorComp markdown={markdown} />
           </Suspense>
+          <button className="w-full bg-white p-2 rounded-2xl" onClick={EditorSave}>Опубликовать</button>
         </div>
       </section>
     </>

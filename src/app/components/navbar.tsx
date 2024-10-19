@@ -18,7 +18,7 @@ export default function Navbar() {
           </ul>
         </div>
         <li className="list-none justify-end">
-          <Link href="/login">Войти</Link>
+          <Link href="/singin">Войти</Link>
         </li>
       </nav>
     </>

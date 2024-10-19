@@ -3,6 +3,7 @@ import Link from "next/link";
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 
+
 export default function RegistrationPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -20,7 +21,7 @@ export default function RegistrationPage() {
       body: JSON.stringify({username, email, password }),
     });
     if (response.ok) {
-      router.push("/login");
+      router.push("/singin");
     } else {
       console.error("Registration failed");
     }

@@ -1,6 +1,8 @@
+import { getSession } from "next-auth/react";
 import WikiCard from "../components/wikicard";
 
 export default function Home() {
+  console.log(getSession)
   return (
     <>
       <div className="container shadow-2xl mt-12 mx-auto flex flex-wrap p-4 rounded-lg  backdrop-blur-md text-white">

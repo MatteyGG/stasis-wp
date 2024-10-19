@@ -1,38 +1,55 @@
+"use client";
+import { useState } from "react";
+import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
-
-import { redirect } from "next/navigation";
-import { signIn, auth, providerMap } from "@/app/auth";
+import { providerMap } from "../auth";
 import { AuthError } from "next-auth";
 
-export default async function SignInPage(props: {
-  searchParams: { callbackUrl: string | undefined };
-}) {
+export default function LoginPage() {
+  const router = useRouter();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const handleFormSubmit = async function (event) {
+    event.preventDefault();
+    console.log({ email, password });
+    const signInData = await signIn("credentials", {
+      email,
+      password,
+    });
+
+    if (signInData?.error) {
+      console.error(signInData);
+    } else {
+      router.push("/");
+      router.refresh();
+    }
+  };
   return (
     <div className="flex mt-12 items-center justify-center">
       <section className="auth backdrop-blur-sm rounded-6xl shadow-xl gap-4">
         <h1 className="text-3xl">Вход</h1>
-        <form
-          action={async (formData) => {
-            "use server";
-            try {
-              await signIn("credentials", formData);
-            } catch (error) {
-              if (error instanceof AuthError) {
-                return console.log("- error: ", error);
-              }
-              throw error;
-            }
-          }}
-        >
+        <form onSubmit={handleFormSubmit}>
           <label htmlFor="email">
             Email
-            <input name="email" id="email" />
+            <input
+              name="email"
+              id="email"
+              value={email}
+              onChange={(ev) => setEmail(ev.target.value)}
+            />
           </label>
           <label htmlFor="password">
             Password
-            <input name="password" id="password" />
+            <input
+              name="password"
+              id="password"
+              value={password}
+              onChange={(ev) => setPassword(ev.target.value)}
+            />
           </label>
-          <button type="submit">
+          <button type="submit" >
             <span>Sign in</span>
           </button>
         </form>
@@ -44,7 +61,6 @@ export default async function SignInPage(props: {
             className="w-full"
             key={provider.id}
             action={async () => {
-              "use server";
               try {
                 await signIn(provider.id, {
                   redirectTo: props.searchParams?.callbackUrl ?? "",

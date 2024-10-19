@@ -56,9 +56,9 @@ model VerificationToken {
 }
 
 model Wiki {
-  pageId    String   @id @unique
-  title     String
-  short     String
+  pageId    String   @id @unique @default(cuid())
+  title     String?
+  short     String?
   md        String
   createdAt DateTime @default(now())
 }
