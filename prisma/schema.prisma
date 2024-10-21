@@ -57,10 +57,10 @@ model VerificationToken {
   @@unique([identifier, token])
 }
 
-model imagesLibary {
-  id  String @id @default(cuid())
-  scr String
-  alt String?
+model Image {
+  id        Int      @id @default(autoincrement())
+  filename  String
+  filepath  String
   createdAt DateTime @default(now())
 }
 

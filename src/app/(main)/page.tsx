@@ -1,6 +1,7 @@
 import { getSession } from "next-auth/react";
 import WikiCard from "../components/wikicard";
 import { prisma } from "../prisma";
+import UploadForm from "../components/upload";
 
 export default async function Home() {
     const card_array = await prisma.wiki.findMany({
@@ -65,10 +66,10 @@ export default async function Home() {
               <li className="border border-black rounded-full px-4 py-1 text bg-slate-400  backdrop-blur-3xl">
                 <b>Лидер: Mafon</b>
               </li>
-              <li className="border border-black rounded-full px-4 py-1 text-black bg-slate-400  backdrop-blur-3xl">
+              <li className="border border-black rounded-full px-4 py-1 text-black bg-['/diplomat_bg.png'] bg-slate-400  backdrop-blur-3xl">
                 <b>Дипломат: Герань</b>
               </li>
-              <li className="border border-black rounded-full px-4 py-1 text bg-slate-400  backdrop-blur-3xl">
+              <li className="border text-4xl border-black rounded-full px-4 py-1 text-black bg-[url('/diplomat_bg.png')] bg-cover bg-slate-400  backdrop-blur-3xl">
                 <b>Леха</b>
               </li>
             </ul>
