@@ -6,19 +6,20 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
 model Account {
-  id                 String  @id @default(cuid())
-  userId             String  @db.Text
-  type               String  @db.Text
-  provider           String   @db.Text
-  providerAccountId  String   @db.Text
-  refresh_token      String?  @db.Text
-  access_token       String?  @db.Text
-  expires_at         Int?     
-  token_type         String?  @db.Text
-  scope              String?  @db.Text
-  id_token           String?  @db.Text
-  session_state      String?  @db.Text
+  id                String  @id @default(cuid())
+  userId            String  @db.Text
+  type              String  @db.Text
+  provider          String  @db.Text
+  providerAccountId String  @db.Text
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String? @db.Text
+  scope             String? @db.Text
+  id_token          String? @db.Text
+  session_state     String? @db.Text
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -39,10 +40,11 @@ model User {
   email         String?   @unique
   password      String    @default("default_Ann_password_value") @db.Char(60)
   emailVerified DateTime?
-  image         String?  @default("")
-  created_at    DateTime @default(now())
-  phone         String?  @db.Text @default("")
-  role          String?  @default("user")
+  image         String?   @default("")
+  created_at    DateTime  @default(now())
+  role          String?   @default("user")
+  army          String?
+  nation        String?
   accounts      Account[]
   sessions      Session[]
 }
@@ -55,9 +57,20 @@ model VerificationToken {
   @@unique([identifier, token])
 }
 
+model imagesLibary {
+  id  String @id @default(cuid())
+  scr String
+  alt String?
+  createdAt DateTime @default(now())
+}
+
 model Wiki {
+  autor     String?
   pageId    String   @id @unique @default(cuid())
   title     String?
+  scr       String
+  alt       String
+  category  String
   short     String?
   md        String
   createdAt DateTime @default(now())

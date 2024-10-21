@@ -9,6 +9,9 @@ export async function POST(req: Request) {
   try {
     const response = await prisma.wiki.create({
       data: {
+        autor: body.autor,
+        title: body.title,
+        short: body.short,
         md: body.markdown
       }
     });

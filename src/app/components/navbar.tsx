@@ -1,9 +1,13 @@
 import Link from "next/link";
+import { auth } from "../auth";
 
-export default function Navbar() {
+export default async function Navbar() {
+
+  const session = await auth()
+  console.log(session?.user)
   return (
     <>
-      <nav className="flex flex-row justify-evenly backdrop-blur-2xl pb-2 text-center items-center">
+      <nav className="flex overflow-visible flex-row justify-evenly backdrop-blur-2xl pb-2 text-center items-center">
         <Link className="text-3xl glitch" data-text="STASIS" href="/">
           STASIS
         </Link>
@@ -18,7 +22,14 @@ export default function Navbar() {
           </ul>
         </div>
         <li className="list-none justify-end">
-          <Link href="/singin">Войти</Link>
+          {session?.user ? (
+              <>
+                <Link href="/profile">Профиль</Link>
+              </>
+            ) : (
+                <Link href="/singin">Войти</Link>
+            )
+          }
         </li>
       </nav>
     </>

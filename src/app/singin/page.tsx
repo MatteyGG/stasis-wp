@@ -17,6 +17,7 @@ export default function LoginPage() {
     const signInData = await signIn("credentials", {
       email,
       password,
+      redirect:false
     });
 
     if (signInData?.error) {
@@ -28,7 +29,7 @@ export default function LoginPage() {
   };
   return (
     <div className="flex mt-12 items-center justify-center">
-      <section className="auth backdrop-blur-sm rounded-6xl shadow-xl gap-4">
+      <section className="auth backdrop-blur-3xl  rounded-6xl shadow-xl gap-4">
         <h1 className="text-3xl">Вход</h1>
         <form onSubmit={handleFormSubmit}>
           <label htmlFor="email">

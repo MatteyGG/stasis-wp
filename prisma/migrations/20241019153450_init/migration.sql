@@ -1,3 +1,0 @@
--- AlterTable
-ALTER TABLE "Wiki" ALTER COLUMN "title" DROP NOT NULL,
-ALTER COLUMN "short" DROP NOT NULL;
