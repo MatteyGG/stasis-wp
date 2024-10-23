@@ -43,6 +43,7 @@ model User {
   image         String?   @default("")
   created_at    DateTime  @default(now())
   role          String?   @default("user")
+  rank          String?   @default("R1")
   army          String?
   nation        String?
   accounts      Account[]

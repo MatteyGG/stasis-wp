@@ -1,13 +1,26 @@
 import { getSession } from "next-auth/react";
-import WikiCard from "../components/wikicard";
 import { prisma } from "../prisma";
-import UploadForm from "../components/upload";
+
+import WikiCard from "../components/wikicard";
+import Memberlist from "../components/members";
 
 export default async function Home() {
-    const card_array = await prisma.wiki.findMany({
-      where: { title: { not: null } },
-    });
-  console.log(card_array)
+  const card_array = await prisma.wiki.findMany({
+    where: { title: { not: null } },
+  });
+  const leader = await prisma.user.findMany({
+    where: {
+      rank: "leader",
+    },
+  });
+  const officers_array = await prisma.user.findMany({
+    where: { rank: { equals: "officer" } },
+  });
+  const members_array = await prisma.user.findMany({
+    where: { rank: { in: ["R1", "R2", "R3"] } },
+  });
+
+  console.log(card_array);
   console.log(getSession);
 
   return (
@@ -25,9 +38,9 @@ export default async function Home() {
                 <WikiCard
                   className="w-min"
                   key={index} // assuming each card has a unique id
-                  title={card.title}
+                  title={card.title ?? "Туториал"}
                   category={card.category}
-                  description={card.short}
+                  description={card.short ?? ""}
                   img={{ src: "/placeholder.jpg", alt: "some_image_alt" }}
                   link={"/"}
                 />
@@ -59,19 +72,37 @@ export default async function Home() {
             <h1 className="text-3xl ">
               <b>Члены альянса</b>
             </h1>
-            <ul className="list-none list-inside text-center space-y-1 ">
-              <li className=" rounded-full px-4 py-1 text bg-slate-400  backdrop-blur-3xl bg-gradient-to-r from-indigo-500 via-purple-400 to-pink-500">
-                <b>Лидер: Mafon</b>
-              </li>
-              <li className="border border-black rounded-full px-4 py-1 text bg-slate-400  backdrop-blur-3xl">
-                <b>Лидер: Mafon</b>
-              </li>
-              <li className="border border-black rounded-full px-4 py-1 text-black bg-['/diplomat_bg.png'] bg-slate-400  backdrop-blur-3xl">
-                <b>Дипломат: Герань</b>
-              </li>
-              <li className="border text-4xl border-black rounded-full px-4 py-1 text-black bg-[url('/diplomat_bg.png')] bg-cover bg-slate-400  backdrop-blur-3xl">
-                <b>Леха</b>
-              </li>
+            <ul className="w-3/4 space-y-1 list-none text-center">
+              {leader.map((leader, index) => (
+                <Memberlist
+                  key={index}
+                  role={leader.role}
+                  username={leader.username}
+                  rank={leader.rank}
+                />
+              ))}
+              {Object.values(officers_array).map((member, index) => {
+                console.log(member);
+                return (
+                  <Memberlist
+                    key={index}
+                    role={member.role}
+                    username={member.username ?? "Commander404"}
+                    rank={member.rank}
+                  />
+                );
+              })}
+              {Object.values(members_array).sort().map((member, index) => {
+                console.log(member);
+                return (
+                  <Memberlist
+                    key={index}
+                    role={member.role}
+                    username={member.username ?? "Commander404"}
+                    rank={member.rank}
+                  />
+                );
+              })}
             </ul>
           </div>
           {/* Блок с уведомлениями */}
