@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { auth } from "../auth";
+import SignOutButton from "./signoutButton";
 
 export default async function Navbar() {
 
@@ -7,7 +8,7 @@ export default async function Navbar() {
   console.log(session?.user)
   return (
     <>
-      <nav className="flex overflow-visible flex-row justify-evenly backdrop-blur-2xl pb-2 text-center items-center">
+      <nav className="flex overflow-visible flex-row justify-evenly backdrop-blur-2xl mt-1 pb-2 text-center items-center">
         <Link className="text-3xl glitch" data-text="STASIS" href="/">
           STASIS
         </Link>
@@ -23,11 +24,14 @@ export default async function Navbar() {
         </div>
         <li className="list-none justify-end">
           {session?.user ? (
-              <>
+              <div className="space-x-1">
                 <Link href="/profile">Профиль</Link>
-              </>
+                <SignOutButton />
+              </div>
             ) : (
+              <div className="space-x-1">
                 <Link href="/singin">Войти</Link>
+              </div>
             )
           }
         </li>

@@ -6,7 +6,7 @@ import Memberlist from "../components/members";
 
 export default async function Home() {
   const card_array = await prisma.wiki.findMany({
-    where: { title: { not: null } },
+    where: { published: true },
   });
   const leader = await prisma.user.findMany({
     where: {
@@ -41,7 +41,7 @@ export default async function Home() {
                   title={card.title ?? "Туториал"}
                   category={card.category}
                   description={card.short ?? ""}
-                  img={{ src: "/placeholder.jpg", alt: "some_image_alt" }}
+                  img={{ src: card.scr, alt: card.alt }}
                   link={"/"}
                 />
               );
@@ -72,7 +72,7 @@ export default async function Home() {
             <h1 className="text-3xl ">
               <b>Члены альянса</b>
             </h1>
-            <ul className="w-3/4 space-y-1 list-none text-center">
+            <ul className="w-1/3 space-y-1 list-none text-center">
               {leader.map((leader, index) => (
                 <Memberlist
                   key={index}
@@ -92,17 +92,19 @@ export default async function Home() {
                   />
                 );
               })}
-              {Object.values(members_array).sort().map((member, index) => {
-                console.log(member);
-                return (
-                  <Memberlist
-                    key={index}
-                    role={member.role}
-                    username={member.username ?? "Commander404"}
-                    rank={member.rank}
-                  />
-                );
-              })}
+              {Object.values(members_array)
+                .sort()
+                .map((member, index) => {
+                  console.log(member);
+                  return (
+                    <Memberlist
+                      key={index}
+                      role={member.role}
+                      username={member.username ?? "Commander404"}
+                      rank={member.rank}
+                    />
+                  );
+                })}
             </ul>
           </div>
           {/* Блок с уведомлениями */}

@@ -2,28 +2,34 @@
 
 import dynamic from "next/dynamic";
 import { Suspense } from "react";
-
-import { useState, FormEvent } from "react";
+import React from "react";
+import { useState, useRef, FormEvent } from "react";
 
 const EditorComp = dynamic(() => import("../../components/EditorComponent"), {
   ssr: false,
 });
 
-const markdown = `
-# Hello **world**!
-`;
-
 export default function Editor() {
   const [title, setTitle] = useState("");
+  const [category, setCategory] = useState("");	
   const [short, setShort] = useState("");
-  const [image, setImage] = useState("");
+  const [image, setImage] = useState({ src: "placeholder.png", alt: "placeholder" });
+  const [markdown, setMarkdown] = useState("# Начните *писать*");
+
+  const ref = React.useRef<MDXEditorMethods>(null);
 
   const EditorSave = async function (ev: FormEvent) {
     ev.preventDefault();
-    console.log({ markdown });
     const response = await fetch("/api/markdownNew", {
       method: "POST",
-      body: JSON.stringify({ title, short, markdown }),
+      body: JSON.stringify({
+        title,
+        short,
+        markdown: ref.current?.getMarkdown(),
+        category,
+        image: image.src,
+        imageAlt: image.alt,
+      }),
     });
     if (response.ok) {
       console.log("Saved markdown: ", response);
@@ -36,9 +42,12 @@ export default function Editor() {
       <section className="flex flex-col items-center justify-center">
         <h1 className="text-4xl">Edit wiki page</h1>
         <p>Enter your markdown here</p>
+        <button onClick={() => console.log(ref.current?.getMarkdown())}>
+          Get markdown
+        </button>
         <div className="Editor">
-          <Suspense fallback={null}>
-            <EditorComp markdown={markdown} />
+          <Suspense fallback={<>Loading...</>}>
+            <EditorComp editorRef={ref} markdown={markdown} />
           </Suspense>
           <form>
             <div className="grid grid-cols-2">
@@ -55,6 +64,16 @@ export default function Editor() {
               <div>
                 <input
                   type="text"
+                  id="title"
+                  className="bg-white p-2 rounded-md w-full"
+                  placeholder="Категория"
+                  required
+                  onChange={(e) => setCategory(e.target.value)}
+                />
+              </div>
+              <div className="col-span-2">
+                <input
+                  type="text"
                   id="short"
                   className="bg-white p-2 rounded-md w-full"
                   placeholder="Короткое описание"
@@ -64,18 +83,23 @@ export default function Editor() {
               </div>
               <div className="col-span-2">
                 <input
-                  className="block w-full text-sm text-gray-900 border border-gray-700 rounded-lg cursor-pointer bg-gray-50 focus:outline-none bg-gradient-to-br from-blue-200 to-blue-100"
-                  aria-describedby="file_input_help"
-                  id="file_input"
-                  type="file"
-                  onChange={(e) => setImage(e.target.files[0].name)}
+                  type="text"
+                  id="image"
+                  className="bg-white p-2 rounded-md w-1/2"
+                  placeholder="Ссылка на Изображение"
+                  onChange={(e) =>
+                    setImage({ src: e.target.value, alt: e.target.value })
+                  }
                 />
-                <p
-                  className="mt-1 text-sm text-gray-500 dark:text-gray-300"
-                  id="file_input_help"
-                >
-                  SVG, PNG, JPG.
-                </p>
+                <input
+                  type="text"
+                  id="imageAlt"
+                  className="bg-white p-2 rounded-md w-1/2"
+                  placeholder="Описание изображения"
+                  onChange={(e) =>
+                    setImage({ src: image.src, alt: e.target.value })
+                  }
+                />
               </div>
             </div>
           </form>

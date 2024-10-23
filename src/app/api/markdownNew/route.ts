@@ -11,8 +11,10 @@ export async function POST(req: Request) {
       data: {
         autor: body.autor,
         title: body.title,
+        category: body.category,
         short: body.short,
-        md: body.markdown
+        md: body.markdown,
+        scr: body.image
       }
     });
     console.log(response);

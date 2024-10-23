@@ -36,16 +36,17 @@ model Session {
 
 model User {
   id            String    @id @default(cuid())
-  username      String?   @default("")
-  email         String?   @unique
-  password      String    @default("default_Ann_password_value") @db.Char(60)
-  emailVerified DateTime?
   image         String?   @default("")
-  created_at    DateTime  @default(now())
+  username      String?   @default("")
+  approved      Boolean   @default(false)
+  password      String    @default("default_Ann_password_value") @db.Char(60)
+  email         String?   @unique
+  emailVerified DateTime?
   role          String?   @default("user")
   rank          String?   @default("R1")
   army          String?
   nation        String?
+  created_at    DateTime  @default(now())
   accounts      Account[]
   sessions      Session[]
 }
@@ -69,10 +70,11 @@ model Wiki {
   autor     String?
   pageId    String   @id @unique @default(cuid())
   title     String?
-  scr       String
-  alt       String
-  category  String
+  scr       String   @default("placeholder.png")
+  alt       String?  @default("Prewiew image")
+  category  String?
   short     String?
   md        String
+  published Boolean  @default(false)
   createdAt DateTime @default(now())
 }

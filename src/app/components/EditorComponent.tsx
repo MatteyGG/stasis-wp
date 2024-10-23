@@ -9,6 +9,7 @@ import {
   listsPlugin,
   diffSourcePlugin,
   linkDialogPlugin,
+  linkPlugin,
   frontmatterPlugin,
   imagePlugin,
   sandpackPlugin,
@@ -36,15 +37,16 @@ interface EditorProps {
   editorRef?: React.MutableRefObject<MDXEditorMethods | null>;
 }
 
+
 const Editor: FC<EditorProps> = ({ markdown, editorRef }) => {
   return (
     <MDXEditor
-      onChange={(e) => console.log(e)}
       ref={editorRef}
       markdown={markdown}
       plugins={[
         // Add plugins here
         headingsPlugin(),
+        linkPlugin(),
         linkDialogPlugin(),
         quotePlugin(),
         listsPlugin(),
@@ -60,16 +62,14 @@ const Editor: FC<EditorProps> = ({ markdown, editorRef }) => {
         toolbarPlugin({
           toolbarContents: () => (
             <>
-                <UndoRedo />
-                <BlockTypeSelect />
-                <BoldItalicUnderlineToggles />
-                <CreateLink />
-                <InsertTable />
-                <InsertImage />
-                <InsertFrontmatter />
-                <InsertAdmonition />
-                <InsertCodeBlock />
-                {/*<InsertSandpack /> */} {/* TODO: Add Sandpack plugin */}
+              <UndoRedo />
+              <BlockTypeSelect />
+              <BoldItalicUnderlineToggles />
+              <CreateLink />
+              <InsertTable />
+              <InsertImage />
+              <InsertAdmonition />
+              {/*<InsertSandpack /> */} {/* TODO: Add Sandpack plugin */}
             </>
           ),
         }),
