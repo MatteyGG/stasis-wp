@@ -1,6 +1,7 @@
 import WikiCard from "../components/wikicard";
-
+import { prisma } from "../prisma";
 export default function Wiki_main() {
+  const card_array = prisma.wiki.findMany({});
   return (
     <div className="wiki container shadow-2xl mt-12 mx-auto flex flex-wrap p-4 rounded-lg  backdrop-blur-md text-white">
       <h1 className="text-6xl text-primaly text-center w-full my-6">

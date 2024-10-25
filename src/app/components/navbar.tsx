@@ -5,7 +5,6 @@ import SignOutButton from "./signoutButton";
 export default async function Navbar() {
 
   const session = await auth()
-  console.log(session?.user)
   return (
     <>
       <nav className="flex overflow-visible flex-row justify-evenly backdrop-blur-2xl mt-1 pb-2 text-center items-center">
@@ -20,6 +19,11 @@ export default async function Navbar() {
             <li className="mr-6">
               <Link href="/about">В работе</Link>
             </li>
+            {session?.user.role.includes("admin") ? (
+              <li className="mr-6">
+                <Link href="/dashboard">Админка</Link>
+              </li>
+            ) : null}
           </ul>
         </div>
         <li className="list-none justify-end">

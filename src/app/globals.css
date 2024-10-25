@@ -29,6 +29,45 @@ body {
   }
 }
 
+.upload {
+  @apply flex flex-row p-4  items-center justify-around rounded-md bg-slate-400 hover:bg-slate-500;
+}
+
+.upload input{
+  @apply  text-white font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full;
+  @apply file:mr-4 file:py-2 file:px-4
+      file:rounded-full file:border-0
+      file:text-sm file:font-semibold
+      file:bg-violet-50 file:text-gray-700
+      hover:file:bg-violet-100;
+}
+
+.upload button{
+  @apply bg-blue-500 hover:bg-blue-700 text-white font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 py-2 w-1/3;
+}
+
+.checkbox-label input[type="checkbox"] {
+  display: none;
+}
+.checkbox-label input[type="checkbox"]:checked + .checkbox-text{
+  @apply ease-in-out border-x-transparent  duration-300  border-t-green-500 border-b-red-500 border-4  rounded-md px-1;
+}
+
+.checkbox-text {
+  padding: 5px;
+}
+
+::-webkit-scrollbar {
+	background-color: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+	background-color: rgba(0, 0, 0, 0.2);
+	border: 2px solid transparent;
+	-webkit-background-clip: content-box;
+	border-radius: 10px;
+}
+
 .Editor{
   @apply px-1 shadow-md bg-gradient-to-br from-white to-blue-100 rounded-xl ;
 }
@@ -90,23 +129,26 @@ body {
 }
 
 .leader {
-  @apply bg-gradient-to-t from-red-800 to-red-300
+  @apply bg-gradient-to-r from-[#FFD700] via-[#c56d1a] to-[#a70d40]
 }
-
 .officer {
-  @apply bg-gradient-to-t from-purple-800 to-purple-300
+  @apply bg-gradient-to-r from-[#FF7F50] via-[#FF4500] to-[#8B0000]
 }
 
 .R3{
-  @apply bg-gradient-to-t from-emerald-500 to-emerald-300
+  @apply bg-gradient-to-r from-[#D3D3D3] via-[#98FF98] to-[#8FBC8F]
 }
 
 .R2{
-  @apply bg-gradient-to-t from-green-500 to-green-300
+  @apply bg-gradient-to-r from-[#00BFFF] via-[#7FFFD4] to-[#ADFF2F]
 }
 
 .R1 {
-  @apply bg-gradient-to-t from-lime-500 to-lime-300
+  @apply bg-gradient-to-r from-[#B0C4DE] via-[#AFEEEE] to-[#a8f720]
+}
+
+.ally{
+  @apply bg-gradient-to-r from-[#FFA500] via-[#FFD700] to-[#ADFF2F]
 }
 
 /* Glitch effect */

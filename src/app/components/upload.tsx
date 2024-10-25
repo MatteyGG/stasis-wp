@@ -29,9 +29,9 @@ export default function UploadForm() {
   };
 
   return (
-    <div>
+    <div className="upload">
       {isClient && <input id="image" type="file" onChange={handleFileChange} />}
-      <button onClick={handleUpload}>Загрузить</button>
+      <button onClick={handleUpload}>↑  Загрузить ↑</button>
     </div>
   );
 }

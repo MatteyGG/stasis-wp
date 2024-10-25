@@ -1,9 +1,10 @@
 "use client";
 
+import { MDXEditorMethods } from "@mdxeditor/editor";
 import dynamic from "next/dynamic";
 import { Suspense } from "react";
 import React from "react";
-import { useState, useRef, FormEvent } from "react";
+import { useState, FormEvent } from "react";
 
 const EditorComp = dynamic(() => import("../../components/EditorComponent"), {
   ssr: false,
@@ -14,7 +15,8 @@ export default function Editor() {
   const [category, setCategory] = useState("");	
   const [short, setShort] = useState("");
   const [image, setImage] = useState({ src: "placeholder.png", alt: "placeholder" });
-  const [markdown, setMarkdown] = useState("# Начните *писать*");
+  
+  const markdown = "# Начните **писать**";
 
   const ref = React.useRef<MDXEditorMethods>(null);
 

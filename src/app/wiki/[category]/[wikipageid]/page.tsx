@@ -1,6 +1,7 @@
 import { prisma } from "@/app/prisma";
 import { MDXRemote } from "next-mdx-remote/rsc";
 
+import Link from "next/link";
 
 export default async function Wiki_page({
   params,
@@ -19,7 +20,9 @@ export default async function Wiki_page({
   return (
     <>
       <h1 className="text-6xl text-primaly text-center w-full my-6">
-        Страница в категории {params.category} of {wiki.title}
+        Страница в категории <Link href={`../${wiki.category}`}>{params.category}</Link>
+        <br />
+        <b>{wiki.title}</b>
       </h1>
       <div className="container shadow-2xl shadow-black mt-12 mx-auto flex flex-wrap p-4 rounded-xl  backdrop-blur-3xl">
         <div className="flex flex-col">
