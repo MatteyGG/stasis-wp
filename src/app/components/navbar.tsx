@@ -28,16 +28,20 @@ export default async function Navbar() {
         </div>
         <li className="list-none justify-end">
           {session?.user ? (
-              <div className="space-x-1">
-                <Link href="/profile">Профиль</Link>
-                <SignOutButton />
-              </div>
-            ) : (
-              <div className="space-x-1">
+            <div className="space-x-1">
+              <Link href="/profile">Профиль</Link>
+              <SignOutButton />
+            </div>
+          ) : (
+            <div className="space-x-1">
+              <button className="bg-green-500 text-white px-3 py-1 rounded-xl hover:bg-green-600">
+                <Link href="/registration">Регистрация</Link>
+              </button>
+              <button className="bg-blue-500 text-white px-3 py-1 rounded-xl hover:bg-blue-600">
                 <Link href="/singin">Войти</Link>
-              </div>
-            )
-          }
+              </button>
+            </div>
+          )}
         </li>
       </nav>
     </>
