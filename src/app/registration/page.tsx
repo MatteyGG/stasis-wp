@@ -47,7 +47,7 @@ export default function RegistrationPage() {
         <h1 className="text-3xl">Регистрация</h1>
         <form className="flex flex-col gap-3" onSubmit={handleFormSubmit}>
           <label>
-            <span>Почта</span>
+            <span>Имя</span>
             <input
               type="name"
               name="name"
