@@ -8,10 +8,10 @@ export default async function Navbar() {
   return (
     <>
       <nav className="flex overflow-visible flex-row justify-evenly backdrop-blur-2xl mt-1 pb-2 text-center items-center">
-        <Link className="text-3xl glitch" data-text="STASIS" href="/">
+        <Link className="hidden md:block text-3xl glitch" data-text="STASIS" href="/">
           STASIS
         </Link>
-        <div className="flex flex-row items-center">
+        <div className="flex flex-row text-nowrap items-center">
           <ul className="flex flex-row">
             <li className="mr-6">
               <Link href="/wiki">Вики</Link>
@@ -26,7 +26,7 @@ export default async function Navbar() {
             ) : null}
           </ul>
         </div>
-        <li className="list-none justify-end">
+        <li className=" list-none justify-end">
           {session?.user ? (
             <div className="space-x-1">
               <Link href="/profile">Профиль</Link>

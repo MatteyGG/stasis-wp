@@ -10,7 +10,7 @@ export default async function gallery() {
     },
   });
   return (
-    <div className="container h-2/3 overflow-y-scroll shadow-sm shadow-black mx-auto p-4 rounded-xl  backdrop-blur-3xl">
+    <div className="container h-full md:h-2/3 overflow-y-scroll shadow-sm shadow-black mx-auto p-4 rounded-xl  backdrop-blur-3xl">
       <h1 className="text-2xl text-center">Gallery</h1>
       <div className="h-full  text-center">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">

@@ -6,7 +6,7 @@ export default async function Userlist() {
   const user_array = await prisma.user.findMany();
 
   return (
-    <div className="container h-4/6 shadow-sm shadow-black mx-auto flex-col p-2 rounded-xl  backdrop-blur-3xl">
+    <div className="container h-full md:h-4/6 shadow-sm shadow-black mx-auto flex-col p-2 rounded-xl  backdrop-blur-3xl">
       <ul className="h-5/6  text-left userlist overflow-y-scroll overflow-x-hidden rounded-xl space-y-1">
         {Object.values(user_array).map((user, index) => {
           return (
@@ -29,10 +29,11 @@ export default async function Userlist() {
                     {user.rank}:{user.username}
                   </h2>
                   <p className="text-gray-500">
-                    Создан: {user.created_at.toLocaleDateString('en-US', {
-                      year: 'numeric',
-                      month: 'long',
-                      day: 'numeric',
+                    Создан:{" "}
+                    {user.created_at.toLocaleDateString("en-US", {
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
                     })}
                   </p>
                   <p className="text-gray-500">Почта: {user.email}</p>

@@ -4,7 +4,7 @@ import Link from "next/link";
 export default async function WikiList() {
   const wikis = await prisma.wiki.findMany();
   return (
-    <div className="container h-2/3 overflow-y-scroll shadow-sm shadow-black mx-auto p-2 rounded-xl  backdrop-blur-3xl">
+    <div className="container h-full md:h-2/3 overflow-y-scroll shadow-sm shadow-black mx-auto p-2 rounded-xl  backdrop-blur-3xl">
       <ul className="flex flex-col gap-1 ">
         {wikis.map((wiki, index) => (
           <li
