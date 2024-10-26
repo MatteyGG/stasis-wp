@@ -39,10 +39,10 @@ export default async function Home() {
                   className="w-min"
                   key={index} // assuming each card has a unique id
                   title={card.title ?? "Туториал"}
-                  category={card.category}
+                  category={card.category ?? ""}
                   description={card.short ?? ""}
                   img={{ src: card.scr, alt: card.alt }}
-                  link={"/"}
+                  link={`wiki/${card.category}/${card.pageId}`}
                 />
               );
             })}
