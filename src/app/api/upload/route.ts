@@ -16,7 +16,7 @@ export const POST = async (req: any) => {
   console.log(filename);
 
   // Create the uploads directory if it does not exist
-  const uploadsDir = path.join(process.cwd(), "public", "uploads");
+  const uploadsDir = path.join(process.cwd(), "public", "tmp");
   try {
     await mkdir(uploadsDir, { recursive: true });
   } catch (error) {
