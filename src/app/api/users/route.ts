@@ -1,5 +1,5 @@
 import { prisma } from "../../prisma";
-export async function GET(request: any) {
+export async function GET() {
   const user_array = await prisma.user.findMany({
     where: { role: { equals: "user" } },
   });

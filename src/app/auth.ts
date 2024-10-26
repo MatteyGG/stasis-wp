@@ -2,7 +2,6 @@ import NextAuth, { type DefaultSession } from "next-auth";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { prisma } from "./prisma";
 import type { Provider } from "next-auth/providers";
-import { JWT } from "next-auth/jwt";
 
 import { compare } from "bcrypt-ts";
 
@@ -36,7 +35,7 @@ const providers: Provider[] = [
       email: { label: "Email", type: "email" },
       password: { label: "Password", type: "password" },
     },
-    async authorize(credentials, req) {
+    async authorize(credentials) {
 
 
       if (!credentials?.email && !credentials?.password) {
