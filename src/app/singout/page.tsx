@@ -1,4 +1,5 @@
 import { signOut } from "../auth";
+import "@/app/globals.css";
 
 export default function SignOutPage() {
   return (
