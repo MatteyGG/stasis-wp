@@ -42,13 +42,13 @@ export default async function Userlist() {
               <div className="flex justify-between p-4 pt-1">
                 <div className="flex flex-row">
                   <Image
-                    src={"/" + user.nation + ".webp"}
+                    src={"/source/" + user.nation + ".webp"}
                     height={18}
                     width={48}
                     alt=""
                   />
                   <Image
-                    src={"/" + user.army + ".webp"}
+                    src={"/source/" + user.army + ".webp"}
                     height={18}
                     width={48}
                     alt=""
