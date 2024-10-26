@@ -24,7 +24,7 @@ export default function RegistrationPage() {
   const [nation, setNation] = useState("");
 
   const router = useRouter();
-  const handleFormSubmit = async function (ev) {
+  const handleFormSubmit = async function (ev: React.FormEvent) {
     ev.preventDefault();
     console.log({ email, password });
 

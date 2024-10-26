@@ -5,13 +5,15 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { providerMap } from "../auth";
 import { AuthError } from "next-auth";
+import { redirect } from "next/navigation";
+
 
 export default function LoginPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleFormSubmit = async function (event) {
+  const handleFormSubmit = async function (event: React.FormEvent) {
     event.preventDefault();
     console.log({ email, password });
     const signInData = await signIn("credentials", {
@@ -64,7 +66,7 @@ export default function LoginPage() {
             action={async () => {
               try {
                 await signIn(provider.id, {
-                  redirectTo: props.searchParams?.callbackUrl ?? "",
+                  redirectTo: redirect(`/`) ?? "",
                 });
               } catch (error) {
                 if (error instanceof AuthError) {

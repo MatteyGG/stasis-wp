@@ -8,6 +8,10 @@ import { compare } from "bcrypt-ts";
 import Credentials from "next-auth/providers/credentials";
 import Yandex from "next-auth/providers/yandex";
 import VK from "next-auth/providers/vk";
+import { JWT } from "next-auth/jwt";
+import { AdapterUser } from "@auth/core/adapters";
+import { User } from "next-auth";
+
 
 declare module "next-auth" {
   interface Session {
@@ -43,7 +47,7 @@ const providers: Provider[] = [
       }
       const user = await prisma.user.findUnique({
         where: {
-          email: credentials?.email,
+          email: credentials.email as string,
         },
       });
       console.log(credentials, "//", user);
@@ -51,7 +55,7 @@ const providers: Provider[] = [
         return null;
       }
 
-      const passwordCheck = await compare(credentials.password, user.password);
+      const passwordCheck = await compare(credentials.password as string, user.password);
       console.log(passwordCheck, credentials.password, user.password)
       if (!passwordCheck) {
         return null
@@ -85,12 +89,12 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     strategy: "jwt",
   },
   callbacks: {
-    jwt({ token, user }) {
-      if (user) {
+    jwt({ token, user }: { token: JWT, user: User | AdapterUser }) {
+      if (user && 'id' in user && 'email' in user && 'username' in user && 'role' in user && 'army' in user && 'nation' in user) {
         // User is available during sign-in
-        token.id = user.id;
+        token.id = user.id!;
         token.email = user.email;
-        token.username = user.username;
+        token.username = user.username ?? 'Не указано';
         token.role = user.role;
         token.army = user.army;
         token.nation = user.nation;
@@ -99,13 +103,19 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       return console.log('JWT token ---->', token.name), token;
     },
     session({ session, token }) {
-      session.user.id = token.id;
-      session.user.email = token.email;
-      session.user.username = token.username;
-      session.user.role = token.role;
-      session.user.army = token.army;
-      session.user.nation = token.nation;
-      return console.log("Session token ---->", token.name), session;
+      if (!session || !session.user || !token) {
+        throw new Error("Invalid session or token");
+      }
+      
+      session.user.id = token.id ?? "unknown";
+      session.user.email = token.email ?? "unknown";
+      session.user.username = token.username?.toString() ?? "unknown";
+      session.user.role = token.role?.toString() ?? "unknown";
+      session.user.army = token.army?.toString() ?? "unknown";
+      session.user.nation = token.nation?.toString() ?? "unknown";
+      
+      console.log("Session token ---->", token.name ?? "unknown");
+      return session;
     },
   },
 });

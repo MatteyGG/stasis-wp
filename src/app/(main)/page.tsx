@@ -36,12 +36,11 @@ export default async function Home() {
               console.log(card);
               return (
                 <WikiCard
-                  className="w-min"
                   key={index} // assuming each card has a unique id
                   title={card.title ?? "Туториал"}
                   category={card.category ?? ""}
                   description={card.short ?? ""}
-                  img={{ src: card.scr, alt: card.alt }}
+                  img={{ src: card.scr, alt: card.alt ?? "" }}
                   link={`wiki/${card.category}/${card.pageId}`}
                 />
               );
@@ -76,9 +75,9 @@ export default async function Home() {
               {leader.map((leader, index) => (
                 <Memberlist
                   key={index}
-                  role={leader.role}
-                  username={leader.username}
-                  rank={leader.rank}
+                  role={leader.role ?? "Не найден"}
+                  username={leader.username ?? "Не найден"}
+                  rank={leader.rank ?? "Не найден"}
                 />
               ))}
               {Object.values(officers_array).map((member, index) => {
@@ -86,9 +85,9 @@ export default async function Home() {
                 return (
                   <Memberlist
                     key={index}
-                    role={member.role}
+                    role={member.role ?? "Не найден"}
                     username={member.username ?? "Commander404"}
-                    rank={member.rank}
+                    rank={member.rank ?? "Не найден"}
                   />
                 );
               })}
@@ -99,9 +98,9 @@ export default async function Home() {
                   return (
                     <Memberlist
                       key={index}
-                      role={member.role}
+                      role={member.role ?? "Не найден"}
                       username={member.username ?? "Commander404"}
-                      rank={member.rank}
+                      rank={member.rank ?? "Не найден"}
                     />
                   );
                 })}

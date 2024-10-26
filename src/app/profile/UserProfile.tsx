@@ -33,7 +33,7 @@ export default function UserProf() {
     return <div>Loading...</div>;
   }
 
-  async function handeleProfileUpdate(e) {
+  async function handeleProfileUpdate(e: React.FormEvent) {
     e.preventDefault();
     console.log("submit");
     await fetch("/api/profile", {
@@ -57,7 +57,7 @@ export default function UserProf() {
         </h1>
         <div className="container w-80% flex mt-4 items-center text-primaly">
           <div className=" md:w-1/3 ">
-            {!session.user?.image ? (
+            {!session?.user?.image ? (
               <>
                 <Image
                   className=" rounded-t-md object-cover w-full"
@@ -79,7 +79,12 @@ export default function UserProf() {
                   <input
                     className="hidden"
                     type="file"
-                    onChange={(e) => console.log(e.target.files[0])}
+                    onChange={(e) => {
+                      const files = e.target.files;
+                      if (files && files[0]) {
+                        console.log(files[0]);
+                      }
+                    }}
                   />
                   <span className="block border border-primary rounded-lg p-2 text-xs text-center">
                     Загрузить фото

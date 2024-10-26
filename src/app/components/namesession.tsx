@@ -1,6 +1,6 @@
 'use server'
 
-import auth from "next-auth"; // Импортируем auth
+import { auth } from "../auth";
 
 export default async function UserName() {
   try {

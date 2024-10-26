@@ -1,21 +1,37 @@
 'use client'
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, ChangeEvent } from "react";
 
 export default function UploadForm() {
-  const [file, setFile] = useState(null);
-  const [isClient, setIsClient] = useState(false);
+const [file, setFile] = useState<File | null>(null);
+const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
     setIsClient(true);
   }, []);
 
-  const handleFileChange = (event) => {
-    const selectedFile = event.target.files[0];
-    setFile(selectedFile);
-  };
+const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
+  const target = event.target;
+  if (!target.files || target.files.length === 0) {
+    console.warn("No files selected");
+    return;
+  }
+
+  const selectedFile = target.files[0];
+  if (!selectedFile) {
+    console.error("File is null");
+    return;
+  }
+
+  setFile(selectedFile);
+};
 
   const handleUpload = () => {
+    if (file === null) {
+      console.error("No file selected");
+      return;
+    }
+
     const formData = new FormData();
     formData.append("file", file);
 
@@ -23,9 +39,14 @@ export default function UploadForm() {
       method: "POST",
       body: formData,
     })
-      .then((response) => response.json())
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+      })
       .then((data) => console.log(data))
-      .catch((error) => console.error(error));
+      .catch((error) => console.error("Error:", error));
   };
 
   return (
