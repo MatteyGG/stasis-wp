@@ -21,14 +21,9 @@ import {
   BlockTypeSelect,
   CreateLink,
   tablePlugin,
-  DiffSourceToggleWrapper,
   thematicBreakPlugin,
-  InsertFrontmatter,
   InsertImage,
-  InsertSandpack,
   InsertAdmonition,
-  InsertCodeBlock,
-  ChangeAdmonitionType,
   UndoRedo,
 } from "@mdxeditor/editor";
 

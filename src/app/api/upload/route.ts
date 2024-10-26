@@ -2,7 +2,8 @@ import { NextResponse } from "next/server";
 import path from "path";
 import { writeFile, mkdir } from "fs/promises";
 import { prisma } from "../../prisma";
-export const POST = async (req, res) => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const POST = async (req: any) => {
   const formData = await req.formData();
 
   const file = formData.get("file");

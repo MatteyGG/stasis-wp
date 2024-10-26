@@ -1,6 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 
-export async function PUT(req : Request) {
+export async function GET() {
   const prisma = new PrismaClient();
 
   const array = await prisma.wiki.findMany();

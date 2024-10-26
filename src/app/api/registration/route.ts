@@ -33,9 +33,8 @@ export async function POST(req: Request) {
         nation: nation
       },
     });
-    const { password: _, ...user } = newUser;
 
-    console.log(newUser);
+    console.log("User created:", newUser);
     await prisma.$disconnect();
     return Response.json(
       { user: newUser, message: "User created successfully" },

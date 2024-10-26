@@ -11,7 +11,6 @@ export default function UserProf() {
 
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
-  const [image, setImage] = useState("");
   const [army, setArmy] = useState("");
   const [nation, setNation] = useState("");
 
@@ -19,7 +18,6 @@ export default function UserProf() {
     if (status === "authenticated" && session.user) {
       setUsername(session.user.username);
       setEmail(session.user.email);
-      setImage(session.user.image);
       setArmy(session.user.army);
       setNation(session.user.nation);
 
