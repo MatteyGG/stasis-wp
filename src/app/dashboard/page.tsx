@@ -17,7 +17,6 @@ export default function Dashboard() {
           <WikiList />
           <Userlist />
           <Gallery />
-          
         </div>
       </>
     );

@@ -109,19 +109,19 @@ body {
 }
 
 .auth {
-  @apply flex flex-col p-4  items-center justify-center border border-slate-500 rounded-md;
+  @apply w-full md:w-1/5 p-4  items-center justify-center  rounded-md;
 }
 
 .auth form {
-  @apply flex flex-col gap-4
+  @apply w-full gap-4
 }
 
 .auth input {
-  @apply bg-blue-500 hover:bg-blue-700 text-white font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5;
+  @apply bg-white hover:bg-blue-200 text-primaly font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5;
 }
 
 .auth button {
-  @apply bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded;
+  @apply bg-white hover:bg-blue-200 text-primaly w-full font-bold py-2 px-4 rounded;
 }
 
 .member{

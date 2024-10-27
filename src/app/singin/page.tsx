@@ -6,7 +6,7 @@ import Link from "next/link";
 import { providerMap } from "../auth";
 import { AuthError } from "next-auth";
 import { redirect } from "next/navigation";
-
+import Image from "next/image";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -30,12 +30,12 @@ export default function LoginPage() {
     }
   };
   return (
-    <div className="flex mt-12 items-center justify-center">
-      <section className="auth backdrop-blur-3xl  rounded-6xl shadow-xl gap-4">
+    <div className="mt-12 flex flex-row items-center justify-center ">
+      <section className="w-3/4 auth backdrop-blur-3xl  rounded-6xl shadow-xl gap-4">
         <h1 className="text-3xl">Вход</h1>
-        <form onSubmit={handleFormSubmit}>
+        <form className="flex flex-col gap-3" onSubmit={handleFormSubmit}>
           <label htmlFor="email">
-            Email
+            Почта
             <input
               name="email"
               id="email"
@@ -44,48 +44,59 @@ export default function LoginPage() {
             />
           </label>
           <label htmlFor="password">
-            Password
+            Пароль
             <input
+              type="password"
               name="password"
-              id="password"
+              autoComplete="password"
+              placeholder="•••••••••"
               value={password}
               onChange={(ev) => setPassword(ev.target.value)}
             />
           </label>
-          <button type="submit" >
-            <span>Sign in</span>
+          <button type="submit" className="w-full">
+            <span>Войти</span>
           </button>
         </form>
         <p className="text-center">
           <b>или</b>
         </p>
-        {Object.values(providerMap).map((provider) => (
-          <form
-            className="w-full"
-            key={provider.id}
-            action={async () => {
-              try {
-                await signIn(provider.id, {
-                  redirectTo: redirect(`/`) ?? "",
-                });
-              } catch (error) {
-                if (error instanceof AuthError) {
-                  return console.log(error);
-                }
+        <div className="flex flex-col justify-center gap-1">
+          {Object.values(providerMap).map((provider) => (
+            <form
+              className="w-full"
+              key={provider.id}
+              action={async () => {
+                try {
+                  await signIn(provider.id, {
+                    redirectTo: redirect(`/`) ?? "",
+                  });
+                } catch (error) {
+                  if (error instanceof AuthError) {
+                    return console.log(error);
+                  }
 
-                throw error;
-              }
-            }}
-          >
-            <button type="submit">
-              <span>Sign in with {provider.name}</span>
-            </button>
-          </form>
-        ))}
+                  throw error;
+                }
+              }}
+            >
+              <button type="submit" className="w-full">
+                <span>Sign in with {provider.name}</span>
+              </button>
+            </form>
+          ))}
+        </div>
         <Link href="/registration" className="text-base mt-4">
           Зарегестрироваться --&gt;
         </Link>
       </section>
+      <Image
+        className="hidden md:block w-3/4 brightness-80 "
+        src="/source/stasis_prew.png"
+        width={1000}
+        height={1000}
+        alt=""
+      />
     </div>
   );
 }

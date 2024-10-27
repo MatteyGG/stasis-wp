@@ -7,7 +7,7 @@ export default async function Navbar() {
   const session = await auth()
   return (
     <>
-      <nav className="flex overflow-visible flex-row justify-evenly backdrop-blur-2xl mt-1 pb-2 text-center items-center">
+      <nav className="flex overflow-visible flex-row justify-evenly backdrop-blur-2xl pb-2 text-center items-center">
         <Link className="hidden md:block text-3xl glitch" data-text="STASIS" href="/">
           STASIS
         </Link>
@@ -17,7 +17,7 @@ export default async function Navbar() {
               <Link href="/wiki">Вики</Link>
             </li>
             <li className="mr-6">
-              <Link href="/about">В работе</Link>
+              <Link href="/about">О нас</Link>
             </li>
             {session?.user.role.includes("admin") ? (
               <li className="mr-6">
@@ -26,7 +26,7 @@ export default async function Navbar() {
             ) : null}
           </ul>
         </div>
-        <li className=" list-none justify-end">
+        <li className=" mt-1 list-none justify-end">
           {session?.user ? (
             <div className="space-x-1">
               <Link href="/profile">Профиль</Link>

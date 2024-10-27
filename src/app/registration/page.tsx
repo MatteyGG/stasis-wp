@@ -2,8 +2,8 @@
 import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-
 import Image from "next/image";
+import Select from "react-select";
 
 export default function RegistrationPage() {
   const nation_array = ["Vanguard", "Liberty", "Martyrs"];
@@ -20,6 +20,7 @@ export default function RegistrationPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [username, setUsername] = useState("");
+  const [rank, setRank] = useState("");
   const [army, setArmy] = useState("");
   const [nation, setNation] = useState("");
 
@@ -33,7 +34,7 @@ export default function RegistrationPage() {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ username, email, password, army, nation }),
+      body: JSON.stringify({ username, email, password, rank, army, nation }),
     });
     if (response.ok) {
       router.push("/singin");
@@ -42,8 +43,8 @@ export default function RegistrationPage() {
     }
   };
   return (
-    <div className="flex mt-12 items-center justify-center ">
-      <section className="auth backdrop-blur-sm rounded-6xl shadow-xl">
+    <div className="mt-12 flex flex-row items-center justify-center ">
+      <section className="w-1/4 auth backdrop-blur-md border border-gray-400 rounded-6xl">
         <h1 className="text-3xl">Регистрация</h1>
         <form className="flex flex-col gap-3" onSubmit={handleFormSubmit}>
           <label>
@@ -78,55 +79,49 @@ export default function RegistrationPage() {
               onChange={(ev) => setPassword(ev.target.value)}
             />
           </label>
-          <div>
-            <div className="flex justify-center items-center">
-              {Object.values(nation_array).map((nation, index) => (
-                <label
-                  key={index}
-                  className="relative flex items-center cursor-pointer hover:ease-in-out hover:scale-110 duration-200"
-                  htmlFor={nation}
-                >
-                  <input
-                    name="framework-custom-icon"
-                    type="radio"
-                    className="peer/nation opacity-20"
-                    id={nation}
-                    onClick={() => setNation(nation)}
-                  />
-                  <Image
-                    className="peer-checked/nation:ring-2 peer-checked/nation:ring-blue peer-checked:rounded-lg"
-                    src={"/" + nation + ".webp"}
-                    alt={nation}
-                    height={70}
-                    width={70}
-                  />
-                </label>
-              ))}
-            </div>
-            <div className="inline-flex items-center">
-              {Object.values(army_array).map((army, index) => (
-                <label
-                  key={index}
-                  className="relative flex items-center cursor-pointer hover:ease-in-out hover:scale-110 duration-200"
-                  htmlFor={army}
-                >
-                  <input
-                    name="framework-custom-icon"
-                    type="radio"
-                    className="peer/army opacity-20"
-                    id={army}
-                    onClick={() => setArmy(army)}
-                  />
-                  <Image
-                    className="peer-checked/army:ring-2 peer-checked/army:ring-blue peer-checked:rounded-lg"
-                    src={"/" + army + ".webp"}
-                    alt={army}
-                    height={32}
-                    width={32}
-                  />
-                </label>
-              ))}
-            </div>
+          <div className="w-full">
+            <Select
+              instanceId="nation_select"
+              id="nation_select"
+              className="peer/nation"
+              options={nation_array.map((nation) => ({
+                value: nation,
+                label: (
+                  <div className="flex items-center">
+                    <Image
+                      className="peer-checked/nation:ring-2 peer-checked/nation:ring-blue peer-checked:rounded-lg"
+                      src={"/source/nation/" + nation + ".webp"}
+                      alt={nation}
+                      height={70}
+                      width={70}
+                    />
+                    <span className="ml-2">{nation}</span>
+                  </div>
+                ),
+              }))}
+              onChange={(selectedOption) => console.log(selectedOption?.value)}
+            />
+            <Select
+              instanceId="army_select"
+              id="army_select"
+              className="peer/nation"
+              options={army_array.map((army) => ({
+                value: army,
+                label: (
+                  <div className="flex items-center">
+                    <Image
+                      className="peer-checked/nation:ring-2 peer-checked/nation:ring-blue peer-checked:rounded-lg"
+                      src={"/source/army/" + army + ".webp"}
+                      alt={army}
+                      height={70}
+                      width={70}
+                    />
+                    <span className="ml-2">{army}</span>
+                  </div>
+                ),
+              }))}
+              onChange={(selectedOption) => console.log(selectedOption?.value)}
+            />
           </div>
           <button type="submit" className="w-full">
             Зарегестрироваться
@@ -143,6 +138,13 @@ export default function RegistrationPage() {
           Войти --&gt;
         </Link>
       </section>
+      <Image
+        className="hidden md:block w-3/4 brightness-80 "
+        src="/source/stasis_prew.png"
+        width={1000}
+        height={1000}
+        alt=""
+      />
     </div>
   );
 }
