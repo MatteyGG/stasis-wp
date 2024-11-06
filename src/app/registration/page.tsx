@@ -20,7 +20,6 @@ export default function RegistrationPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [username, setUsername] = useState("");
-  const [rank, setRank] = useState("");
   const [army, setArmy] = useState("");
   const [nation, setNation] = useState("");
 
@@ -34,7 +33,7 @@ export default function RegistrationPage() {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ username, email, password, rank, army, nation }),
+      body: JSON.stringify({ username, email, password, army, nation }),
     });
     if (response.ok) {
       router.push("/singin");
@@ -99,7 +98,9 @@ export default function RegistrationPage() {
                   </div>
                 ),
               }))}
-              onChange={(selectedOption) => console.log(selectedOption?.value)}
+              onChange={(selectedOption) =>
+                setNation(selectedOption?.value ?? "Не выбрано")
+              }
             />
             <Select
               instanceId="army_select"
@@ -120,7 +121,9 @@ export default function RegistrationPage() {
                   </div>
                 ),
               }))}
-              onChange={(selectedOption) => console.log(selectedOption?.value)}
+              onChange={(selectedOption) =>
+                setArmy(selectedOption?.value ?? "Не выбрано")
+              }
             />
           </div>
           <button type="submit" className="w-full">

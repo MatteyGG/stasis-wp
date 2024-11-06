@@ -16,7 +16,6 @@ export default async function Wiki_page({
       pageId: params.wikipageid,
     },
   });
-  console.log(wiki)
   return (
     <>
       <h1 className="text-6xl text-primaly text-center w-full my-6">
@@ -24,10 +23,8 @@ export default async function Wiki_page({
         <br />
         <b>{wiki.title}</b>
       </h1>
-      <div className="container shadow-2xl shadow-black mt-12 mx-auto flex flex-wrap p-4 rounded-xl  backdrop-blur-3xl">
-        <div className="flex flex-col">
+      <div className="wiki container shadow-2xl shadow-black mt-12 mx-auto flex flex-wrap p-4 rounded-xl  backdrop-blur-3xl">
           <MDXRemote source={wiki.md} />
-        </div>
       </div>
     </>
   );

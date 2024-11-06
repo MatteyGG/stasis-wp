@@ -151,6 +151,21 @@ body {
   @apply bg-gradient-to-r from-[#FFA500] via-[#FFD700] to-[#ADFF2F]
 }
 
+.about button{
+  @apply hover:animate-bounce  ease-in-out duration-500 delay-300
+}
+
+.wiki {
+  @apply flex flex-col max-w-min md:p-4 bg-gradient-to-r from-[#FFD700] via-[#c56d1a] to-[#a70d40]
+}
+.wiki h1{
+  @apply text-4xl text-primaly;
+}
+
+.wiki h2{
+  @apply text-3xl text-primaly;
+}
+
 /* Glitch effect */
 /* From Uiverse.io by andrew-demchenk0 */ 
 .glitch {

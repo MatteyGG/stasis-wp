@@ -25,14 +25,14 @@ export default async function Home() {
 
   return (
     <>
-      <div className="container shadow-2xl shadow-black mt-12 mx-auto flex flex-wrap p-4 rounded-xl  backdrop-blur-3xl text-white">
+      <div className="container shadow-2xl shadow-black mt-12 mx-auto flex flex-wrap p-4 rounded-xl  backdrop-blur-3xl">
         <h1 className="text-6xl text-primaly text-center w-full my-6">
           <b>Welcome to STASIS</b>
         </h1>
         <div className="w-full">
           {/* Блок с случайными wiki страницами */}
           <div className="w-full ">
-            <section className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-4">
+            <section className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-4 text-white">
               {Object.values(card_array).map((card, index) => {
                 console.log(card);
                 return (

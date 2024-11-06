@@ -1,12 +1,26 @@
+/* eslint-disable @next/next/no-async-client-component */
+'use client';
+
 import { prisma } from "../../prisma";
 
 import Image from "next/image";
 
+
+
 export default async function Userlist() {
   const user_array = await prisma.user.findMany();
 
+    const handleSubmit = async (event) => {
+      event.preventDefault();
+      const data = new FormData(event.currentTarget);
+      // eslint-disable-next-line no-console
+      console.log({
+        email: data.get("email"),
+        password: data.get("password"),
+      });
+    };
   return (
-    <div className="container h-full md:h-4/6 shadow-sm shadow-black mx-auto flex-col p-2 rounded-xl  backdrop-blur-3xl">
+    <form className="container h-full md:h-4/6 shadow-sm shadow-black mx-auto flex-col p-2 rounded-xl  backdrop-blur-3xl" onSubmit={handleSubmit}>
       <ul className="h-5/6  text-left userlist overflow-y-scroll overflow-x-hidden rounded-xl space-y-1">
         {Object.values(user_array).map((user, index) => {
           return (
@@ -26,8 +40,28 @@ export default async function Userlist() {
                   <h2
                     className={` ${user.rank} text-xl font-semibold rounded-md p-1`}
                   >
-                    {user.rank}:{user.username}
+                    <select
+                      className={` bg-transparent text-xl font-semibold rounded-md p-1`}
+                      defaultValue={user.rank?.toString() ?? ""}
+                      onChange={(e) => {
+                        console.log(e.target.value);
+                        prisma.user.update({
+                          where: { id: user.id },
+                          data: {
+                            rank: e.target.value,
+                          },
+                        });
+                      }
+                    }
+                    >
+                      <option value="R1">R1</option>
+                      <option value="R2">R2</option>
+                      <option value="R3">R3</option>
+                      <option value="officer">Officer</option>
+                    </select>
+                    {user.username}
                   </h2>
+
                   <p className="text-gray-500">
                     Создан:{" "}
                     {user.created_at.toLocaleDateString("en-US", {
@@ -42,13 +76,13 @@ export default async function Userlist() {
               <div className="flex justify-between p-4 pt-1">
                 <div className="flex flex-row">
                   <Image
-                    src={"/source/" + user.nation + ".webp"}
+                    src={"/source/nation/" + user.nation + ".webp"}
                     height={18}
                     width={48}
                     alt=""
                   />
                   <Image
-                    src={"/source/" + user.army + ".webp"}
+                    src={"/source/army/" + user.army + ".webp"}
                     height={18}
                     width={48}
                     alt=""
@@ -91,6 +125,6 @@ export default async function Userlist() {
       <button className="w-full bg-emerald-600 hover:bg-emerald-700 text-white p-4 rounded-xl">
         Подтвердить
       </button>
-    </div>
+    </form>
   );
 }
