@@ -1,28 +1,50 @@
+'use client'
+
 /* eslint-disable @next/next/no-async-client-component */
-'use client';
-
-import { prisma } from "../../prisma";
-
 import Image from "next/image";
+import { useEffect, useState } from "react";
 
+interface User {
+  username: string;
+  email: string;
+  created_at: Date;
+  nation: string;
+  army: string;
+  rank: string;
+  approved: boolean;
+}
 
+export default function Userlist() {
+  const [users, setUsers] = useState<User[]>([]);
+  const [isLoading, setLoading] = useState(true);
 
-export default async function Userlist() {
-  const user_array = await prisma.user.findMany();
-
-    const handleSubmit = async (event) => {
-      event.preventDefault();
-      const data = new FormData(event.currentTarget);
-      // eslint-disable-next-line no-console
-      console.log({
-        email: data.get("email"),
-        password: data.get("password"),
-      });
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch("/api/user_list", {
+          method: "GET",
+        });
+        if (response) {
+          const data = await response.json();
+          
+          setUsers(data.users);
+        }
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setLoading(false);
+      }
     };
+
+    fetchUsers();
+  }, []);
+  console.log("data is:", users);
   return (
-    <form className="container h-full md:h-4/6 shadow-sm shadow-black mx-auto flex-col p-2 rounded-xl  backdrop-blur-3xl" onSubmit={handleSubmit}>
+    <form className="container h-full md:h-4/6 shadow-sm shadow-black mx-auto flex-col p-2 rounded-xl  backdrop-blur-3xl" >
       <ul className="h-5/6  text-left userlist overflow-y-scroll overflow-x-hidden rounded-xl space-y-1">
-        {Object.values(user_array).map((user, index) => {
+        {Object.values(users).map((user, index) => {
+          console.log(index, user)
           return (
             <li
               className="mx-auto px-4 bg-white rounded-xl shadow-md md:max-w-2xl"
@@ -43,16 +65,6 @@ export default async function Userlist() {
                     <select
                       className={` bg-transparent text-xl font-semibold rounded-md p-1`}
                       defaultValue={user.rank?.toString() ?? ""}
-                      onChange={(e) => {
-                        console.log(e.target.value);
-                        prisma.user.update({
-                          where: { id: user.id },
-                          data: {
-                            rank: e.target.value,
-                          },
-                        });
-                      }
-                    }
                     >
                       <option value="R1">R1</option>
                       <option value="R2">R2</option>
@@ -64,11 +76,11 @@ export default async function Userlist() {
 
                   <p className="text-gray-500">
                     Создан:{" "}
-                    {user.created_at.toLocaleDateString("en-US", {
+                    {/* {user.created_at.toLocaleDateString("en-US", {
                       year: "numeric",
                       month: "long",
                       day: "numeric",
-                    })}
+                    })} */}
                   </p>
                   <p className="text-gray-500">Почта: {user.email}</p>
                 </div>
@@ -77,13 +89,13 @@ export default async function Userlist() {
                 <div className="flex flex-row">
                   <Image
                     src={"/source/nation/" + user.nation + ".webp"}
-                    height={18}
+                    height={48}
                     width={48}
                     alt=""
                   />
                   <Image
                     src={"/source/army/" + user.army + ".webp"}
-                    height={18}
+                    height={48}
                     width={48}
                     alt=""
                   />

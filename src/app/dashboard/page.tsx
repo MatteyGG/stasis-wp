@@ -14,9 +14,9 @@ export default function Dashboard() {
           </nav>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3">
-          <WikiList />
+          {/*<WikiList /> */}
           <Userlist />
-          <Gallery />
+          {/* <Gallery /> */}
         </div>
       </>
     );
