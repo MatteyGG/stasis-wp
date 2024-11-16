@@ -10,7 +10,7 @@ import Yandex from "next-auth/providers/yandex";
 import VK from "next-auth/providers/vk";
 import { JWT } from "next-auth/jwt";
 import { AdapterUser } from "@auth/core/adapters";
-import { User } from "next-auth";
+import { CustomUser } from "next-auth";
 
 
 declare module "next-auth" {
@@ -20,10 +20,25 @@ declare module "next-auth" {
       email: string;
       username: string;
       role: string; // user or admin
+      rank: string;
       army: string;
       nation: string;
       image: string;
-    } & DefaultSession["user"];
+      approved: boolean;
+    } & DefaultSession["user"]
+  }
+
+  interface CustomUser extends User {
+    id: string;
+    email: string;
+    username: string;
+    role: string; // user or admin
+    rank: string;
+    army: string;
+    nation: string;
+    image: string;
+    created_at: Date;
+    approved: boolean;
   }
 }
 
@@ -61,7 +76,18 @@ const providers: Provider[] = [
         return null
       }
 
-      return {id: user.id.toString(), username: user.username, image: user.image?.toString(), email: user.email, role: user.role?.toString(), army: user.army?.toString(), nation: user.nation?.toString()};
+      return {
+        id: user.id.toString(),
+        username: user.username,
+        image: user.image?.toString(),
+        email: user.email,
+        role: user.role?.toString(),
+        rank: user.rank?.toString(),
+        army: user.army?.toString(),
+        nation: user.nation?.toString(),
+        created_at: user.created_at,
+        approved: user.approved,
+      };
 
     },
   }),
@@ -89,31 +115,48 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     strategy: "jwt",
   },
   callbacks: {
-    jwt({ token, user }: { token: JWT, user: User | AdapterUser }) {
-      if (user && 'id' in user && 'email' in user && 'username' in user && 'role' in user && 'army' in user && 'nation' in user) {
+    jwt({ token, user }: { token: JWT; user: CustomUser | AdapterUser }) {
+      if (
+        user &&
+        "id" in user &&
+        "email" in user &&
+        "username" in user &&
+        "role" in user &&
+        "army" in user &&
+        "nation" in user &&
+        "rank" in user &&
+        "created_at" in user
+      ) {
         // User is available during sign-in
         token.id = user.id!;
         token.email = user.email;
-        token.username = user.username ?? 'Не указано';
+        token.username = user.username ?? "Не указано";
         token.role = user.role;
+        token.rank = user.rank ?? "Не указано";
         token.army = user.army;
         token.nation = user.nation;
         token.image = user.image;
+        token.approved = user.approved ?? false;
+        token.created_at = user.created_at;
       }
-      return console.log('JWT token ---->', token.name), token;
+      return console.log("JWT token ---->", token.name), token;
     },
     session({ session, token }) {
       if (!session || !session.user || !token) {
         throw new Error("Invalid session or token");
       }
-      
+
       session.user.id = token.id ?? "unknown";
       session.user.email = token.email ?? "unknown";
       session.user.username = token.username?.toString() ?? "unknown";
       session.user.role = token.role?.toString() ?? "unknown";
+      session.user.rank = token.rank?.toString() ?? "unknown";
       session.user.army = token.army?.toString() ?? "unknown";
       session.user.nation = token.nation?.toString() ?? "unknown";
-      
+      session.user.image = token.image?.toString() ?? "unknown";
+      session.user.created_at = token.created_at;
+      session.user.approved = Boolean(token.approved) ?? false;
+
       console.log("Session token ---->", token.name ?? "unknown");
       return session;
     },

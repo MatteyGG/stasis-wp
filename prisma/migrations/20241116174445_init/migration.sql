@@ -29,15 +29,17 @@ CREATE TABLE "Session" (
 -- CreateTable
 CREATE TABLE "User" (
     "id" TEXT NOT NULL,
-    "username" TEXT DEFAULT '',
-    "email" TEXT,
-    "password" CHAR(60) NOT NULL DEFAULT 'default_Ann_password_value',
-    "emailVerified" TIMESTAMP(3),
     "image" TEXT DEFAULT '',
-    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "username" TEXT DEFAULT '',
+    "approved" BOOLEAN NOT NULL DEFAULT false,
+    "password" CHAR(60) NOT NULL DEFAULT 'default_Ann_password_value',
+    "email" TEXT,
+    "emailVerified" TIMESTAMP(3),
     "role" TEXT DEFAULT 'user',
+    "rank" TEXT DEFAULT 'R1',
     "army" TEXT,
     "nation" TEXT,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("id")
 );
@@ -50,28 +52,50 @@ CREATE TABLE "VerificationToken" (
 );
 
 -- CreateTable
-CREATE TABLE "imagesLibary" (
-    "id" TEXT NOT NULL,
-    "scr" TEXT NOT NULL,
-    "alt" TEXT,
+CREATE TABLE "Image" (
+    "id" SERIAL NOT NULL,
+    "filename" TEXT NOT NULL,
+    "filepath" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-    CONSTRAINT "imagesLibary_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "Image_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "Wiki" (
-    "autor" TEXT NOT NULL,
+    "autor" TEXT,
     "pageId" TEXT NOT NULL,
     "title" TEXT,
-    "scr" TEXT NOT NULL,
-    "alt" TEXT NOT NULL,
-    "category" TEXT NOT NULL,
+    "scr" TEXT NOT NULL DEFAULT 'placeholder.png',
+    "alt" TEXT DEFAULT 'Prewiew image',
+    "category" TEXT,
     "short" TEXT,
     "md" TEXT NOT NULL,
+    "published" BOOLEAN NOT NULL DEFAULT false,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "Wiki_pkey" PRIMARY KEY ("pageId")
+);
+
+-- CreateTable
+CREATE TABLE "Alert" (
+    "id" SERIAL NOT NULL,
+    "userId" TEXT NOT NULL,
+    "type" TEXT NOT NULL DEFAULT 'info',
+    "message" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "Alert_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "Promocode" (
+    "id" SERIAL NOT NULL,
+    "code" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "until" TIMESTAMP(3),
+
+    CONSTRAINT "Promocode_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateIndex
@@ -92,8 +116,14 @@ CREATE UNIQUE INDEX "VerificationToken_identifier_token_key" ON "VerificationTok
 -- CreateIndex
 CREATE UNIQUE INDEX "Wiki_pageId_key" ON "Wiki"("pageId");
 
+-- CreateIndex
+CREATE UNIQUE INDEX "Promocode_code_key" ON "Promocode"("code");
+
 -- AddForeignKey
 ALTER TABLE "Account" ADD CONSTRAINT "Account_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Session" ADD CONSTRAINT "Session_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Alert" ADD CONSTRAINT "Alert_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;

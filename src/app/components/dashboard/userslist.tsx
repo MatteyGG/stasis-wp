@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 /* eslint-disable @next/next/no-async-client-component */
 import Image from "next/image";
@@ -27,7 +27,7 @@ export default function Userlist() {
         });
         if (response) {
           const data = await response.json();
-          
+
           setUsers(data.users);
         }
       } catch (error) {
@@ -39,12 +39,18 @@ export default function Userlist() {
 
     fetchUsers();
   }, []);
-  console.log("data is:", users);
+  
+  if (isLoading) {
+    return (
+      <form>
+        <h1>Loading...</h1>
+      </form>
+    );
+  }
   return (
-    <form className="container h-full md:h-4/6 shadow-sm shadow-black mx-auto flex-col p-2 rounded-xl  backdrop-blur-3xl" >
+    <form className="container h-full md:h-4/6 shadow-sm shadow-black mx-auto flex-col p-2 rounded-xl  backdrop-blur-3xl">
       <ul className="h-5/6  text-left userlist overflow-y-scroll overflow-x-hidden rounded-xl space-y-1">
         {Object.values(users).map((user, index) => {
-          console.log(index, user)
           return (
             <li
               className="mx-auto px-4 bg-white rounded-xl shadow-md md:max-w-2xl"

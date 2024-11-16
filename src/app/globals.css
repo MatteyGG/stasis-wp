@@ -28,6 +28,22 @@ body {
     text-wrap: balance;
   }
 }
+/*
+Styles of alerts
+*/
+.warning {
+  @apply border-t-yellow-600 border-yellow-400 bg-yellow-100 text-yellow-700
+}
+.info {
+  @apply border-t-blue-600 border-blue-400 bg-blue-100 text-blue-700
+}
+.error {
+  @apply border-t-red-600 border-red-400 bg-red-100 text-red-700
+}
+.success {
+  @apply border-t-green-600 border-green-400 bg-green-100 text-green-700
+}
+
 
 .upload {
   @apply flex flex-row p-4  items-center justify-around rounded-md bg-slate-400 hover:bg-slate-500;
@@ -164,6 +180,40 @@ body {
 
 .wiki h2{
   @apply text-3xl text-primaly;
+}
+
+.tabs {
+  @apply w-full text-xs md:text-xl
+}
+
+.tab-buttons {
+  display: flex;
+  justify-content: center;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  background-color: #f0f0f0;
+  margin-bottom: 10px;
+}
+
+.tab-button {
+  width: 25%;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  background-color: #f0f0f0;
+  cursor: pointer;
+}
+
+.tab-button.active {
+  background-color: #007bff;
+  color: #ffffff;
+}
+
+.tab-content {
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  background-color: #ffffff;
 }
 
 /* Glitch effect */

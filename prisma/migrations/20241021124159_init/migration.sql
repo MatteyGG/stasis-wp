@@ -1,2 +1,0 @@
--- AlterTable
-ALTER TABLE "Wiki" ALTER COLUMN "autor" DROP NOT NULL;
