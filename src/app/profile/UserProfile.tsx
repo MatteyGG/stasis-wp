@@ -7,13 +7,11 @@ import { useEffect, useState } from "react";
 import SignOut from "../components/signoutButton";
 import Alert from "../components/alert/mainalert";
 
-
 const options: Intl.DateTimeFormatOptions = {
   year: "numeric",
   month: "long",
   day: "numeric",
 };
-
 
 export default function UserProf() {
   const { data: session, status } = useSession();
@@ -31,21 +29,9 @@ export default function UserProf() {
 
   useEffect(() => {
     if (status === "authenticated" && session.user) {
-      setUsername(session.user.username);
-      setEmail(session.user.email);
-      setArmy(session.user.army);
-      setNation(session.user.nation);
-      setRank(session.user.rank);
-      setCreated_at(session.user.created_at);
-      setApproved(session.user.approved);
-
-      console.log("use session", session);
-    }
-  }, [session, status]);
-    useEffect(() => {
       const fetchAlerts = async () => {
         try {
-          
+          fetchAlerts();
           const response = await fetch("/api/listAlerts", {
             method: "GET",
           });
@@ -57,12 +43,20 @@ export default function UserProf() {
         } catch (error) {
           console.log(error);
         } finally {
-          
         }
       };
+      setUsername(session.user.username);
+      setEmail(session.user.email);
+      setArmy(session.user.army);
+      setNation(session.user.nation);
+      setRank(session.user.rank);
+      setCreated_at(session.user.created_at);
+      setApproved(session.user.approved);
 
       fetchAlerts();
-    }, []);
+      console.log("use session", session, alerts);
+    }
+  }, [session, status, alerts]);
 
   if (status === "unauthenticated") {
     redirect("/singin");
@@ -72,24 +66,33 @@ export default function UserProf() {
     return <div>Loading...</div>;
   }
 
-  
   return (
     <>
       <div className="container shadow-2xl shadow-black mt-12 mx-auto flex flex-wrap p-4 rounded-xl  backdrop-blur-md">
         <h1 className="text-6xl text-primaly text-center w-full my-6">
           <b>Профиль</b>
         </h1>
-        {alerts && Object.values(alerts).map((alert, index) => {
-          const alertType = alert.type.toString().toLowerCase();
-          if (alertType === 'info' || alertType === 'warning' || alertType === 'error' || alertType === 'success') {
-            return (
-              <Alert key={index} type={alertType as "info" | "warning" | "error" | "success"} message={alert.message} />
-            );
-          } else {
-            console.error(`Invalid alert type: ${alertType}`);
-            return null;
-          }
-        })}
+        {alerts &&
+          Object.values(alerts).map((alert, index) => {
+            const alertType = alert.type.toString().toLowerCase();
+            if (
+              alertType === "info" ||
+              alertType === "warning" ||
+              alertType === "error" ||
+              alertType === "success"
+            ) {
+              return (
+                <Alert
+                  key={index}
+                  type={alertType as "info" | "warning" | "error" | "success"}
+                  message={alert.message}
+                />
+              );
+            } else {
+              console.error(`Invalid alert type: ${alertType}`);
+              return null;
+            }
+          })}
         <div className="container w-80% flex flex-col justify-evenly md:flex-row mt-4 items-center text-primaly">
           <div className="w-full md:w-1/3 ">
             {!session?.user?.image ? (
