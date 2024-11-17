@@ -7,8 +7,6 @@ import { useEffect, useState } from "react";
 import SignOut from "../components/signoutButton";
 import Alert from "../components/alert/mainalert";
 
-import { prisma } from "@/app/prisma";
-
 
 const options: Intl.DateTimeFormatOptions = {
   year: "numeric",
@@ -25,10 +23,11 @@ export default function UserProf() {
   const [army, setArmy] = useState("");
   const [nation, setNation] = useState("");
   const [rank, setRank] = useState("");
-  const [created_at, setCreated_at] = useState(Date);
+  const [created_at, setCreated_at] = useState<Date>(new Date());
+
   const [approved, setApproved] = useState(false);
 
-  const [alerts, setAlerts] = useState();
+  const [alerts, setAlerts] = useState<{ type: string; message: string }[]>([]);
 
   useEffect(() => {
     if (status === "authenticated" && session.user) {
@@ -44,7 +43,7 @@ export default function UserProf() {
     }
   }, [session, status]);
     useEffect(() => {
-      const fetchUsers = async () => {
+      const fetchAlerts = async () => {
         try {
           
           const response = await fetch("/api/listAlerts", {
@@ -62,7 +61,7 @@ export default function UserProf() {
         }
       };
 
-      fetchUsers();
+      fetchAlerts();
     }, []);
 
   if (status === "unauthenticated") {
@@ -73,15 +72,6 @@ export default function UserProf() {
     return <div>Loading...</div>;
   }
 
-  async function GetAlerts(e) {
-    console.log("Alerts");
-    return ((await fetch('/api/listAlerts')).json());
-  }
-  async function handeleProfileUpdate(e: React.FormEvent) {
-    e.preventDefault();
-    console.log("submit");
-    
-  }
   
   return (
     <>
@@ -89,12 +79,17 @@ export default function UserProf() {
         <h1 className="text-6xl text-primaly text-center w-full my-6">
           <b>Профиль</b>
         </h1>
-        {Object.values(alerts).map((alert, index) => {
-          return (
-            <Alert key={index} type={alert.type} message={alert.message} />
-          );
+        {alerts && Object.values(alerts).map((alert, index) => {
+          const alertType = alert.type.toString().toLowerCase();
+          if (alertType === 'info' || alertType === 'warning' || alertType === 'error' || alertType === 'success') {
+            return (
+              <Alert key={index} type={alertType as "info" | "warning" | "error" | "success"} message={alert.message} />
+            );
+          } else {
+            console.error(`Invalid alert type: ${alertType}`);
+            return null;
+          }
         })}
-        <Alert type={"success"} message={"GGG"} />
         <div className="container w-80% flex flex-col justify-evenly md:flex-row mt-4 items-center text-primaly">
           <div className="w-full md:w-1/3 ">
             {!session?.user?.image ? (

@@ -48,8 +48,8 @@ export default function Userlist() {
     );
   }
   return (
-    <form className="container h-full md:h-4/6 shadow-sm shadow-black mx-auto flex-col p-2 rounded-xl  backdrop-blur-3xl">
-      <ul className="h-5/6  text-left userlist overflow-y-scroll overflow-x-hidden rounded-xl space-y-1">
+    <form className="container min-h-64 shadow-sm shadow-black mx-auto flex-col p-2 rounded-xl  backdrop-blur-3xl">
+      <ul className="text-left userlist  rounded-xl space-y-1">
         {Object.values(users).map((user, index) => {
           return (
             <li

@@ -12,7 +12,7 @@ export default async function Manage_users() {
   const users_array = await prisma.user.findMany();
 
   return (
-    <ul className="h-5/6 grid grid-cols-1  md:grid-cols-3 text-left  rounded-xl space-y-1">
+    <ul className="h-5/6 min-h-64 grid grid-cols-1  md:grid-cols-3 text-left  rounded-xl space-y-1">
       {Object.values(users_array).map((user, index) => {
         return (
           <li
@@ -69,7 +69,7 @@ export default async function Manage_users() {
                   alt=""
                 />
               </div>
-              <AlertMake userId={user.id.toString()}/>
+              <AlertMake userId={user.id.toString()} />
             </div>
           </li>
         );

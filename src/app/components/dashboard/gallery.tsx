@@ -1,7 +1,7 @@
 import { prisma } from "../../prisma";
 
 import Image from "next/image";
-import UploadForm from "../upload";
+// import UploadForm from "../upload";
 
 export default async function gallery() {
   const image_array = await prisma.image.findMany({
@@ -10,7 +10,7 @@ export default async function gallery() {
     },
   });
   return (
-    <div className="container h-full md:h-2/3 overflow-y-scroll shadow-sm shadow-black mx-auto p-4 rounded-xl  backdrop-blur-3xl">
+    <div className="container h-full min-h-64 md:h-2/3 shadow-sm shadow-black mx-auto p-4 rounded-xl  backdrop-blur-3xl">
       <h1 className="text-2xl text-center">Gallery</h1>
       <div className="h-full  text-center">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -26,7 +26,7 @@ export default async function gallery() {
             </div>
           ))}
         </div>
-        <UploadForm />
+        {/* <UploadForm /> */}
       </div>
     </div>
   );

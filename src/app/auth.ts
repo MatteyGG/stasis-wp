@@ -11,7 +11,7 @@ import VK from "next-auth/providers/vk";
 import { JWT } from "next-auth/jwt";
 import { AdapterUser } from "@auth/core/adapters";
 import { CustomUser } from "next-auth";
-
+import { User } from "next-auth";
 
 declare module "next-auth" {
   interface Session {
@@ -25,7 +25,8 @@ declare module "next-auth" {
       nation: string;
       image: string;
       approved: boolean;
-    } & DefaultSession["user"]
+      created_at: Date;
+    } & DefaultSession["user"];
   }
 
   interface CustomUser extends User {
@@ -115,7 +116,13 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     strategy: "jwt",
   },
   callbacks: {
-    jwt({ token, user }: { token: JWT; user: CustomUser | AdapterUser }) {
+    jwt({
+      token,
+      user,
+    }: {
+      token: JWT;
+      user: User | AdapterUser | CustomUser;
+    }) {
       if (
         user &&
         "id" in user &&
@@ -154,7 +161,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       session.user.army = token.army?.toString() ?? "unknown";
       session.user.nation = token.nation?.toString() ?? "unknown";
       session.user.image = token.image?.toString() ?? "unknown";
-      session.user.created_at = token.created_at;
+      session.user.created_at = token.created_at as Date;
       session.user.approved = Boolean(token.approved) ?? false;
 
       console.log("Session token ---->", token.name ?? "unknown");
