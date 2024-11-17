@@ -43,22 +43,19 @@ export default function UserProf() {
     }
   }, [session, status]);
     useEffect(() => {
-      const fetchAlerts = async () => {
+      (async () => {
         try {
           const response = await fetch("/api/listAlerts", {
             method: "GET",
           });
           if (response) {
             const data = await response.json();
-            console.log(alerts);
             setAlerts(data.alerts);
           }
         } catch (error) {
           console.log(error);
-        } finally {
         }
-      };
-      fetchAlerts();
+      })();
     }, []);
 
   if (status === "unauthenticated") {
