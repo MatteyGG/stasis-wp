@@ -7,11 +7,13 @@ import { useEffect, useState } from "react";
 import SignOut from "../components/signoutButton";
 import Alert from "../components/alert/mainalert";
 
+
 const options: Intl.DateTimeFormatOptions = {
   year: "numeric",
   month: "long",
   day: "numeric",
 };
+
 
 export default function UserProf() {
   const { data: session, status } = useSession();
@@ -29,22 +31,6 @@ export default function UserProf() {
 
   useEffect(() => {
     if (status === "authenticated" && session.user) {
-      const fetchAlerts = async () => {
-        try {
-          fetchAlerts();
-          const response = await fetch("/api/listAlerts", {
-            method: "GET",
-          });
-          if (response) {
-            const data = await response.json();
-
-            setAlerts(data.alerts);
-          }
-        } catch (error) {
-          console.log(error);
-        } finally {
-        }
-      };
       setUsername(session.user.username);
       setEmail(session.user.email);
       setArmy(session.user.army);
@@ -53,10 +39,27 @@ export default function UserProf() {
       setCreated_at(session.user.created_at);
       setApproved(session.user.approved);
 
-      fetchAlerts();
-      console.log("use session", session, alerts);
+      console.log("use session", session);
     }
-  }, [session, status, alerts]);
+  }, [session, status]);
+    useEffect(() => {
+      const fetchAlerts = async () => {
+        try {
+          const response = await fetch("/api/listAlerts", {
+            method: "GET",
+          });
+          if (response) {
+            const data = await response.json();
+            console.log(alerts);
+            setAlerts(data.alerts);
+          }
+        } catch (error) {
+          console.log(error);
+        } finally {
+        }
+      };
+      fetchAlerts();
+    }, []);
 
   if (status === "unauthenticated") {
     redirect("/singin");
@@ -66,14 +69,15 @@ export default function UserProf() {
     return <div>Loading...</div>;
   }
 
+  const alerts_array = alerts;
   return (
     <>
       <div className="container shadow-2xl shadow-black mt-12 mx-auto flex flex-wrap p-4 rounded-xl  backdrop-blur-md">
         <h1 className="text-6xl text-primaly text-center w-full my-6">
           <b>Профиль</b>
         </h1>
-        {alerts &&
-          Object.values(alerts).map((alert, index) => {
+        {alerts_array &&
+          Object.values(alerts_array).map((alert, index) => {
             const alertType = alert.type.toString().toLowerCase();
             if (
               alertType === "info" ||
