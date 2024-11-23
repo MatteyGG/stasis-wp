@@ -7,6 +7,8 @@ import { useEffect, useState } from "react";
 import SignOut from "../components/signoutButton";
 import Alert from "../components/alert/mainalert";
 
+import { CSSTransition } from "react-transition-group";
+
 const options: Intl.DateTimeFormatOptions = {
   year: "numeric",
   month: "long",
@@ -24,15 +26,11 @@ export default function UserProf() {
   const [created_at, setCreated_at] = useState<Date>(new Date());
 
   const [approved, setApproved] = useState(false);
-  const [reputation, setReputation] = useState(8); // Репутация
+  const [reputation, setReputation] = useState(10); // Репутация
   const [alerts, setAlerts] = useState<{ type: string; message: string }[]>([]);
 
   const [isModalOpen, setIsModalOpen] = useState(false); // Состояние для модального окна
-  const [changeHistory, setChangeHistory] = useState([
-    { date: "2024-11-01", change: "Изменение имени на 'JohnDoe'" },
-    { date: "2024-11-10", change: "Обновлена почта на 'johndoe@example.com'" },
-    // Здесь могут быть реальные данные истории изменений
-  ]);
+  const [open, setOpen] = useState(false);
 
   const getProgressWidth = () => {
     if (reputation > 0) return `${(reputation / 10) * 100}%`;
@@ -61,18 +59,18 @@ export default function UserProf() {
   useEffect(() => {
     (async () => {
       try {
-        const response = await fetch("/api/listAlerts", {
+        const response = await fetch("/api/alerts/" + session!.user.id, {
           method: "GET",
         });
         if (response) {
           const data = await response.json();
-          setAlerts(data.alerts);
+          setAlerts(data);
         }
       } catch (error) {
         console.log(error);
       }
     })();
-  }, []);
+  }, [session]);
 
   if (status === "unauthenticated") {
     redirect("/singin");
@@ -86,37 +84,52 @@ export default function UserProf() {
 
   return (
     <>
-      <div className="container shadow-2xl shadow-black mt-12 mx-auto flex flex-wrap p-4 rounded-xl backdrop-blur-md">
+      <div className="container relative -z-1 shadow-2xl shadow-black mt-12 mx-auto flex flex-wrap p-4 rounded-xl backdrop:z-0 backdrop-blur-lg">
         <h1 className="text-6xl text-primaly text-center w-full my-6">
           <b>Профиль</b>
         </h1>
-        {alerts_array &&
-          Object.values(alerts_array).map((alert, index) => {
-            const alertType = alert.type.toString().toLowerCase();
-            if (
-              alertType === "info" ||
-              alertType === "warning" ||
-              alertType === "error" ||
-              alertType === "success"
-            ) {
-              return (
-                <Alert
-                  key={index}
-                  type={alertType as "info" | "warning" | "error" | "success"}
-                  message={alert.message}
-                />
-              );
-            } else {
-              console.error(`Invalid alert type: ${alertType}`);
-              return null;
-            }
-          })}
+        <details className="w-full">
+          <summary
+            className="cursor-pointer text-primaly"
+            onClick={() => setOpen(!open)}
+          >
+            Показать уведомления
+          </summary>
+          <CSSTransition in={open} timeout={700} classNames="dropdown">
+            <div className="dropdown-content">
+              {alerts_array &&
+                Object.values(alerts_array).map((alert, index) => {
+                  const alertType = alert.type.toString().toLowerCase();
+                  if (
+                    alertType === "info" ||
+                    alertType === "warning" ||
+                    alertType === "error" ||
+                    alertType === "success"
+                  ) {
+                    return (
+                      <Alert
+                        key={index}
+                        type={
+                          alertType as "info" | "warning" | "error" | "success"
+                        }
+                        message={alert.message}
+                      />
+                    );
+                  } else {
+                    console.error(`Invalid alert type: ${alertType}`);
+                    return null;
+                  }
+                })}
+            </div>
+          </CSSTransition>
+        </details>
         <div className="container w-80% flex flex-col justify-evenly md:flex-row mt-4 items-center text-primaly">
           <div className="w-full md:w-1/3 relative">
             {!session?.user?.image ? (
               <>
                 <Image
-                  className="rounded-md h-full hover:translate-x-1/2 hover:grow hover:shadow-lg hover:scale-[2.3] transition-all delay-100 duration-500"
+                  className="z-30 rounded-md h-full hover:translate-x-1/2 hover:grow hover:shadow-lg hover:scale-[2.3] transition-all delay-100 duration-500"
+                  style={{ position: "relative" }}
                   src={"/placeholder.png"}
                   alt={username}
                   width={1000}
@@ -181,77 +194,72 @@ export default function UserProf() {
               </div>
             </div>
 
-{/* Репутация */}
-<div className="mt-4">
-  <h4 className="text-lg font-bold text-gray-700 text-center">
-    Активность
-  </h4>
-  <div className="w-full h-6 bg-gray-200 rounded-full overflow-hidden my-2 relative">
-    {/* Полоса прогресса */}
-    <div
-      className={`h-full transition-all ${getProgressColor()}`}
-      style={{
-        width: getProgressWidth(),
-        position: "absolute", // Полоса прогресса остаётся внутри контейнера
-        top: 0,
-        left: 0,
-        zIndex: 1, // Полоса прогресса под текстом
-      }}
-    ></div>
+            {/* Репутация */}
+            <div className=" mt-4">
+              <h4 className="text-lg font-bold text-gray-700 text-center">
+                Активность
+              </h4>
+              <div className="w-full h-6 bg-gray-200 rounded-full my-2 relative">
+                {/* Полоса прогресса */}
+                <div
+                  className={`h-full transition-all ${getProgressColor()}`}
+                  
+                  style={{
+                    width: getProgressWidth(),
+                    position: "relative",
+                    top: 0,
+                    left: 0,
+                    zIndex: 10, // Полоса прогресса под текстом
+                  }}
+                ></div>
 
-    {/* Текст */}
-    <div
-      className="absolute inset-0 flex items-center justify-center text-white text-sm font-bold"
-      style={{
-        zIndex: 2, // Текст поверх полосы прогресса
-      }}
-    >
-      {reputation > 0 || reputation < 0
-        ? `${Math.abs(reputation) * 10}%`
-        : "0%"}
-    </div>
-  </div>
-</div>
-
-
-{/* Кнопка История изменений */}
-<div className="mt-4 text-center">
-  <button
-    className="bg-transparent text-blue-700 border border-blue-700 text-sm px-4 py-2 rounded-full transition-all duration-300 hover:border-blue-600 hover:text-white hover:bg-blue-600 shadow-xl hover:shadow-2xl focus:outline-none focus:ring-2 focus:ring-blue-500"
-    onClick={() => setIsModalOpen(true)}
-  >
-    История изменений
-  </button>
-</div>
-
-
-
-
-
-
-
-            <div className="flex justify-between pt-1">
-              <div className="flex flex-row">
-                <Image
-                  src={"/source/nation/" + nation + ".webp"}
-                  height={48}
-                  width={48}
-                  alt=""
-                />
-                <Image
-                  src={"/source/army/" + army + ".webp"}
-                  height={48}
-                  width={48}
-                  alt=""
-                />
+                {/* Текст */}
+                <div
+                  className=" inset-0 flex items-center justify-center text-sm font-bold"
+                  style={{
+                    zIndex: 20, // Текст поверх полосы прогресса
+                  }}
+                >
+                  {reputation > 0 || reputation < 0
+                    ? `${Math.abs(reputation) * 10}%`
+                    : "0%"}
+                </div>
               </div>
             </div>
-            <div className="w-full">
+
+            {/* Кнопка История изменений */}
+            <div className="mt-4 text-center">
+              <button
+                className="bg-transparent text-blue-700 border border-blue-700 text-sm px-4 py-2 rounded-full transition-all duration-300 hover:border-blue-600 hover:text-white hover:bg-blue-600 shadow-xl hover:shadow-2xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+                onClick={() => setIsModalOpen(true)}
+              >
+                История изменений
+              </button>
+            </div>
+
+            <div className="inline-flex justify-between pt-1">
+              <Image
+                src={"/source/nation/" + nation + ".webp"}
+                height={64}
+                width={64}
+                alt=""
+              />
+              <Image
+                src={"/source/army/" + army + ".webp"}
+                height={64}
+                width={64}
+                alt=""
+              />
+            </div>
+            <div className="w-full flex flex-col space-y-2">
               <button
                 className="bg-green-500 text-white px-3 py-1 rounded-md hover:bg-green-600"
                 type="submit"
               >
                 Сохранить
+              </button>
+              <button className="bg-amber-500 text-white px-3 py-1 rounded-md hover:bg-amber-600">
+                Сбросить пароль
               </button>
               <SignOut />
             </div>
@@ -270,12 +278,30 @@ export default function UserProf() {
             onClick={(e) => e.stopPropagation()}
           >
             <h2 className="text-xl font-semibold mb-4">История изменений</h2>
-            <ul>
-              {changeHistory.map((item, index) => (
-                <li key={index} className="mb-2">
-                  <b>{item.date}:</b> {item.change}
-                </li>
-              ))}
+            <ul className="w-full gap-1 flex flex-col">
+              {alerts_array &&
+                Object.values(alerts_array).map((alert, index) => {
+                  const alertType = alert.type.toString().toLowerCase();
+                  if (
+                    alertType === "info" ||
+                    alertType === "warning" ||
+                    alertType === "error" ||
+                    alertType === "success"
+                  ) {
+                    return (
+                      <Alert
+                        key={index}
+                        type={
+                          alertType as "info" | "warning" | "error" | "success"
+                        }
+                        message={alert.message}
+                      />
+                    );
+                  } else {
+                    console.error(`Invalid alert type: ${alertType}`);
+                    return null;
+                  }
+                })}
             </ul>
             <button
               className="mt-4 bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600"

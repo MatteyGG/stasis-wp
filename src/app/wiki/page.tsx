@@ -1,5 +1,6 @@
 import WikiCard from "@/app/components/wikicard";
 import { prisma } from "../prisma";
+import Link from "next/link";
 
 export default async function WikiMain() {
     const card_category = await prisma.wiki.findMany({
@@ -18,12 +19,20 @@ export default async function WikiMain() {
       </h1>
       <div className="w-full">
         {/* Блок с wiki страницами */}
-        <div className="w-full ">
-            <button>
-              {card_category.map((category) => (
-                <span key={category.category}>{category.category}</span>
-              ))}
-            </button>
+        <div className="w-full">
+          <div className="inline-flex gap-2">
+            {card_category.map((category) => (
+              <button
+                key={category.category}
+                className="bg-gray-400 text-primaly text-md px-3 py-1 rounded-xl mb-1"
+              >
+                <Link href={`wiki/${category.category}`}>
+                  {category.category}
+                </Link>
+              </button>
+            ))}
+          </div>
+
           <section className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-4 text-white">
             {Object.values(card_array).map((card, index) => {
               console.log(card);

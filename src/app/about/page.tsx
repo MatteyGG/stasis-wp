@@ -27,8 +27,8 @@ export default function About() {
         </article>
         <div>
           <Image
-            className="w-full hover:scale-[1.2] md:hover:scale-[2] ease-in-out duration-700 overflow-visible "
-            src="/source/icon/Stasis.png"
+            className="w-full hover:scale-110 md:hover:scale-125 ease-in-out duration-700 overflow-visible "
+            src="/source/icon/Stasis_logo.png"
             width={300}
             height={300}
             alt=""

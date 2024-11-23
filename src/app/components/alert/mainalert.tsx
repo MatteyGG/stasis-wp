@@ -10,19 +10,24 @@ const Alert: FC<AlertProps> = ({ type, message }) => {
   const getStyles = () => {
     switch (type) {
       case "warning":
-        return "border-t-yellow-600 border-yellow-400 bg-yellow-100 text-yellow-700";
+        return "warning";
       case "error":
-        return "border-t-red-600 border-red-400 bg-red-100 text-red-700";
+        return "error";
       case "success":
-        return "border-t-green-600 border-green-400 bg-green-100 text-green-700";
+        return "success";
       case "info":
-        return "border-t-blue-600 border-blue-400 bg-blue-100 text-blue-700";
+        return "info";
     }
   };
 
   return (
-    <div className={`w-full border border-t-8 rounded-b px-4 py-3 ${getStyles()}`}>
-      <p>{message}</p>
+    <div className="w-full inline-flex items-center">
+      <span className="mr-2 text-gray-600">25.01.23: </span>
+      <div
+        className={`w-full border rounded-b px-4 py-3 space-y-4 ${getStyles()}`}
+      >
+        <p>{message}</p>
+      </div>
     </div>
   );
 };

@@ -1,14 +1,18 @@
 import Link from "next/link";
 import { auth } from "../auth";
 import SignOutButton from "./signoutButton";
+import DropdownButton from "./base/dropdownButton";
 
 export default async function Navbar() {
-
-  const session = await auth()
+  const session = await auth();
   return (
     <>
-      <nav className="flex overflow-visible flex-row justify-evenly backdrop-blur-2xl pb-2 text-center items-center">
-        <Link className="hidden md:block text-3xl glitch" data-text="STASIS" href="/">
+      <nav className="flex z-0 overflow-visible flex-row justify-evenly backdrop-blur-2xl pb-2 text-center items-center">
+        <Link
+          className="hidden md:block text-3xl glitch"
+          data-text="STASIS"
+          href="/"
+        >
           STASIS
         </Link>
         <div className="flex flex-row text-nowrap items-center">
@@ -19,18 +23,18 @@ export default async function Navbar() {
             <li className="mr-6">
               <Link href="/about">О нас</Link>
             </li>
-            {session?.user.role.includes("admin") ? (
-              <li className="mr-6">
-                <Link href="/dashboard">Админка</Link>
-              </li>
-            ) : null}
           </ul>
         </div>
-        <li className=" mt-1 list-none justify-end">
+        <li className=" absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
           {session?.user ? (
-            <div className="space-x-1">
-              <Link href="/profile">Профиль</Link>
-              <SignOutButton />
+            <div className="relative ml-3 space-x-1 items-center inline-flex">
+              <DropdownButton>
+                <Link href="/profile">Профиль</Link>
+                {session?.user.role.includes("admin") ? (
+                  <Link href="/dashboard">Админка</Link>
+                ) : null}
+                <SignOutButton />
+              </DropdownButton>
             </div>
           ) : (
             <div className="space-x-1">
