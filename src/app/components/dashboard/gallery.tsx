@@ -17,7 +17,9 @@ export default async function gallery() {
           {image_array.map((image, index) => (
             <div key={index} className="h-full">
               <Image
-                src={"/" + image.filename}
+                src={
+                  "/" + image.filepath.split("\\").pop() + "/" + image.filename
+                }
                 alt={image.filename}
                 height={128}
                 width={128}

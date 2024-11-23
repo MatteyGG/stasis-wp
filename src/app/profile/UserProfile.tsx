@@ -8,6 +8,7 @@ import SignOut from "../components/signoutButton";
 import Alert from "../components/alert/mainalert";
 
 import { CSSTransition } from "react-transition-group";
+import UploadImage from "../components/userImageUpload";
 
 const options: Intl.DateTimeFormatOptions = {
   year: "numeric",
@@ -130,16 +131,16 @@ export default function UserProf() {
                 <Image
                   className="z-30 rounded-md h-full hover:translate-x-1/2 hover:grow hover:shadow-lg hover:scale-[2.3] transition-all delay-100 duration-500"
                   style={{ position: "relative" }}
-                  src={"/placeholder.png"}
+                  src={"/userScreen/" + "userScreen_" + session!.user.id + '.png'}
                   alt={username}
                   width={1000}
                   height={1000}
                 />
+
                 <label>
-                  <input className="hidden" type="file" />
-                  <span className="block border border-gray-800 rounded-b-md p-2 text-xs text-center">
+                  <UploadImage userId={session!.user!.id.toString()}>
                     Изменить
-                  </span>
+                  </UploadImage>
                 </label>
               </>
             ) : (
@@ -203,7 +204,6 @@ export default function UserProf() {
                 {/* Полоса прогресса */}
                 <div
                   className={`h-full transition-all ${getProgressColor()}`}
-                  
                   style={{
                     width: getProgressWidth(),
                     position: "relative",

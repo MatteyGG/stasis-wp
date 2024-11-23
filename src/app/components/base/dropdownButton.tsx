@@ -10,20 +10,19 @@ export default function DropdownButton({ children } ) {
   };
 
   return (
-    <div className="relative ml-3 overflow-y-visible z-20">
+    <div className="relative ml-3 ">
       <div>
         <button
           type="button"
           onClick={toggleDropdown}
-          className="relative flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
+          className="relative flex rounded-full text-sm"
           id="user-menu-button"
           aria-expanded="false"
           aria-haspopup="true"
         >
           <span className="absolute -inset-1.5"></span>
-          <span className="sr-only">Open user menu</span>
           <Image
-            className="size-8 rounded-full"
+            className=" rounded-full"
             src="/source/icon/Stasis_logo.png"
             width={64}
             height={64}
