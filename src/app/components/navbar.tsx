@@ -33,7 +33,7 @@ export default async function Navbar() {
                 {session?.user.role.includes("admin") ? (
                   <Link href="/dashboard">Админка</Link>
                 ) : null}
-                <SignOutButton />
+                <SignOutButton color="red" />
               </DropdownButton>
             </div>
           ) : (

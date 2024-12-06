@@ -6,7 +6,6 @@ import Link from "next/link";
 import { providerMap } from "../auth";
 import { AuthError } from "next-auth";
 import { redirect } from "next/navigation";
-import Image from "next/image";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -90,13 +89,6 @@ export default function LoginPage() {
           Зарегестрироваться --&gt;
         </Link>
       </section>
-      <Image
-        className="hidden md:block w-3/4 brightness-80 "
-        src="/source/stasis_prew.png"
-        width={1000}
-        height={1000}
-        alt=""
-      />
     </div>
   );
 }

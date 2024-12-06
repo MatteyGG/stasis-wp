@@ -141,13 +141,6 @@ export default function RegistrationPage() {
           Войти --&gt;
         </Link>
       </section>
-      <Image
-        className="hidden md:block w-3/4 brightness-80 "
-        src="/source/stasis_prew.png"
-        width={1000}
-        height={1000}
-        alt=""
-      />
     </div>
   );
 }

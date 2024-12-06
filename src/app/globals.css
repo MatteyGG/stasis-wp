@@ -31,17 +31,20 @@ body {
 /*
 Styles of alerts
 */
+
+
+
 .warning {
-  @apply border-l-8 border-l-yellow-600 border-yellow-400 bg-yellow-100 text-yellow-700
+  @apply  shadow-md shadow-yellow-500 bg-gray-100 
 }
 .info {
-  @apply border-l-8 border-l-blue-600 border-blue-400 bg-blue-100 text-blue-700
+  @apply  shadow-md shadow-blue-500  bg-gray-100 
 }
 .error {
-  @apply border-l-8 border-l-red-600 border-red-400 bg-red-100 text-red-700
+  @apply  shadow-md shadow-red-500  bg-gray-100 
 }
 .success {
-  @apply border-l-8 border-l-green-600 border-green-400 bg-green-100 text-green-700
+  @apply  shadow-md shadow-green-500  bg-gray-100 
 }
 
 
@@ -183,37 +186,23 @@ Styles of alerts
 }
 
 .tabs {
-  @apply w-full text-xs md:text-xl
+  @apply flex flex-row text-xs md:text-xl
 }
 
 .tab-buttons {
-  display: flex;
-  justify-content: center;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  background-color: #f0f0f0;
-  margin-bottom: 10px;
+  @apply flex flex-col text-nowrap rounded-xl justify-start bg-gray-200 bg-opacity-30;
 }
 
 .tab-button {
-  width: 25%;
-  padding: 10px;
-  border: none;
-  border-radius: 5px;
-  background-color: #f0f0f0;
-  cursor: pointer;
+  @apply w-full text-left px-4 py-2 bg-gray-200 cursor-pointer;
 }
 
 .tab-button.active {
-  background-color: #007bff;
-  color: #ffffff;
+  @apply bg-blue-500 text-white;
 }
 
 .tab-content {
-  padding: 20px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  background-color: #ffffff;
+  @apply w-full ;
 }
 .dropdown-enter {
   max-height: 0;
@@ -234,6 +223,11 @@ Styles of alerts
   overflow: hidden;
   transition: max-height 0.5s ease-in-out;
 }
+
+.settigs-nav button {
+  @apply text-primaly p-2 border border-gray-600 rounded-sm;
+}
+
 /* Glitch effect */
 /* From Uiverse.io by andrew-demchenk0 */ 
 .glitch {

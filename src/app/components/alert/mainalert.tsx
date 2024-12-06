@@ -1,4 +1,4 @@
-
+import Image from "next/image";
 import { FC } from "react";
 
 interface AlertProps {
@@ -21,12 +21,22 @@ const Alert: FC<AlertProps> = ({ type, message }) => {
   };
 
   return (
-    <div className="w-full inline-flex items-center">
-      <span className="mr-2 text-gray-600">25.01.23: </span>
-      <div
-        className={`w-full border rounded-b px-4 py-3 space-y-4 ${getStyles()}`}
-      >
-        <p>{message}</p>
+    <div
+      className={`inline-flex w-full rounded-3xl bg-slate-300  bg-opacity-85 place-items-center px-4 py-3 gap-4 ${getStyles()}`}
+    >
+      <Image
+        className=" object-scale-down "
+        src={`/source/icon/${getStyles()}.png`}
+        width={32}
+        height={32}
+        alt=""
+      />
+      <div className="w-full  inline-flex justify-between">
+        <p className="mt-3 items-baseline text-black">{message}</p>
+        <div className="flex flex-col">
+          <span className="text-sm text-gray-500">23 ноября 2024</span>
+          <p className="text-center text-emerald-600">+1</p>
+        </div>
       </div>
     </div>
   );

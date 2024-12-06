@@ -7,14 +7,14 @@ interface TabsProps {
 }
 
 function Tabs({ tabs, tabContents }: TabsProps) {
-  const [activeTab, setActiveTab] = useState(3);
+  const [activeTab, setActiveTab] = useState(0);
 
   const handleTabClick = (index: number) => {
     setActiveTab(index);
   };
 
   return (
-    <div className="tabs grid">
+    <div className="tabs">
       <div className="tab-buttons">
         {tabs.map((tab, index) => (
           <button

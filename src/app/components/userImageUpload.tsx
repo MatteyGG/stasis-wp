@@ -5,10 +5,7 @@ import { useEffect, useState, ChangeEvent } from "react";
 export default function UploadImage({
   children,
   userId,
-}: {
-  children: any;
-  userId: string;
-}) {
+}: Readonly<{ children: React.ReactNode; userId: string }>) {
   const [file, setFile] = useState<File | null>(null);
   const [isClient, setIsClient] = useState(false);
 

@@ -2,7 +2,11 @@
 import { useState } from "react";
 import Image from "next/image";
 
-export default function DropdownButton({ children } ) {
+export interface DropdownButtonProps {
+  children: React.ReactNode;
+}
+
+export default function DropdownButton({ children }: DropdownButtonProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   const toggleDropdown = () => {

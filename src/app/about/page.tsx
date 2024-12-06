@@ -3,7 +3,7 @@ import Link from "next/link";
 
 export default function About() {
   return (
-    <div className="about container md:mt-12 mx-auto flex flex-wrap p-4 rounded-xl backdrop-blur-2xl">
+    <div className="about container md:mt-12 mx-auto flex flex-wrap p-4 rounded-xl">
       <h1 className="text-6xl text-primaly text-left w-full my-6">
         <b>О нас</b>
       </h1>
