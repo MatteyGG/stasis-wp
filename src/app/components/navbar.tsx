@@ -25,7 +25,7 @@ export default async function Navbar() {
             </li>
           </ul>
         </div>
-        <li className=" absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
+        <li className="z-30 absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
           {session?.user ? (
             <div className="relative ml-3 space-x-1 items-center inline-flex">
               <DropdownButton>

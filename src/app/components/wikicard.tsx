@@ -24,7 +24,7 @@ const WikiCard =  ( { title, category, description, img, link }: WikiCardProps )
           width={150}
           height={150}
         />
-        <span className="wikicard-category absolute text-white text-1xl bg-primaly p-2 rounded-br-xl ">
+        <span className="z-1 wikicard-category absolute text-white text-1xl bg-primaly p-2 rounded-br-xl ">
           {category}
         </span>
         <h1 className="wikicard-title">

@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
-    },
+  },
   "dependencies": {
     "@auth/prisma-adapter": "^2.7.1",
     "@mdxeditor/editor": "^3.14.0",
@@ -22,7 +22,8 @@
     "next-mdx-remote": "^5.0.0",
     "react": "^18",
     "react-dom": "^18",
-    "react-select": "^5.8.2"
+    "react-select": "^5.8.2",
+    "react-toastify": "^10.0.6"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",

@@ -5,6 +5,12 @@ import Image from "next/image";
 import { prisma } from "@/app/prisma";
 import WikiCard from "../wikicard";
 
+import React from "react";
+
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import AllyWidget from "../allyWid";
+
 const options: Intl.DateTimeFormatOptions = {
   year: "numeric",
   month: "long",
@@ -37,6 +43,18 @@ export default function Profile({
   status: string;
   alerts_array: [];
 }) {
+  const notify = () =>
+    toast.success("Скопировано", {
+      position: "bottom-right",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "colored",
+    });
+
   const getProgressWidth = () => {
     if (reputation > 0) return `${(reputation / 10) * 100}%`;
     if (reputation < 0) return `${(Math.abs(reputation) / 5) * 100}%`;
@@ -63,7 +81,6 @@ export default function Profile({
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [reputation, setReputation] = useState(10); // Репутация
 
-  
   useEffect(() => {
     if (status === "authenticated" && session.user) {
       setUserId(session.user.id);
@@ -237,7 +254,10 @@ export default function Profile({
                       key={code}
                     >
                       <button
-                        onClick={() => navigator.clipboard.writeText(code)}
+                        onClick={() => {
+                          navigator.clipboard.writeText(code);
+                          notify();
+                        }}
                       >
                         <Image
                           src="/source/icon/copy.png"
@@ -255,6 +275,7 @@ export default function Profile({
           </div>
           <div className="mx-6">
             <div className="w-full">
+              <h1 className="text-3xl my-2">Рекомендации</h1>
               <section className="grid grid-cols-3 gap-4 text-white">
                 {Object.values(wikicard).map((card, index) => {
                   console.log(card);
@@ -271,8 +292,21 @@ export default function Profile({
                 })}
               </section>
             </div>
+            <AllyWidget />
           </div>
         </div>
+        <ToastContainer
+          position="bottom-right"
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="colored"
+        />
       </div>
     </>
   );

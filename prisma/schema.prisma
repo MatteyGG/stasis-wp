@@ -81,13 +81,13 @@ model Wiki {
 }
 
 model Alert {
-  id        Int       @id @default(autoincrement())
+  id        Int      @id @default(autoincrement())
   userId    String
-  type      String  @default("info")
+  type      String   @default("info")
   message   String
-  createdAt DateTime  @default(now())
+  createdAt DateTime @default(now())
 
-  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
 
 model Promocode {
@@ -95,4 +95,21 @@ model Promocode {
   code      String    @unique
   createdAt DateTime  @default(now())
   until     DateTime?
+}
+
+model Guild {
+  id        Int      @id @default(1)
+  power     BigInt
+  leader    String
+  updatedAt DateTime
+}
+
+model Member {
+  id        Int      @id
+  nickname  String
+  TownHall  Int
+  power     String
+  kill      Int
+  die       Int
+  kills     String
 }
