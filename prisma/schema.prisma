@@ -92,7 +92,7 @@ model Alert {
 
 model Promocode {
   id        Int       @id @default(autoincrement())
-  code      String    @unique
+  code      String    
   createdAt DateTime  @default(now())
   until     DateTime?
 }

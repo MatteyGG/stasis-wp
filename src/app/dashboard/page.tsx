@@ -4,12 +4,14 @@ import WikiList from "@/app/components/dashboard/wikilist";
 import Userlist from "@/app/components/dashboard/userslist";
 import Tabs from "../components/tabs";
 import Manage_users from "../components/dashboard/manage";
+import PromoList from "../components/dashboard/promocode";
 
 const tabContents = [
   <WikiList key={0} />,
   <Userlist key={1} />,
   <Gallery key={2} />,
   <Manage_users key={3} />,
+  <PromoList key={4} />,
 ];
 
 export default function Dashboard() {
@@ -21,7 +23,7 @@ export default function Dashboard() {
           <Link href="/wiki/edit">Новая статья</Link>
         </nav>
         <Tabs
-          tabs={["Вики", "Права доступа", "Галерея", "Пользователи"]}
+          tabs={["Вики", "Права доступа", "Галерея", "Пользователи", "Промокоды"]}
           tabContents={tabContents}
         />
       </div>

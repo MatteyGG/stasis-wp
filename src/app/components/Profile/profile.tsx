@@ -2,7 +2,6 @@ import SignOut from "@/app/components/signoutButton";
 import Alert from "@/app/components/alert/mainalert";
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import { prisma } from "@/app/prisma";
 import WikiCard from "../wikicard";
 
 import React from "react";
