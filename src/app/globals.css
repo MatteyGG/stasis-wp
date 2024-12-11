@@ -175,7 +175,7 @@ Styles of alerts
 }
 
 .wiki {
-  @apply flex flex-col w-full mx-0 md:mx-2 md:p-4 rounded-md bg-gradient-to-r from-[#FFD700] via-[#c56d1a] to-[#a70d40]
+  @apply flex flex-col mx-0 md:mx-auto w-full p-2 md:p-4 rounded-md bg-gradient-to-r from-[#FFD700] via-[#c56d1a] to-[#a70d40]
 }
 .wiki h1{
   @apply text-4xl text-primaly;

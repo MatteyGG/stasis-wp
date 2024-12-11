@@ -40,7 +40,7 @@ export default function Profile({
 }: {
   session: any;
   status: string;
-  alerts_array: [];
+  alerts_array: typeof Alert;
 }) {
   const notify = () =>
     toast.success("Скопировано", {
@@ -73,7 +73,9 @@ export default function Profile({
   const [nation, setNation] = useState("");
   const [rank, setRank] = useState("");
   const [created_at, setCreated_at] = useState<Date>(new Date());
-
+  const [promocodes, setPromocodes] = useState<
+    { id: number; code: string; createdAt: string; until: string }[]
+  >([]);
   const [wikicard, setWikicard] = useState([]);
 
   const [approved, setApproved] = useState(false);
@@ -93,6 +95,29 @@ export default function Profile({
       setWikicard(wikicardData);
     }
   }, [session, status]);
+  useEffect(() => {
+    fetch("/api/promocode")
+      .then((res) => res.json())
+      .then((data) => {
+        setPromocodes(data.data);
+        console.log(data.data);
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  }, []);
+
+  const sortedPromocodes = [...promocodes].sort(
+    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+  );
+  const isRecent = (date: Date) => {
+    const now = new Date();
+    const threeDaysAgo = new Date();
+    threeDaysAgo.setDate(now.getDate() - 3);
+
+    // Check if the date is within the last 3 days
+    return date >= threeDaysAgo && date <= now;
+  };
 
   return (
     <>
@@ -247,14 +272,18 @@ export default function Profile({
                   <b>Промокоды</b>
                 </h1>
                 <ul className="mt-2 list-none list-inside grid grid-cols-1 md:grid-cols-2 gap-2">
-                  {["wpcommunity", "WPIAGG", "QUOCKHANHVN"].map((code) => (
+                  {sortedPromocodes.slice(0, 10).map((promocode, index) => (
                     <li
-                      className="inline-flex bg-slate-200 text-black p-2 rounded-lg"
-                      key={code}
+                      className={`inline-flex text-black p-2 rounded-lg ${
+                        isRecent(new Date(promocode.createdAt))
+                          ? "bg-green-300"
+                          : "bg-blue-300"
+                      }`}
+                      key={index}
                     >
                       <button
                         onClick={() => {
-                          navigator.clipboard.writeText(code);
+                          navigator.clipboard.writeText(promocode.code);
                           notify();
                         }}
                       >
@@ -265,7 +294,7 @@ export default function Profile({
                           alt=""
                         />
                       </button>
-                      <b className="ml-2 text-center mt-1">{code}</b>
+                      <b className="ml-2 text-center mt-1">{promocode.code}</b>
                     </li>
                   ))}
                 </ul>

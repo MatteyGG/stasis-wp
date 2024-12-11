@@ -1,8 +1,9 @@
-import { getSession } from "next-auth/react";
 import { prisma } from "../prisma";
 
 import WikiCard from "../components/wikicard";
 import Memberlist from "../components/members";
+import Image from "next/image";
+import { Promocode } from "@prisma/client";
 
 export default async function Home() {
   const card_array = await prisma.wiki.findMany({
@@ -20,8 +21,10 @@ export default async function Home() {
     where: { rank: { in: ["R1", "R2", "R3"] } },
   });
 
-  console.log(card_array);
-  console.log(getSession);
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_BASE_URL}/api/promocode`
+  );
+  const promocodes = await response.json();
 
   return (
     <>
@@ -51,20 +54,28 @@ export default async function Home() {
 
           <div className="container flex-col w-full mt-4 flex md:flex-row items-center text-primaly">
             {/* Блок с промокодами */}
-            <div className="w-full md:w-1/3 flex flex-col items-center">
+            <div className="w-full md:w-1/3 flex flex-col items-center mt-8">
               <h1 className="text-3xl">
                 <b>Промокоды</b>
               </h1>
-              <ul className="list-disc list-inside">
-                <li>
-                  <b>wpcommunity</b>
-                </li>
-                <li>
-                  <b>WPIAGG</b>
-                </li>
-                <li>
-                  <b>QUOCKHANHVN</b>
-                </li>
+
+              <ul className="mt-2 list-none list-inside grid grid-cols-1 md:grid-cols-3 gap-2">
+                {promocodes.data.map((promocode: Promocode, index: number) => (
+                  <li
+                    className="inline-flex text-xs text-black p-2 rounded-lg bg-sky-200"
+                    key={index}
+                  >
+                    <button>
+                      <Image
+                        src="/source/icon/copy.png"
+                        width={24}
+                        height={24}
+                        alt=""
+                      />
+                    </button>
+                    <b className="ml-2 text-center mt-1">{promocode.code}</b>
+                  </li>
+                ))}
               </ul>
             </div>
             {/* Блок с членами альянса */}
@@ -82,7 +93,6 @@ export default async function Home() {
                   />
                 ))}
                 {Object.values(officers_array).map((member, index) => {
-                  console.log(member);
                   return (
                     <Memberlist
                       key={index}
