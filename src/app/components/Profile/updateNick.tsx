@@ -1,8 +1,9 @@
+import { useSession } from "next-auth/react";
 import { useState } from "react";
 
-export default function UpdateNickname({ nickname }: { nickname: string }) {
+export default function UpdateNickname({ nickname, id }: { nickname: string, id: string }) {
   const [newNickname, setNewNickname] = useState(nickname);
-
+  const { update } = useSession();
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     try {
@@ -11,13 +12,14 @@ export default function UpdateNickname({ nickname }: { nickname: string }) {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ nickname: newNickname }),
+        body: JSON.stringify({ id: id, nickname: newNickname }),
       });
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const data = await response.json();
       console.log(data);
+      update();
     } catch (error) {
       console.error("Error:", error);
     }

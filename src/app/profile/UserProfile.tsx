@@ -11,7 +11,6 @@ import UpdateNickname from "@/app/components/Profile/updateNick";
 import Profile from "../components/Profile/profile";
 import HistoryAlerts from "../components/Profile/alerts";
 import { useEffect, useState } from "react";
-
 export default function UserProfile() {
   const { data: session, status } = useSession();
 
@@ -47,7 +46,7 @@ export default function UserProfile() {
   const tabContents = [
     <Profile session={session} status={status} alerts_array={alerts_array} key={0} />,
     <HistoryAlerts alerts_array={alerts_array} key={1} />,
-    <UpdateNickname nickname={session!.user.username!.toString()} key={2} />,
+    <UpdateNickname id={session!.user.id.toString()} nickname={session!.user.username!.toString()} key={2} />,
     <UpdatePhoto userId={session!.user.id} username={session!.user.username!.toString()} key={3} />,
     <UpdateTech key={4} />,
     <ResetPass key={5} />,
