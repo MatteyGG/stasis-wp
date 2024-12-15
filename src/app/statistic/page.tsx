@@ -1,6 +1,5 @@
-import Image from "next/image";
-import Link from "next/link";
 import Leaderboard from "../components/statistic/leaderboard";
+import AllyWidget from "../components/allyWid";
 
 export default function About() {
   return (
@@ -11,6 +10,9 @@ export default function About() {
       <div className="grid grid-cols-1 md:grid-cols-3 md:grid-rows-2">
         <div className="flex flex-col">
           <Leaderboard />
+        </div>
+        <div>
+          <AllyWidget />
         </div>
       </div>
     </div>

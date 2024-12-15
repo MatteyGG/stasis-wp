@@ -18,37 +18,12 @@ export default function Leaderboard() {
   const [isLoading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchServer = async () => {
-      try {
-        setLoading(true);
-        const response = await fetch(
-          "https://yx.dmzgame.com/intl_warpath/rank_pid?day=20241205&wid=130&ccid=0&rank=power&is_benfu=1&is_quanfu=0&page=1&perPage=3000",
-          {
-            method: "GET",
-          }
-        );
-        if (response) {
-          const data = await response.json();
-          console.log(data);
-          const players = data.Data.map(
-            (player) => ({
-              ally: player.gnick,
-              nick: player.nick,
-              power: Number(player.power).toLocaleString(),
-              sumkill: player.sumkill,
-              die: player.die,
-            } as const)
-          );
-
-          console.log(players);
-          setUsers(players.sort((a, b) => b.power - a.power));
-        }
-      } catch (error) {
-        console.log(error);
-      } finally {
-        setLoading(false);
-      }
-    };
+    async function fetchServer() {
+      const response = await fetch("/api/warpath");
+      const data = await response.json();
+      setUsers(data);
+      setLoading(false);
+    }
 
     fetchServer();
   }, []);
@@ -61,20 +36,24 @@ export default function Leaderboard() {
     );
   }
   return (
-    <ul className="text-left w-full rounded-xl space-y-1">
+    <ul className="max-h-screen p-2 text-left w-full rounded-xl space-y-1 overflow-x-hidden overscroll-auto focus:overscroll-contain">
       {Object.values(users).map((user, index) => {
         return (
           <li
-            className="grid grid-cols-6 grid-rows-2 mx-auto px-4 py-1 ease-in-out duration-300 hover:scale-[1.2] bg-white rounded-xl shadow-md md:max-w-2xl"
+            className=" overflow-visible grid grid-cols-6 grid-rows-2 mx-auto px-4 py-1 ease-in-out duration-300 hover:scale-[1.05] bg-white rounded-xl shadow-md md:max-w-2xl"
             key={index}
           >
             <div className="row-span-2">
               <p
-                className={`h-full text-center p-4 text-align:center ${
-                  index + 1 > 3 ? "" : "text-transparent"
-                } bg-[url('/source/icon/Rank_Medaille0${
-                  index + 1 > 3 ? "" : index + 1
-                }.png')] bg-center bg-contain bg-no-repeat`}
+                className={`h-full text-center p-4 text-align:center bg-center bg-contain bg-no-repeat ${
+                  index === 0
+                    ? "text-transparent bg-[url('/source/icon/Rank_Medaille01.png')]"
+                    : index === 1
+                    ? "text-transparent bg-[url('/source/icon/Rank_Medaille02.png')]"
+                    : index === 2
+                    ? "text-transparent bg-[url('/source/icon/Rank_Medaille03.png')]"
+                    : "bg-[url('/source/icon/Rank_Medaille0.png')]"
+                }`}
               >
                 <b>{index + 1}</b>
               </p>
@@ -89,7 +68,7 @@ export default function Leaderboard() {
             </div>
             <div className="w-full col-span-3 inline-flex items-center">
               <Image
-              className="object-contain"
+                className="object-contain"
                 src="/source/icon/kills.png"
                 width={20}
                 height={20}
