@@ -1,12 +1,11 @@
 import Image from "next/image";
-import { FC } from "react";
 
 interface AlertProps {
   type: "info" | "warning" | "error" | "success";
   message: string;
 }
 
-const Alert: FC<AlertProps> = ({ type, message }) => {
+const Alert = ({ type, message }: AlertProps) => {
   const getStyles = () => {
     switch (type) {
       case "warning":
@@ -43,3 +42,4 @@ const Alert: FC<AlertProps> = ({ type, message }) => {
 };
 
 export default Alert;
+

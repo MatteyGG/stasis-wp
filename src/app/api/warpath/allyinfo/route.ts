@@ -1,12 +1,13 @@
 import { NextResponse } from "next/server";
 
-export async function GET(req: NextRequest) {
+export async function GET() {
   const url =
     "https://yx.dmzgame.com/intl_warpath/guild_detail?gid=2645296&page=1&perPage=1";
   const response = await fetch(url);
   const data = await response.json();
 
   const result = data.Data.map(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (item: any) => ({
     id: item.id,
     day: item.day,

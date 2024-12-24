@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import SignOut from "@/app/components/signoutButton";
 import Alert from "@/app/components/alert/mainalert";
 import { useEffect, useState } from "react";
@@ -15,7 +17,7 @@ const options: Intl.DateTimeFormatOptions = {
   month: "long",
   day: "numeric",
 };
-const wikicardData = [
+const staticwikicardData = [
   {
     title: "Sample Wiki 1",
     category: "Army",
@@ -33,14 +35,10 @@ const wikicardData = [
 ];
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export default function Profile({
-  session,
-  status,
-  alerts_array,
-}: {
+export default function Profile({ session, status, alerts_array }: {
   session: any;
   status: string;
-  alerts_array: typeof Alert;
+  alerts_array:{ type: string; message: string }[];
 }) {
   const notify = () =>
     toast.success("Скопировано", {
@@ -76,7 +74,7 @@ export default function Profile({
   const [promocodes, setPromocodes] = useState<
     { id: number; code: string; createdAt: string; until: string }[]
   >([]);
-  const [wikicard, setWikicard] = useState([]);
+  const [wikicardData, setWikicardData] = useState<typeof staticwikicardData>([]);
 
   const [approved, setApproved] = useState(false);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -92,7 +90,7 @@ export default function Profile({
       setRank(session.user.rank);
       setCreated_at(session.user.created_at);
       setApproved(session.user.approved);
-      setWikicard(wikicardData);
+      setWikicardData(staticwikicardData);
     }
   }, [session, status]);
   useEffect(() => {
@@ -305,16 +303,16 @@ export default function Profile({
             <div className="w-full">
               <h1 className="text-3xl my-2">Рекомендации</h1>
               <section className="grid grid-cols-3 gap-4 text-white">
-                {Object.values(wikicard).map((card, index) => {
+                {Object.values(wikicardData).map((card, index) => {
                   console.log(card);
                   return (
                     <WikiCard
                       key={index} // assuming each card has a unique id
                       title={card.title ?? "Туториал"}
                       category={card.category ?? ""}
-                      description={card.short ?? ""}
+                      description={ ""}
                       img={{ src: "Liberty.webp", alt: "" }}
-                      link={`wiki/${card.category}/${card.pageId}`}
+                      link={`wiki/${card.category}/`}
                     />
                   );
                 })}

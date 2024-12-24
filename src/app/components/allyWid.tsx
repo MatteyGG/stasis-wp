@@ -3,8 +3,15 @@
 import Image from "next/image";
 import { useState, useEffect } from "react";
 
+interface Ally {
+  fname: string;
+  sname: string;
+  members: number;
+  power: number;
+  rank: number;
+}
 export default function AllyWidget() {
-  const [allyData, setAllyData] = useState(null);
+  const [allyData, setAllyData] = useState<Ally | null>(null);
 
     useEffect(() => {
       async function fetchServer() {

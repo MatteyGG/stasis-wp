@@ -11,10 +11,14 @@ import UpdateNickname from "@/app/components/Profile/updateNick";
 import Profile from "../components/Profile/profile";
 import HistoryAlerts from "../components/Profile/alerts";
 import { useEffect, useState } from "react";
+type AlertProps = {
+  type: string;
+  message: string;
+};
 export default function UserProfile() {
   const { data: session, status } = useSession();
 
-  const [alerts, setAlerts] = useState<{ type: string; message: string }[]>([]);
+  const [alerts, setAlerts] = useState<AlertProps[]>([]);
 
   if (status === "unauthenticated") {
     redirect("/singin");
@@ -40,14 +44,24 @@ export default function UserProfile() {
     return <div>Loading...</div>;
   }
 
-
-
-  const alerts_array = alerts;
   const tabContents = [
-    <Profile session={session} status={status} alerts_array={alerts_array} key={0} />,
-    <HistoryAlerts alerts_array={alerts_array} key={1} />,
-    <UpdateNickname id={session!.user.id.toString()} nickname={session!.user.username!.toString()} key={2} />,
-    <UpdatePhoto userId={session!.user.id} username={session!.user.username!.toString()} key={3} />,
+    <Profile
+      session={session}
+      status={status}
+      alerts_array={alerts}
+      key={0}
+    />,
+    <HistoryAlerts alerts_array={alerts} key={1} />,
+    <UpdateNickname
+      id={session!.user.id.toString()}
+      nickname={session!.user.username!.toString()}
+      key={2}
+    />,
+    <UpdatePhoto
+      userId={session!.user.id}
+      username={session!.user.username!.toString()}
+      key={3}
+    />,
     <UpdateTech key={4} />,
     <ResetPass key={5} />,
   ];
@@ -65,5 +79,4 @@ export default function UserProfile() {
     />
   );
 }
-
 

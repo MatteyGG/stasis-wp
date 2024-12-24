@@ -13,10 +13,8 @@ const config: Config = {
         foreground: "var(--foreground)",
         primaly: "#072336",
         secondary: "#54F2F2",
-        
       },
     },
   },
-  plugins: [],
 };
 export default config;

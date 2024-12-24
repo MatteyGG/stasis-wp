@@ -11,6 +11,9 @@ interface Player {
   ally: string;
   kills: string;
   death: string;
+  nick: string;
+  sumkill: number;
+  die: number;
 }
 
 export default function Leaderboard() {
