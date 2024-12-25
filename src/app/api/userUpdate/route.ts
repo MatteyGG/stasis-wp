@@ -4,15 +4,13 @@ import { PrismaClient } from "@prisma/client";
 export const POST = async (req: Request) => {
   const prisma = new PrismaClient();
   try {
-    const { id, username } = await req.json();
+    const { id, ...data } = await req.json();
 
     const user = await prisma.user.update({
       where: {
         id,
       },
-      data: {
-        username,
-      },
+      data,
     });
 
     return NextResponse.json(user, { status: 200 });

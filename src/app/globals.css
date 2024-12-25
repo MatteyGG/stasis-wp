@@ -49,7 +49,7 @@ Styles of alerts
 
 
 .upload {
-  @apply flex flex-row p-4  items-center justify-around rounded-md bg-slate-400 hover:bg-slate-500;
+  @apply flex flex-row p-4  items-center justify-around rounded-md rounded-t-none bg-slate-400 hover:bg-slate-500;
 }
 
 .upload input{

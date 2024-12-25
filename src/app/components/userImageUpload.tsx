@@ -5,7 +5,12 @@ import { useEffect, useState, ChangeEvent } from "react";
 export default function UploadImage({
   children,
   userId,
-}: Readonly<{ children: React.ReactNode; userId: string }>) {
+  method,
+}: Readonly<{
+  children: React.ReactNode;
+  userId: string;
+  method: "userScreen" | "userProfile";
+}>) {
   const [file, setFile] = useState<File | null>(null);
   const [isClient, setIsClient] = useState(false);
 
@@ -38,7 +43,7 @@ export default function UploadImage({
     const formData = new FormData();
     formData.append("file", file);
     formData.append("userId", userId);
-    formData.append("endPath", 'userScreen');
+    formData.append("endPath", method);
 
     fetch("/api/upload", {
       method: "POST",
@@ -50,7 +55,7 @@ export default function UploadImage({
         }
         return response.json();
       })
-      .then((data) => console.log('data is:', data))
+      .then((data) => console.log("data is:", data))
       .catch((error) => console.error("Error:", error));
   };
 

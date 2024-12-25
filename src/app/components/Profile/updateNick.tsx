@@ -12,7 +12,7 @@ export default function UpdateNickname({ nickname, id }: { nickname: string, id:
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ id: id, nickname: newNickname }),
+        body: JSON.stringify({ id: id, username: newNickname }),
       });
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);

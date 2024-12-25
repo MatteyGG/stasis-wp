@@ -119,10 +119,19 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     jwt({
       token,
       user,
+      session,
+      trigger,
     }: {
       token: JWT;
       user: User | AdapterUser | CustomUser;
+      trigger: string;
     }) {
+      if (trigger === 'update') {
+      {
+        token.army = session.army
+        token.nation = session.nation
+       };
+   }
       if (
         user &&
         "id" in user &&

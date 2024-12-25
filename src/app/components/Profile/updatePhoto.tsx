@@ -1,20 +1,36 @@
 import Image from "next/image";
+import UploadImage from "../userImageUpload";
 
 export default function UpdatePhoto({username, userId} : {username: string, userId: string}) {
   return (
     <>
-      <div className="">
-        <Image
-          className="z-20 object-none aspect-[3/2] rounded-3xl hover:object-cover hover:translate-x-1/2 hover:grow hover:shadow-lg hover:scale-[2.3] transition-all delay-100 duration-500"
-          style={{
-            position: "relative",
-            zIndex: 3, // Полоса прогресса под текстом
-          }}
-          src={"/userScreen/" + "userScreen_" + userId + ".png"}
-          alt={username}
-          width={700}
-          height={700}
-        />
+      <div className="md:mx-12 grid grid-cols-1 md:grid-cols-2 gap-2">
+        <div>
+          <h1>Фото вашей техники</h1>
+          <Image
+            className="w-full object-fill aspect-[3/2] rounded-3xl rounded-b-none"
+            src={"/userScreen/" + "userScreen_" + userId + ".png"}
+            alt={username}
+            width={700}
+            height={700}
+          />
+          <UploadImage method="userScreen" userId={userId}>
+            Обновить
+          </UploadImage>
+        </div>
+        <div>
+          <h1>Фото вашего профиля</h1>
+          <Image
+            className="w-full object-fill aspect-[3/2] rounded-3xl rounded-b-none"
+            src={"/userProfile/" + "userProfile_" + userId + ".png"}
+            alt={username}
+            width={700}
+            height={700}
+          />
+          <UploadImage method="userProfile" userId={userId}>
+            Обновить
+          </UploadImage>
+        </div>
       </div>
     </>
   );

@@ -62,7 +62,7 @@ export default function UserProfile() {
       username={session!.user.username!.toString()}
       key={3}
     />,
-    <UpdateTech key={4} />,
+    <UpdateTech nation={session!.user.nation} army={session!.user.army} id={session!.user.id} key={4} />,
     <ResetPass key={5} />,
   ];
   return (

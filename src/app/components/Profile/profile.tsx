@@ -4,7 +4,6 @@ import SignOut from "@/app/components/signoutButton";
 import Alert from "@/app/components/alert/mainalert";
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import WikiCard from "../wikicard";
 
 import React from "react";
 
@@ -17,22 +16,6 @@ const options: Intl.DateTimeFormatOptions = {
   month: "long",
   day: "numeric",
 };
-const staticwikicardData = [
-  {
-    title: "Sample Wiki 1",
-    category: "Army",
-    description: "This is a description for Sample Wiki 1.",
-    img: { src: "sample1.jpg", alt: "Sample Image 1" },
-    link: "/wiki/category-a/sample-wiki-1",
-  },
-  {
-    title: "Sample Wiki 2",
-    category: "Tech",
-    description: "This is a description for Sample Wiki 2.",
-    img: { src: "sample2.jpg", alt: "Sample Image 2" },
-    link: "/wiki/category-b/sample-wiki-2",
-  },
-];
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export default function Profile({ session, status, alerts_array }: {
@@ -74,7 +57,6 @@ export default function Profile({ session, status, alerts_array }: {
   const [promocodes, setPromocodes] = useState<
     { id: number; code: string; createdAt: string; until: string }[]
   >([]);
-  const [wikicardData, setWikicardData] = useState<typeof staticwikicardData>([]);
 
   const [approved, setApproved] = useState(false);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -90,7 +72,6 @@ export default function Profile({ session, status, alerts_array }: {
       setRank(session.user.rank);
       setCreated_at(session.user.created_at);
       setApproved(session.user.approved);
-      setWikicardData(staticwikicardData);
     }
   }, [session, status]);
   useEffect(() => {
@@ -300,24 +281,6 @@ export default function Profile({ session, status, alerts_array }: {
             </div>
           </div>
           <div className="mx-6">
-            <div className="w-full">
-              <h1 className="text-3xl my-2">Рекомендации</h1>
-              <section className="grid grid-cols-3 gap-4 text-white">
-                {Object.values(wikicardData).map((card, index) => {
-                  console.log(card);
-                  return (
-                    <WikiCard
-                      key={index} // assuming each card has a unique id
-                      title={card.title ?? "Туториал"}
-                      category={card.category ?? ""}
-                      description={ ""}
-                      img={{ src: "Liberty.webp", alt: "" }}
-                      link={`wiki/${card.category}/`}
-                    />
-                  );
-                })}
-              </section>
-            </div>
             <AllyWidget />
           </div>
         </div>
