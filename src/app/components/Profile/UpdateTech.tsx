@@ -25,8 +25,7 @@ export default function UpdateTech({
 }) {
   const [newNation, setNewNation] = useState(nation);
   const [newArmy, setNewArmy] = useState(army);
-  const { session, status, update } = useSession();
-
+  const { data: session, update } = useSession();
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
 
@@ -46,7 +45,6 @@ export default function UpdateTech({
       await update(
         {
           ...session,
-          id: id,
           army: newArmy,
           nation: newNation,
         }

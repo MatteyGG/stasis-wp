@@ -116,22 +116,24 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     strategy: "jwt",
   },
   callbacks: {
-    jwt({
+    jwt: ({
       token,
       user,
-      session,
       trigger,
+      session,
     }: {
       token: JWT;
       user: User | AdapterUser | CustomUser;
-      trigger: string;
-    }) {
-      if (trigger === 'update') {
-      {
-        token.army = session.army
-        token.nation = session.nation
-       };
-   }
+      trigger?: "signIn" | "signUp" | "update";
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      session?: any;
+    }): JWT | null => {
+      if (trigger === "update") {
+        {
+          token.army = session.army;
+          token.nation = session.nation;
+        }
+      }
       if (
         user &&
         "id" in user &&
@@ -155,7 +157,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         token.approved = user.approved ?? false;
         token.created_at = user.created_at;
       }
-      return console.log("JWT token ---->", token.name), token;
+      return token;
     },
     session({ session, token }) {
       if (!session || !session.user || !token) {

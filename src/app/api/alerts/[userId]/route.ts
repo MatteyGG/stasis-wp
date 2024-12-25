@@ -4,7 +4,6 @@ import { PrismaClient } from "@prisma/client";
 
 export async function GET(req: NextRequest) {
   const userId = req.url.split("/").pop();
-  console.log(userId)
   const prisma = new PrismaClient();
 
   const alerts = await prisma.alert.findMany({
@@ -13,6 +12,5 @@ export async function GET(req: NextRequest) {
   if (!alerts) {
     return NextResponse.error();
   }
-  console.log(alerts);
   return NextResponse.json(alerts);
 }
