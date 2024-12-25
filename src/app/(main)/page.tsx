@@ -13,12 +13,27 @@ export default async function Home() {
     where: {
       rank: "leader",
     },
+    select: {
+      rank: true,
+      username: true,
+      role: true,
+    },
   });
   const officers_array = await prisma.user.findMany({
     where: { rank: { equals: "officer" } },
+    select: {
+      rank: true,
+      username: true,
+      role: true,
+    },
   });
   const members_array = await prisma.user.findMany({
     where: { rank: { in: ["R1", "R2", "R3"] } },
+    select: {
+      rank: true,
+      username: true,
+      role: true
+    },
   });
 
   const response = await fetch(
@@ -37,7 +52,6 @@ export default async function Home() {
           <div className="w-full ">
             <section className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-4 text-white">
               {Object.values(card_array).map((card, index) => {
-                console.log(card);
                 return (
                   <WikiCard
                     key={index} // assuming each card has a unique id
@@ -105,7 +119,6 @@ export default async function Home() {
                 {Object.values(members_array)
                   .sort()
                   .map((member, index) => {
-                    console.log(member);
                     return (
                       <Memberlist
                         key={index}

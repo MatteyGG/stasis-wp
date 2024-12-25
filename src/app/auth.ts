@@ -80,7 +80,6 @@ const providers: Provider[] = [
       return {
         id: user.id.toString(),
         username: user.username,
-        image: user.image?.toString(),
         email: user.email,
         role: user.role?.toString(),
         rank: user.rank?.toString(),
@@ -129,10 +128,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       session?: any;
     }): JWT | null => {
       if (trigger === "update") {
-        {
-          token.army = session.army;
-          token.nation = session.nation;
-        }
+        token.username = session.username;
+        token.army = session.army;
+        token.nation = session.nation;
       }
       if (
         user &&

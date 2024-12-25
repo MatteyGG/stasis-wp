@@ -34,10 +34,21 @@ export const POST = async (req: any) => {
   try {
     console.log("Writing file to:", path.join(uploadsDir, filename));
     await writeFile(path.join(uploadsDir, filename), buffer);
-    await prisma.image.create({
-      data: {
+    await prisma.image.upsert({
+      where: { id: userId },
+      update: {
         filename: filename,
         filepath: uploadsDir,
+        user: {
+          connect: { id: userId },
+        },
+      },
+      create: {
+        filename: filename,
+        filepath: uploadsDir,
+        user: {
+          connect: { id: userId },
+        },
       },
     });
     return NextResponse.json({ Message: "Success", status: 201 });

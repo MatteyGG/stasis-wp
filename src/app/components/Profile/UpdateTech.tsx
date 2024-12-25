@@ -45,6 +45,7 @@ export default function UpdateTech({
       await update(
         {
           ...session,
+          username: session?.user.username,
           army: newArmy,
           nation: newNation,
         }
@@ -62,6 +63,7 @@ export default function UpdateTech({
           instanceId="nation_select"
           id="nation_select"
           className="peer/nation"
+          defaultInputValue={nation}
           options={nation_array.map((nation) => ({
             value: nation,
             label: (
@@ -84,6 +86,7 @@ export default function UpdateTech({
         <Select
           instanceId="army_select"
           id="army_select"
+          defaultInputValue={army}
           className="peer/nation"
           options={army_array.map((army) => ({
             value: army,

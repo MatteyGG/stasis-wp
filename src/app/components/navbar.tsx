@@ -9,23 +9,25 @@ export default async function Navbar() {
   return (
     <>
       <nav className="flex z-0 overflow-visible flex-row justify-evenly backdrop-blur-2xl pb-2 text-center items-center">
-        <div className="inline-flex items-center gap-1">
-          <h1 className="inline-flex text-black p-2 rounded-lg bg-emerald-300 text-2xl ">
-            <b>s130</b>
-          </h1>          
-          <div className="inline-flex items-center bg-pink-100 p-2 rounded-lg">
-            <Image
-              className="object-contain"
-              src="/source/icon/flag.png"
-              width={64}
-              height={64}
-              alt="flag"
-            />
-            <h1 className="text-xl ">
-              <b>[ST] Стазис</b>
+        <Link href="/">
+          <div className="inline-flex items-center gap-1">
+            <h1 className="inline-flex text-black p-2 rounded-lg bg-emerald-300 text-2xl ">
+              <b>s130</b>
             </h1>
+            <div className="inline-flex items-center  p-2 rounded-lg">
+              <Image
+                className="object-contain"
+                src="/source/icon/flag.png"
+                width={64}
+                height={64}
+                alt="flag"
+              />
+              <h1 className="text-xl ">
+                <b>[ST] Стазис</b>
+              </h1>
+            </div>
           </div>
-        </div>
+        </Link>
         {/* <Link
           className="hidden md:block text-3xl glitch"
           data-text="STASIS"

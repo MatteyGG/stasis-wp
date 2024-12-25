@@ -3,7 +3,7 @@ import { useState } from "react";
 
 export default function UpdateNickname({ nickname, id }: { nickname: string, id: string }) {
   const [newNickname, setNewNickname] = useState(nickname);
-  const { update } = useSession();
+  const { data: session, update } = useSession();
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     try {
@@ -19,7 +19,12 @@ export default function UpdateNickname({ nickname, id }: { nickname: string, id:
       }
       const data = await response.json();
       console.log(data);
-      update();
+      await update({
+        ...session,
+        username: newNickname,
+        army: session!.user.army,
+        nation: session!.user.nation,
+      });
     } catch (error) {
       console.error("Error:", error);
     }
@@ -28,7 +33,7 @@ export default function UpdateNickname({ nickname, id }: { nickname: string, id:
   return (
     <form className="p-4 rounded-lg shadow-md" onSubmit={handleSubmit}>
       <h1 className="text-2xl font-bold mb-4">Обновить ник</h1>
-      <div className="mb-4">{nickname}</div>
+      <div className="mb-4">Ваш ник: {nickname}</div>
       <label className="block mb-2">
         Новый ник:
         <input

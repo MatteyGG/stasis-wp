@@ -103,7 +103,6 @@ export default function Profile({ session, status, alerts_array }: {
       <div className="container w-full bg-gray-200 bg-opacity-55 p-4 shadow-2xl shadow-black mx-auto rounded-3xl">
         <div className="grid grid-cols-3">
           <div className="z-2 relative w-full justify-center ">
-            {!session?.user?.image ? (
               <div className="mx-auto w-10/12 place-items-center">
                 <div className="">
                   <Image
@@ -121,25 +120,6 @@ export default function Profile({ session, status, alerts_array }: {
                   />
                 </div>
               </div>
-            ) : (
-              <>
-                <label>
-                  <input
-                    className="hidden"
-                    type="file"
-                    onChange={(e) => {
-                      const files = e.target.files;
-                      if (files && files[0]) {
-                        console.log(files[0]);
-                      }
-                    }}
-                  />
-                  <span className="block border border-primary rounded-lg p-2 text-xs text-center">
-                    Загрузить фото
-                  </span>
-                </label>
-              </>
-            )}
             <div className="mt-4 items-center pb-1">
               <div className="text-xl w-10/12 justify-center mx-auto">
                 <div className="flex flex-col ">
@@ -158,7 +138,6 @@ export default function Profile({ session, status, alerts_array }: {
                     />
                   </div>
                   <p className="text-gray-500">
-                    Создан:{" "}
                     {new Date(created_at).toLocaleDateString("ru-RU", options)}
                   </p>
                   <p className="text-gray-500">Почта: {email}</p>
