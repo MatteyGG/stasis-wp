@@ -7,7 +7,7 @@ export async function POST(req: Request) {
   const body = await req.json();
   console.log(body);
   const prisma = new PrismaClient();
-  const { username, email, password, army, nation } = body;
+  const { gameID, email, password, army, nation } = body;
 
   try {
     const existingUser = await prisma.user.findUnique({
@@ -26,13 +26,27 @@ export async function POST(req: Request) {
     const hashedPassword = await hash(password, 10);
     const newUser = await prisma.user.create({
       data: {
-        username: username,
+        gameID: gameID,
         email: email,
         password: hashedPassword,
         army: army,
         nation: nation
       },
     });
+
+    try
+    {
+      await prisma.serverUser.update({
+        where: { id: Number(gameID) },
+        data: {
+          onSite: true
+        }
+      })
+    }
+    catch (error)
+    {
+      console.log('Нет в базе', error)
+    }
 
     console.log("User created:", newUser);
     await prisma.$disconnect();

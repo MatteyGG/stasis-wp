@@ -36,6 +36,7 @@ model Session {
 
 model User {
   id            String    @id @default(cuid())
+  gameID        String    @unique @db.Text
   images        Image[]
   username      String?   @default("")
   approved      Boolean   @default(false)
@@ -67,7 +68,6 @@ model Image {
   filename  String
   filepath  String
   createdAt DateTime @default(now())
-
 }
 
 model Wiki {
@@ -95,7 +95,7 @@ model Alert {
 
 model Promocode {
   id        Int       @id @default(autoincrement())
-  code      String    
+  code      String
   createdAt DateTime  @default(now())
   until     DateTime?
 }
@@ -107,12 +107,14 @@ model Guild {
   updatedAt DateTime
 }
 
-model Member {
-  id        Int      @id
-  nickname  String
-  TownHall  Int
-  power     String
-  kill      Int
-  die       Int
-  kills     String
+model serverUser {
+  id       Int     @id
+  ally     String
+  username String
+  TownHall Int
+  power    Int
+  kill     Int
+  die      Int
+  kd       Float
+  onSite   Boolean
 }

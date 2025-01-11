@@ -22,9 +22,9 @@ export default function Leaderboard() {
 
   useEffect(() => {
     async function fetchServer() {
-      const response = await fetch("/api/warpath");
+      const response = await fetch("/api/warpath/dataUpdate");
       const data = await response.json();
-      setUsers(data);
+      setUsers(data[1]);
       setLoading(false);
     }
 

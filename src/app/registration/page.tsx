@@ -19,7 +19,7 @@ export default function RegistrationPage() {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [username, setUsername] = useState("");
+  const [gameID, setGameID] = useState("");
   const [army, setArmy] = useState("");
   const [nation, setNation] = useState("");
 
@@ -33,7 +33,7 @@ export default function RegistrationPage() {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ username, email, password, army, nation }),
+      body: JSON.stringify({ gameID, email, password, army, nation }),
     });
     if (response.ok) {
       router.push("/singin");
@@ -47,13 +47,13 @@ export default function RegistrationPage() {
         <h1 className="text-3xl">Регистрация</h1>
         <form className="flex flex-col gap-3" onSubmit={handleFormSubmit}>
           <label>
-            <span>Имя</span>
+            <span>Ваш ID</span>
             <input
-              type="name"
-              name="name"
-              placeholder="Иван"
-              value={username}
-              onChange={(ev) => setUsername(ev.target.value)}
+              type="id"
+              name="id"
+              placeholder="XXXXXXXX"
+              value={gameID}
+              onChange={(ev) => setGameID(ev.target.value)}
             />
           </label>
           <label>
@@ -129,13 +129,6 @@ export default function RegistrationPage() {
           <button type="submit" className="w-full">
             Зарегестрироваться
           </button>
-          <p className="text-center">
-            <b>или</b>
-          </p>
-          <div className="flex flex-col justify-center gap-1">
-            <button className="w-full ">Войти с ЯндексID</button>
-            <button className="w-full ">Войти с ВК</button>
-          </div>
         </form>
         <Link href="/login" className="text-base mt-4">
           Войти --&gt;
