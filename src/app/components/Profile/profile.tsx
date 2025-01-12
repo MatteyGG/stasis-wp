@@ -9,22 +9,14 @@ import React from "react";
 
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import AllyWidget from "../allyWid";
-import { METHODS } from "http";
+
 
 const options: Intl.DateTimeFormatOptions = {
   year: "numeric",
   month: "long",
   day: "numeric",
 };
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export default function Profile({ session, status, alerts_array }: {
-  session: any;
-  status: string;
-  alerts_array:{ type: string; message: string }[];
-}) {
-  const notify = () =>
+const notify = () =>
     toast.success("Скопировано", {
       position: "bottom-right",
       autoClose: 5000,
@@ -35,6 +27,13 @@ export default function Profile({ session, status, alerts_array }: {
       progress: undefined,
       theme: "colored",
     });
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export default function Profile({ session, status, alerts_array }: {
+  session: any;
+  status: string;
+  alerts_array:{ type: string; message: string }[];
+}) {
 
   const getProgressWidth = () => {
     if (reputation > 0) return `${(reputation / 10) * 100}%`;
@@ -127,8 +126,8 @@ export default function Profile({ session, status, alerts_array }: {
 
   return (
     <>
-      <div className="container w-full bg-gray-200 bg-opacity-55 p-4 shadow-2xl shadow-black mx-auto rounded-3xl">
-        <div className="grid grid-cols-3">
+      <div className="container  w-full bg-gray-200 bg-opacity-55 p-4 shadow-2xl shadow-black mx-auto rounded-3xl">
+        <div className="grid md:grid-cols-3 gap-2">
           <div className="z-2 relative w-full justify-center ">
             <div className="mx-auto w-10/12 place-items-center">
               <div className="">
@@ -315,7 +314,7 @@ export default function Profile({ session, status, alerts_array }: {
                   ? "0"
                   : (playerData.kill / playerData.die).toFixed(2)}
               </h1>
-              <button onClick={updateGameData}>Обновить</button>
+              <button onClick={() => updateGameData(gameID)}>Обновить</button>
             </div>
           </div>
         </div>

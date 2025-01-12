@@ -12,9 +12,9 @@ const Memberlist = ({
 }: member) => {
     return (
       <li className={`member ${role} ${rank}`}>
-        <b>
-          {rank} {username}
-        </b>
+        <p className="inline-flex text-pretty">
+          <b>{rank}</b> | <b>{username}</b>
+        </p>
       </li>
     );
 };

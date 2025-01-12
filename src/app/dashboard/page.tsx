@@ -5,6 +5,9 @@ import Userlist from "@/app/components/dashboard/userslist";
 import Tabs from "../components/tabs";
 import Manage_users from "../components/dashboard/manage";
 import PromoList from "../components/dashboard/promocode";
+import { auth } from "../auth";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const tabContents = [
   <WikiList key={0} />,
@@ -14,7 +17,11 @@ const tabContents = [
   <PromoList key={4} />,
 ];
 
-export default function Dashboard() {
+export default async function Dashboard() {
+  const session = await auth();
+  if (!session || !session.user?.role.includes("admin")) {
+    return <div>Access denied</div>;
+  }
   return (
     <>
       <div className="text-3xl text-center font-bold">
@@ -23,11 +30,30 @@ export default function Dashboard() {
           <Link href="/wiki/edit">Новая статья</Link>
         </nav>
         <Tabs
-          tabs={["Вики", "Права доступа", "Галерея", "Пользователи", "Промокоды"]}
+          tabs={[
+            "Вики",
+            "Права доступа",
+            "Галерея",
+            "Пользователи",
+            "Промокоды",
+          ]}
           tabContents={tabContents}
         />
       </div>
+      <ToastContainer
+        position="bottom-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored"
+      />
     </>
   );
 }
+
 

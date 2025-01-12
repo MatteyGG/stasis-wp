@@ -45,7 +45,7 @@ export default async function Home() {
     <>
       <div className="container shadow-2xl shadow-black mt-12 mx-auto flex flex-wrap p-4 rounded-xl ">
         <h1 className="text-6xl text-primaly text-center w-full my-6">
-          <b>Welcome to STASIS</b>
+          <b>Добро пожаловать в Стазис</b>
         </h1>
         <div className="w-full">
           {/* Блок с случайными wiki страницами */}
@@ -97,13 +97,13 @@ export default async function Home() {
               <h1 className="text-3xl ">
                 <b>Члены альянса</b>
               </h1>
-              <ul className="w-2/3 md:w-1/3 space-y-1 list-none text-center">
+              <ul className="w-2/3 md:w-1/3 space-y-1 list-none items-center text-center">
                 {leader.map((leader, index) => (
                   <Memberlist
                     key={index}
-                    role={leader.role ?? "Не найден"}
+                    role={leader.role ?? "X"}
                     username={leader.username ?? "Не найден"}
-                    rank={leader.rank ?? "Не найден"}
+                    rank={leader.rank ?? "X"}
                   />
                 ))}
                 {Object.values(officers_array).map((member, index) => {

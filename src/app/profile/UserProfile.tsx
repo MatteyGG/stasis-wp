@@ -7,7 +7,6 @@ import Tabs from "@/app/components/tabs";
 import ResetPass from "@/app/components/Profile/resetPassword";
 import UpdatePhoto from "@/app/components/Profile/updatePhoto";
 import UpdateTech from "@/app/components/Profile/UpdateTech";
-import UpdateNickname from "@/app/components/Profile/updateNick";
 import Profile from "../components/Profile/profile";
 import HistoryAlerts from "../components/Profile/alerts";
 import { useEffect, useState } from "react";
@@ -52,11 +51,6 @@ export default function UserProfile() {
       key={0}
     />,
     <HistoryAlerts alerts_array={alerts} key={1} />,
-    <UpdateNickname
-      id={session!.user.id.toString()}
-      nickname={session!.user.username!.toString()}
-      key={2}
-    />,
     <UpdatePhoto
       userId={session!.user.id}
       username={session!.user.username!.toString()}
@@ -70,7 +64,6 @@ export default function UserProfile() {
       tabs={[
         "Профиль",
         "Уведомления",
-        "Обновить никнейм",
         "Обновить фото",
         "Сменить технику",
         "Сменить пароль",

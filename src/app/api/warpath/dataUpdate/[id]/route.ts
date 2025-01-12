@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { NextRequest } from "next/server";
 import { prisma } from "@/app/prisma";
-import { equal } from "assert";
 
 interface Player {
   id: number;
@@ -54,7 +53,7 @@ export async function POST(req: NextRequest) {
     await Promise.all(player);
     return NextResponse.json(
       (await prisma.serverUser.findFirst({
-        where: { id: {equals: Number(userId) } },
+        where: { id: Number(userId) },
       })) || {
         error: "Player not found",
       }
@@ -68,10 +67,14 @@ export async function GET(req: NextRequest) {
 
   try {
     const player = await prisma.serverUser.findFirst({
-      where: { id: Number(userId)  },
+      where: { id: Number(userId) },
     });
      return NextResponse.json(player);
   } catch (error) {
+    console.log(error);
     return NextResponse.json({ error: "Failed to fetch data" });
   }
+
 }
+
+

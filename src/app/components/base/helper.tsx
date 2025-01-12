@@ -18,13 +18,15 @@ export default function MakeHelper({
   return (
     <>
       {isVisible && (
-        <Image
-          className="absolute  object-contain z-30  w-2/3 transition-all duration-500 ease-in-out "
-          src={imagesrc}
-          width={1000}
-          height={1000}
-          alt="helpimage"
-        />
+        <div className="fixed w-1/2 h-1/2 inset-0 z-30 bg-black bg-opacity-50">
+          <Image
+            className="object-contain "
+            src={imagesrc}
+            width={1000}
+            height={1000}
+            alt="helpimage"
+          />
+        </div>
       )}
       <div
         onMouseEnter={handleClick}
@@ -38,3 +40,4 @@ export default function MakeHelper({
     </>
   );
 }
+

@@ -22,7 +22,7 @@ export default async function Navbar() {
                 height={64}
                 alt="flag"
               />
-              <h1 className="text-xl ">
+              <h1 className="text-xl hidden md:flex ">
                 <b>[ST] Стазис</b>
               </h1>
             </div>

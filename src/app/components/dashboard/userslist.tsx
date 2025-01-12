@@ -5,7 +5,12 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import React from "react";
 
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 interface User {
+  id: string;
+  gameID: number;
   username: string;
   email: string;
   created_at: Date;
@@ -15,14 +20,69 @@ interface User {
   approved: boolean;
 }
 
+const notifySuccess = (message: string) =>
+  toast.success(message, {
+    position: "bottom-right",
+    autoClose: 5000,
+    hideProgressBar: false,
+    closeOnClick: true,
+    pauseOnHover: true,
+    draggable: true,
+    progress: undefined,
+    theme: "colored",
+  });
+
+const notifyError = (message: string) =>
+  toast.error(message, {
+    position: "bottom-right",
+    autoClose: 5000,
+    hideProgressBar: false,
+    closeOnClick: true,
+    pauseOnHover: true,
+    draggable: true,
+    progress: undefined,
+    theme: "colored",
+  });
+
 export default function Userlist() {
   const [users, setUsers] = useState<User[]>([]);
   const [isLoading, setLoading] = useState(true);
-  const [isChecked, setIsChecked] = useState(false);
+  const [selectedIds, setSelectedIds] = useState<number[]>([]);
 
-  const handleCheckboxChange = () => {
-    console.log(isChecked);
-    setIsChecked(!isChecked);
+  const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const checkedId = Number(event.target.value);
+    if (event.target.checked) {
+      setSelectedIds([...selectedIds, checkedId]);
+    } else {
+      setSelectedIds(selectedIds.filter((id) => id !== checkedId));
+    }
+  };
+
+  const handleApprove = async (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+    if (selectedIds.length === 0) {
+      return notifyError("Please select at least one user to approve");
+    }
+    try {
+      const response = await fetch("/api/user_list", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          gameID: selectedIds.toLocaleString(),
+          approved: true,
+        }),
+      });
+      if (!response.ok) {
+        notifyError("Error approving users");
+      } else {
+        notifySuccess("Users approved successfully");
+      }
+    } catch (error) {
+      console.error("Error approving users:", error);
+      notifyError("Error approving users");
+    }
   };
 
   useEffect(() => {
@@ -34,7 +94,7 @@ export default function Userlist() {
         });
         if (response) {
           const data = await response.json();
-
+          console.log(data);
           setUsers(data.users);
         }
       } catch (error) {
@@ -54,18 +114,19 @@ export default function Userlist() {
       </form>
     );
   }
+
   return (
     <form className="container min-h-64 shadow-sm shadow-black mx-auto flex-col p-2 rounded-xl  backdrop-blur-3xl">
-      <ul className="text-left grid gap-1 grid-cols-1  md:grid-cols-2 2xl:grid-cols-3 userlist  rounded-xl space-y-1">
+      <ul className="text-left grid gap-1 grid-cols-1  md:grid-cols-2 userlist  rounded-xl space-y-1">
         {Object.values(users).map((user, index) => {
           return (
             <li
-              className="mx-auto px-4 bg-white rounded-xl shadow-md md:max-w-2xl"
+              className="mx-auto w-full px-4 bg-white rounded-xl shadow-md md:max-w-2xl"
               key={index}
             >
               <div className="flex items-center p-6 pb-1">
                 <Image
-                  className="rounded-md w-20 md:w-40 h-full hover:translate-x-1/2 hover:grow hover:shadow-lg hover:scale-[2.3]  transition-all delay-100 duration-500"
+                  className="rounded-md z-10 w-20 md:w-40 h-full hover:translate-x-1/2 hover:grow hover:shadow-lg hover:scale-[2.3]  transition-all delay-100 duration-500"
                   src="/placeholder.png"
                   alt=""
                   width={1000}
@@ -73,11 +134,28 @@ export default function Userlist() {
                 />
                 <div className="ml-6 w-1/2">
                   <h2
-                    className={` ${user.rank} text-xl font-semibold rounded-md p-1`}
+                    className={`w-full ${user.rank} text-xl font-semibold rounded-md p-1`}
                   >
                     <select
                       className={` bg-transparent text-xl font-semibold rounded-md p-1`}
                       defaultValue={user.rank?.toString() ?? ""}
+                      onChange={async (e) => {
+                        const response = await fetch("/api/user_list", {
+                          method: "POST",
+                          headers: {
+                            "Content-Type": "application/json",
+                          },
+                          body: JSON.stringify({
+                            id: user.id,
+                            rank: e.target.value,
+                          }),
+                        });
+                        if (!response.ok) {
+                          notifyError("Error");
+                        } else {
+                          notifySuccess("Success");
+                        }
+                      }}
                     >
                       <option value="R1">R1</option>
                       <option value="R2">R2</option>
@@ -89,13 +167,27 @@ export default function Userlist() {
 
                   <p className="text-gray-500">
                     Создан:{" "}
-                    {/* {user.created_at.toLocaleDateString("en-US", {
+                    {new Date(user.created_at).toLocaleDateString("ru-RU", {
                       year: "numeric",
                       month: "long",
                       day: "numeric",
-                    })} */}
+                    })}
                   </p>
-                  <p className="text-gray-500">Почта: {user.email}</p>
+                  <p className="w-full text-nowrap text-gray-500">
+                    Почта: {user.email}
+                  </p>
+                  <p className="w-full text-nowrap text-gray-500">
+                    Игровой ID: {user.gameID}
+                  </p>
+                  {user.approved ? (
+                    <p className="w-full text-nowrap text-green-500">
+                      Подтвержден
+                    </p>
+                  ) : (
+                    <p className="w-full text-nowrap text-red-500">
+                      Не подтвержден
+                    </p>
+                  )}
                 </div>
               </div>
               <div className="flex justify-between p-4 pt-1">
@@ -113,24 +205,22 @@ export default function Userlist() {
                     alt=""
                   />
                 </div>
-                <label
-                  htmlFor="check"
-                  className="flex cursor-pointer select-none items-center"
-                >
-                  <div className="relative">
+                <label className="flex cursor-pointer select-none items-center gap-2">
+                  <div className="relative ">
                     <input
                       type="checkbox"
-                      id="check"
-                      checked={isChecked}
-                      onChange={handleCheckboxChange}
+                      checked={selectedIds.includes(Number(user.gameID))}
+                      value={user.gameID}
+                      onChange={(event) => {
+                        handleCheckboxChange(event);
+                      }}
                       className={`sr-only peer`}
                     />
                     <div
                       className={`block h-8 w-14 rounded-full bg-red-500 peer-checked:bg-green-500 `}
                     ></div>
-
                     <div className="dot flex transition ease-in-out duration-300 delay-150 translate-x-0  peer-checked:translate-x-6  absolute left-1 top-1  h-6 w-6 items-center justify-center rounded-full bg-white">
-                      {!isChecked ? (
+                      {!selectedIds.includes(Number(user.gameID)) ? (
                         <span>
                           <svg
                             className="h-4 w-4 stroke-current"
@@ -172,9 +262,14 @@ export default function Userlist() {
           );
         })}
       </ul>
-      <button className="w-full bg-emerald-600 hover:bg-emerald-700 text-white p-4 rounded-xl">
+      <div>{selectedIds.join(", ")}</div>
+      <button
+        className="w-full bg-emerald-600 hover:bg-emerald-700 text-white p-4 rounded-xl"
+        onClick={handleApprove}
+      >
         Подтвердить
       </button>
     </form>
   );
 }
+

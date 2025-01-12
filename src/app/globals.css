@@ -144,7 +144,7 @@ Styles of alerts
 }
 
 .member{
-  @apply  px-4 py-1 rounded-xl shadow-md w-full
+  @apply inline-flex px-4 py-1 rounded-xl shadow-md 
 }
 
 .leader {
@@ -186,7 +186,7 @@ Styles of alerts
 }
 
 .tabs {
-  @apply flex flex-row text-xs md:text-xl
+  @apply flex flex-col md:flex-row text-xs md:text-xl
 }
 
 .tab-buttons {

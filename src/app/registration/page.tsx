@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Select from "react-select";
 import MakeHelper from "../components/base/helper";
+import { Audio } from "../components/base/audio";
 
 interface Player {
   username: string;
@@ -31,6 +32,7 @@ export default function RegistrationPage() {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [username, setUsername] = useState("");
   const [gameID, setGameID] = useState("");
   const [army, setArmy] = useState("");
   const [nation, setNation] = useState("");
@@ -49,6 +51,7 @@ export default function RegistrationPage() {
         return setChecked(false);
       }
       setPlayerData(data);
+      setUsername(data[0].nick);
       setChecked(true);
     }
   };
@@ -62,7 +65,7 @@ export default function RegistrationPage() {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ gameID, email, password, army, nation }),
+      body: JSON.stringify({ gameID, username, email, password, army, nation }),
     });
     if (response.ok) {
       router.push("/singin");
@@ -99,6 +102,7 @@ export default function RegistrationPage() {
             >
               {playerData.length > 0 &&
                 playerData.map((user) => (
+                 
                   <div
                     key={user.nick}
                     className="grid grid-cols-6 grid-rows-2 mx-auto px-4 py-1 ease-in-out duration-300 hover:scale-[1.05] transition-all bg-white rounded-xl shadow-md md:max-w-2xl"
@@ -209,6 +213,7 @@ export default function RegistrationPage() {
         <Link href="/login" className="text-base mt-4">
           Войти --&gt;
         </Link>
+        <Audio src="/audio/polet.mp3" />
       </section>
     </div>
   );
