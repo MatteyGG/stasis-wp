@@ -17,6 +17,7 @@ declare module "next-auth" {
   interface Session {
     user: {
       id: string;
+      gameID: number;
       email: string;
       username: string;
       role: string; // user or admin
@@ -24,8 +25,8 @@ declare module "next-auth" {
       army: string;
       nation: string;
       image: string;
-      approved: boolean;
       created_at: Date;
+      approved: boolean;
     } & DefaultSession["user"];
   }
 
@@ -40,12 +41,14 @@ declare module "next-auth" {
     image: string;
     created_at: Date;
     approved: boolean;
+    gameID: number;
   }
 }
 
 declare module "next-auth/jwt" {
   interface JWT {
     id: string;
+    gameID: number;
   }
 }
 
@@ -56,8 +59,6 @@ const providers: Provider[] = [
       password: { label: "Password", type: "password" },
     },
     async authorize(credentials) {
-
-
       if (!credentials?.email && !credentials?.password) {
         return null;
       }
@@ -66,20 +67,30 @@ const providers: Provider[] = [
           email: credentials.email as string,
         },
       });
+
       console.log(credentials, "//", user);
       if (!user) {
         return null;
       }
 
-      const passwordCheck = await compare(credentials.password as string, user.password);
-      console.log(passwordCheck, credentials.password, user.password)
+      const gamedata = await prisma.serverUser.findUnique({
+        where: {
+          id: Number(user.gameID),
+        },
+      });
+      const passwordCheck = await compare(
+        credentials.password as string,
+        user.password
+      );
+      console.log(passwordCheck, credentials.password, user.password);
       if (!passwordCheck) {
-        return null
+        return null;
       }
 
       return {
         id: user.id.toString(),
-        username: user.username,
+        gameID: user.gameID,
+        username: gamedata?.username,
         email: user.email,
         role: user.role?.toString(),
         rank: user.rank?.toString(),
@@ -88,14 +99,12 @@ const providers: Provider[] = [
         created_at: user.created_at,
         approved: user.approved,
       };
-
     },
   }),
   // ...add more providers here
   Yandex,
   VK,
 ];
-
 
 export const providerMap = providers
   .map((provider) => {
@@ -131,6 +140,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         token.username = session.username;
         token.army = session.army;
         token.nation = session.nation;
+        token.gameID = session.gameID;
       }
       if (
         user &&
@@ -141,7 +151,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         "army" in user &&
         "nation" in user &&
         "rank" in user &&
-        "created_at" in user
+        "created_at" in user &&
+        "gameID" in user
       ) {
         // User is available during sign-in
         token.id = user.id!;
@@ -154,6 +165,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         token.image = user.image;
         token.approved = user.approved ?? false;
         token.created_at = user.created_at;
+        token.gameID = user.gameID;
       }
       return token;
     },
@@ -172,6 +184,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       session.user.image = token.image?.toString() ?? "unknown";
       session.user.created_at = token.created_at as Date;
       session.user.approved = Boolean(token.approved) ?? false;
+      session.user.gameID = token.gameID;
 
       console.log("Session token ---->", token.name ?? "unknown");
       return session;

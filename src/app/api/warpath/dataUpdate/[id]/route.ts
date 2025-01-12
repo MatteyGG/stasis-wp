@@ -1,6 +1,8 @@
-import { prisma } from "@/app/prisma";
-
 import { NextResponse } from "next/server";
+import { NextRequest } from "next/server";
+import { prisma } from "@/app/prisma";
+import { equal } from "assert";
+
 interface Player {
   id: number;
   pid: number;
@@ -17,19 +19,16 @@ interface Player {
   sumkill: number;
   onSite: boolean;
 }
-export async function GET() {
-  const today = new Date();
-  const twoDaysBefore = new Date(today.setDate(today.getDate() - 7));
-  const date = twoDaysBefore.toISOString().split('T')[0].replace(/-/g, '')
-  console.log(date)
-  const url =
-    `https://yx.dmzgame.com/intl_warpath/rank_pid?day=${date}&wid=130&ccid=0&rank=power&is_benfu=1&is_quanfu=0&page=1&perPage=3000`;
+export async function POST(req: NextRequest) {
+  const userId = req.url.split("/").pop();
+
+  const url = `https://yx.dmzgame.com/intl_warpath/pid_detail?pid=${userId}&page=1&perPage=1`;
   const response = await fetch(url);
   if (response) {
     const data = await response.json();
-    const players = data.Data.map((player: Player) =>
+    const player = data.Data.map((player: Player) =>
       prisma.serverUser.upsert({
-        where: { id: player.pid },
+        where: { id: Number(userId) },
         update: {
           username: player.username,
           ally: player.gnick,
@@ -52,7 +51,27 @@ export async function GET() {
         },
       })
     );
-    await Promise.all(players);
-    return NextResponse.json([200, players, "Data updated successfully"]);
+    await Promise.all(player);
+    return NextResponse.json(
+      (await prisma.serverUser.findFirst({
+        where: { id: {equals: Number(userId) } },
+      })) || {
+        error: "Player not found",
+      }
+    );
+  } else {
+    return NextResponse.json({ error: "Failed to fetch data" });
+  }
+}
+export async function GET(req: NextRequest) {
+  const userId = req.url.split("/").pop();
+
+  try {
+    const player = await prisma.serverUser.findFirst({
+      where: { id: Number(userId)  },
+    });
+     return NextResponse.json(player);
+  } catch (error) {
+    return NextResponse.json({ error: "Failed to fetch data" });
   }
 }

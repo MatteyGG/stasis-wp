@@ -3,9 +3,6 @@ import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { providerMap } from "../auth";
-import { AuthError } from "next-auth";
-import { redirect } from "next/navigation";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -57,34 +54,6 @@ export default function LoginPage() {
             <span>Войти</span>
           </button>
         </form>
-        <p className="text-center">
-          <b>или</b>
-        </p>
-        <div className="flex flex-col justify-center gap-1">
-          {Object.values(providerMap).map((provider) => (
-            <form
-              className="w-full"
-              key={provider.id}
-              action={async () => {
-                try {
-                  await signIn(provider.id, {
-                    redirectTo: redirect(`/`) ?? "",
-                  });
-                } catch (error) {
-                  if (error instanceof AuthError) {
-                    return console.log(error);
-                  }
-
-                  throw error;
-                }
-              }}
-            >
-              <button type="submit" className="w-full">
-                <span>Sign in with {provider.name}</span>
-              </button>
-            </form>
-          ))}
-        </div>
         <Link href="/registration" className="text-base mt-4">
           Зарегестрироваться --&gt;
         </Link>

@@ -4,6 +4,18 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Select from "react-select";
+import MakeHelper from "../components/base/helper";
+
+interface Player {
+  username: string;
+  power: string;
+  ally: string;
+  kills: string;
+  death: string;
+  nick: string;
+  sumkill: number;
+  die: number;
+}
 
 export default function RegistrationPage() {
   const nation_array = ["Vanguard", "Liberty", "Martyrs"];
@@ -22,8 +34,25 @@ export default function RegistrationPage() {
   const [gameID, setGameID] = useState("");
   const [army, setArmy] = useState("");
   const [nation, setNation] = useState("");
-
+  const [playerData, setPlayerData] = useState<Player[]>([]);
+  const [checked, setChecked] = useState(false);
   const router = useRouter();
+
+  const IdChanged = async function (ev: React.FormEvent) {
+    ev.preventDefault();
+
+    if (gameID) {
+      const response = await fetch(`/api/warpath/player/${gameID}`);
+      const data = await response.json();
+      console.log(data);
+      if (data.length === 0) {
+        return setChecked(false);
+      }
+      setPlayerData(data);
+      setChecked(true);
+    }
+  };
+
   const handleFormSubmit = async function (ev: React.FormEvent) {
     ev.preventDefault();
     console.log({ email, password });
@@ -46,15 +75,60 @@ export default function RegistrationPage() {
       <section className="w-1/4 auth backdrop-blur-md border border-gray-400 rounded-6xl">
         <h1 className="text-3xl">Регистрация</h1>
         <form className="flex flex-col gap-3" onSubmit={handleFormSubmit}>
-          <label>
-            <span>Ваш ID</span>
+          <label className="flex flex-col">
+            <div className="flex justify-between items-center">
+              <span>Ваш ID</span>
+              <MakeHelper text="Где взять?" imagesrc="/source/help/ID.png" />
+            </div>
             <input
-              type="id"
+              className="max-h-12 w-5/6"
+              type="text"
               name="id"
               placeholder="XXXXXXXX"
               value={gameID}
               onChange={(ev) => setGameID(ev.target.value)}
+              onBlur={IdChanged}
             />
+
+            <section
+              className={
+                playerData.length > 0
+                  ? "mt-2 opacity-100 ease-in-out duration-500 rounded-lg"
+                  : " opacity-0"
+              }
+            >
+              {playerData.length > 0 &&
+                playerData.map((user) => (
+                  <div
+                    key={user.nick}
+                    className="grid grid-cols-6 grid-rows-2 mx-auto px-4 py-1 ease-in-out duration-300 hover:scale-[1.05] transition-all bg-white rounded-xl shadow-md md:max-w-2xl"
+                  >
+                    <div className="col-span-3 text-nowrap">
+                      <h1>
+                        [{user.ally}] {user.nick}
+                      </h1>
+                    </div>
+                    <div className="col-span-2 row-span-2 text-center ">
+                      <p className="text-nowrap">{user.power}</p>
+                    </div>
+                    <div className="w-full col-span-3 inline-flex items-center">
+                      <Image
+                        className="object-contain"
+                        src="/source/icon/kills.png"
+                        width={20}
+                        height={20}
+                        alt=""
+                      />
+                      <h1>{user.sumkill}</h1>&nbsp;K/D:&nbsp;
+                      <h1>
+                        {isNaN(user.sumkill / user.die)
+                          ? "0"
+                          : (user.sumkill / user.die).toFixed(2)}
+                      </h1>
+                    </div>
+                  </div>
+                ))}
+            </section>
           </label>
           <label>
             <span>Почта</span>
@@ -126,9 +200,11 @@ export default function RegistrationPage() {
               }
             />
           </div>
-          <button type="submit" className="w-full">
-            Зарегестрироваться
-          </button>
+          {checked && (
+            <button type="submit" className="w-full">
+              Зарегистрироваться
+            </button>
+          )}
         </form>
         <Link href="/login" className="text-base mt-4">
           Войти --&gt;

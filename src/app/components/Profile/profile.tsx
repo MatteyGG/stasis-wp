@@ -10,6 +10,7 @@ import React from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import AllyWidget from "../allyWid";
+import { METHODS } from "http";
 
 const options: Intl.DateTimeFormatOptions = {
   year: "numeric",
@@ -48,6 +49,7 @@ export default function Profile({ session, status, alerts_array }: {
   };
 
   const [userId, setUserId] = useState("");
+  const [gameID, setGameID] = useState();
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [army, setArmy] = useState("");
@@ -57,10 +59,29 @@ export default function Profile({ session, status, alerts_array }: {
   const [promocodes, setPromocodes] = useState<
     { id: number; code: string; createdAt: string; until: string }[]
   >([]);
+  const [playerData, setPlayerData] = useState<any>([]);
 
   const [approved, setApproved] = useState(false);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [reputation, setReputation] = useState(10); // Репутация
+
+     const updateGameData = async function (gameID: any) {
+       if (gameID) {
+         const response = await fetch(`/api/warpath/dataUpdate/${gameID}`, { method: "POST" }); // /api/warpath/dataUpdate/player=[id]);
+         const data = await response.json();
+         setPlayerData(data);
+       }
+     };
+     const getGameData = async function (gameID: any) {
+       if (gameID) {
+         const response = await fetch(
+           `/api/warpath/dataUpdate/${gameID}`,
+           { method: "GET" }
+         ); 
+         const data = await response.json();
+         setPlayerData(data);
+       }
+     };
 
   useEffect(() => {
     if (status === "authenticated" && session.user) {
@@ -72,8 +93,14 @@ export default function Profile({ session, status, alerts_array }: {
       setRank(session.user.rank);
       setCreated_at(session.user.created_at);
       setApproved(session.user.approved);
+      setGameID(session.user.gameID);
     }
   }, [session, status]);
+
+  useEffect(() => {
+    getGameData(gameID);
+  }, [gameID]);
+
   useEffect(() => {
     fetch("/api/promocode")
       .then((res) => res.json())
@@ -103,23 +130,23 @@ export default function Profile({ session, status, alerts_array }: {
       <div className="container w-full bg-gray-200 bg-opacity-55 p-4 shadow-2xl shadow-black mx-auto rounded-3xl">
         <div className="grid grid-cols-3">
           <div className="z-2 relative w-full justify-center ">
-              <div className="mx-auto w-10/12 place-items-center">
-                <div className="">
-                  <Image
-                    className="z-20 object-none aspect-[3/2] rounded-3xl hover:object-cover hover:translate-x-1/2 hover:grow hover:shadow-lg hover:scale-[2.3] transition-all delay-100 duration-500"
-                    style={{
-                      position: "relative",
-                      zIndex: 3, // Полоса прогресса под текстом
-                    }}
-                    src={
-                      "/userScreen/" + "userScreen_" + session!.user.id + ".png"
-                    }
-                    alt={username}
-                    width={700}
-                    height={700}
-                  />
-                </div>
+            <div className="mx-auto w-10/12 place-items-center">
+              <div className="">
+                <Image
+                  className="z-20 object-none aspect-[3/2] rounded-3xl hover:object-cover hover:translate-x-1/2 hover:grow hover:shadow-lg hover:scale-[2.3] transition-all delay-100 duration-500"
+                  style={{
+                    position: "relative",
+                    zIndex: 3, // Полоса прогресса под текстом
+                  }}
+                  src={
+                    "/userScreen/" + "userScreen_" + session!.user.id + ".png"
+                  }
+                  alt={username}
+                  width={700}
+                  height={700}
+                />
               </div>
+            </div>
             <div className="mt-4 items-center pb-1">
               <div className="text-xl w-10/12 justify-center mx-auto">
                 <div className="flex flex-col ">
@@ -260,7 +287,36 @@ export default function Profile({ session, status, alerts_array }: {
             </div>
           </div>
           <div className="mx-6">
-            <AllyWidget />
+            <div
+              key={playerData.username}
+              className="flex flex-col mx-auto px-4 py-1 text-2xl ease-in-out duration-300 hover:scale-[1.05] transition-all bg-white rounded-xl shadow-md md:max-w-2xl"
+            >
+              <div className="col-span-3 text-nowrap"></div>
+              <div className="col-span-2 row-span-2">
+                <p className="text-nowrap">
+                  Сила: &nbsp;
+                  {new Intl.NumberFormat("ru-RU").format(playerData.power)}
+                </p>
+              </div>
+              <div className="w-full col-span-3 inline-flex items-center">
+                <Image
+                  className="object-contain"
+                  src="/source/icon/kills.png"
+                  width={20}
+                  height={20}
+                  alt=""
+                />
+                <h1>&nbsp;Убийств:&nbsp;{playerData.kill}</h1>
+              </div>
+
+              <h1>
+                &nbsp;K/D:&nbsp;
+                {isNaN(playerData.kill / playerData.die)
+                  ? "0"
+                  : (playerData.kill / playerData.die).toFixed(2)}
+              </h1>
+              <button onClick={updateGameData}>Обновить</button>
+            </div>
           </div>
         </div>
         <ToastContainer
