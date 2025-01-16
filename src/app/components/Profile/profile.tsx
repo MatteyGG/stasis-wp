@@ -54,6 +54,7 @@ export default function Profile({ session, status, alerts_array }: {
   const [army, setArmy] = useState("");
   const [nation, setNation] = useState("");
   const [rank, setRank] = useState("");
+  const [tgref, setTgref] = useState("");
   const [created_at, setCreated_at] = useState<Date>(new Date());
   const [promocodes, setPromocodes] = useState<
     { id: number; code: string; createdAt: string; until: string }[]
@@ -90,6 +91,7 @@ export default function Profile({ session, status, alerts_array }: {
       setArmy(session.user.army);
       setNation(session.user.nation);
       setRank(session.user.rank);
+      setTgref(session.user.tgref);
       setCreated_at(session.user.created_at);
       setApproved(session.user.approved);
       setGameID(session.user.gameID);
@@ -184,12 +186,14 @@ export default function Profile({ session, status, alerts_array }: {
                 </div>
                 <div className="mt-2 mb-2">
                   <h1>Контакты</h1>
+                  <a className="w-full" href={tgref} target="_blank">
                   <Image
                     src="/source/icon/telegram.png"
                     height={64}
                     width={64}
                     alt="Telegram"
                   />
+                  </a>
                 </div>
                 <div className="flex w-full">
                   <SignOut color="gray" />

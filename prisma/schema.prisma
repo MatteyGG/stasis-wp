@@ -43,6 +43,7 @@ model User {
   password      String    @default("default_Ann_password_value") @db.Char(60)
   email         String?   @unique
   emailVerified DateTime?
+  tgref         String?   @default("")
   role          String?   @default("user")
   rank          String?   @default("R1")
   army          String?

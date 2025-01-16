@@ -93,11 +93,11 @@ export default async function Home() {
               </ul>
             </div>
             {/* Блок с членами альянса */}
-            <div className="w-full md:w-1/3 flex flex-col mt-4 items-center">
+            <div className="w-full md:w-1/3 flex flex-col mt-4 items-center justify-center">
               <h1 className="text-3xl ">
                 <b>Члены альянса</b>
               </h1>
-              <ul className="w-2/3 md:w-1/3 space-y-1 list-none items-center text-center">
+              <ul className="flex flex-col w-2/3 md:w-full space-y-1 justify-center items-center text-center">
                 {leader.map((leader, index) => (
                   <Memberlist
                     key={index}

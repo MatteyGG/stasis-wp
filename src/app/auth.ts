@@ -27,6 +27,7 @@ declare module "next-auth" {
       image: string;
       created_at: Date;
       approved: boolean;
+      tgref: string;
     } & DefaultSession["user"];
   }
 
@@ -42,6 +43,7 @@ declare module "next-auth" {
     created_at: Date;
     approved: boolean;
     gameID: number;
+    tgref: string;
   }
 }
 
@@ -49,6 +51,7 @@ declare module "next-auth/jwt" {
   interface JWT {
     id: string;
     gameID: number;
+    tgref: string;
   }
 }
 
@@ -92,6 +95,7 @@ const providers: Provider[] = [
         gameID: user.gameID,
         username: gamedata?.username,
         email: user.email,
+        tgref: user.tgref,
         role: user.role?.toString(),
         rank: user.rank?.toString(),
         army: user.army?.toString(),
@@ -140,7 +144,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         token.username = session.username;
         token.army = session.army;
         token.nation = session.nation;
-        token.gameID = session.gameID;
+        token.tgref = session.tgref;
       }
       if (
         user &&
@@ -152,7 +156,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         "nation" in user &&
         "rank" in user &&
         "created_at" in user &&
-        "gameID" in user
+        "gameID" in user &&
+        "tgref" in user
       ) {
         // User is available during sign-in
         token.id = user.id!;
@@ -166,6 +171,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         token.approved = user.approved ?? false;
         token.created_at = user.created_at;
         token.gameID = user.gameID;
+        token.tgref = user.tgref;
       }
       return token;
     },
@@ -185,6 +191,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       session.user.created_at = token.created_at as Date;
       session.user.approved = Boolean(token.approved) ?? false;
       session.user.gameID = token.gameID;
+      session.user.tgref = token.tgref ?? "https://t.me/...";
 
       console.log("Session token ---->", token.name ?? "unknown");
       return session;

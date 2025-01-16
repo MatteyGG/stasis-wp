@@ -71,6 +71,7 @@ export default async function Manage_users() {
               </div>
               <AlertMake userId={user.id.toString()} />
             </div>
+            
           </li>
         );
       })}

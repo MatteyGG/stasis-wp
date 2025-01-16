@@ -40,6 +40,7 @@ export default function AlertMake({ userId }: { userId: string }){
             className="fixed inset-0 z-50 flex items-center justify-center bg-gray-800 bg-opacity-75 transition-all duration-300"
           >
             <div className="bg-white p-4 rounded-md shadow-lg w-1/3 relative">
+            <h1>Новое сообщение для {userId}</h1>
               <button
                 className="absolute top-0 right-0 p-2 text-gray-600 hover:text-gray-800"
                 onClick={handleClick}

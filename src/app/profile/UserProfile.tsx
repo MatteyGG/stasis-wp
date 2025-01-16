@@ -10,6 +10,7 @@ import UpdateTech from "@/app/components/Profile/UpdateTech";
 import Profile from "../components/Profile/profile";
 import HistoryAlerts from "../components/Profile/alerts";
 import { useEffect, useState } from "react";
+import UpdateTGRef from "../components/Profile/updateTG";
 type AlertProps = {
   type: string;
   message: string;
@@ -54,8 +55,9 @@ export default function UserProfile() {
     <UpdatePhoto
       userId={session!.user.id}
       username={session!.user.username!.toString()}
-      key={3}
+      key={2}
     />,
+    <UpdateTGRef tgref={session!.user.tgref} id={session!.user.id} key={3} />,
     <UpdateTech nation={session!.user.nation} army={session!.user.army} id={session!.user.id} key={4} />,
     <ResetPass key={5} />,
   ];
@@ -65,6 +67,7 @@ export default function UserProfile() {
         "Профиль",
         "Уведомления",
         "Обновить фото",
+        "Контакты",
         "Сменить технику",
         "Сменить пароль",
       ]}

@@ -19,7 +19,7 @@ interface Player {
 }
 export async function GET() {
   const today = new Date();
-  const twoDaysBefore = new Date(today.setDate(today.getDate() - 7));
+  const twoDaysBefore = new Date(today.setDate(today.getDate() - 2));
   const date = twoDaysBefore.toISOString().split('T')[0].replace(/-/g, '')
   console.log(date)
   const url =

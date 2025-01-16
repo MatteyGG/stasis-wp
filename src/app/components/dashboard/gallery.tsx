@@ -24,7 +24,7 @@ export default async function gallery() {
                 height={128}
                 width={128}
               />
-              <span>{image.filename}</span>
+              <span className="text-sm">{image.filename}</span>
             </div>
           ))}
         </div>
