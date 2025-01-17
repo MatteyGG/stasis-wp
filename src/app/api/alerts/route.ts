@@ -28,7 +28,7 @@ const types: { [key: string]: string } = {
 
    try {
      const response = await fetch(
-       `https://api.telegram.org/bot`,
+       `https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}`,
        options
      );
      const data = await response.json();
@@ -67,7 +67,7 @@ export async function POST(req: NextRequest) {
       }
       sendText(
         "-1002488337672",
-        `@${userinfo.tgref.split("/").pop()} \nИгрок ${
+        `${userinfo.tgref ? `@${userinfo.tgref.split("/").pop()}` : ""} \nИгрок ${
           userinfo.username
         } получил ${types[type] || "сообщение"}: ${message}`
       );

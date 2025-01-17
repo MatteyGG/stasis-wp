@@ -60,6 +60,7 @@ export default function Profile({ session, status, alerts_array }: {
     { id: number; code: string; createdAt: string; until: string }[]
   >([]);
   const [playerData, setPlayerData] = useState<any>([]);
+  const [currentPage, setCurrentPage] = useState(1);
 
   const [approved, setApproved] = useState(false);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -80,6 +81,19 @@ export default function Profile({ session, status, alerts_array }: {
          ); 
          const data = await response.json();
          setPlayerData(data);
+       }
+     };
+
+     const TgInGameNotify = async function (type: string, userid: any) {
+       if (userid) {
+         const response = await fetch(`/api/alerts/ingame`, {
+           method: "POST",
+           headers: {
+             "Content-Type": "application/json",
+           },
+           body: JSON.stringify({ type: type, userId: userid }),
+         });
+         const data = await response.json();
        }
      };
 
@@ -187,12 +201,12 @@ export default function Profile({ session, status, alerts_array }: {
                 <div className="mt-2 mb-2">
                   <h1>Контакты</h1>
                   <a className="w-full" href={tgref} target="_blank">
-                  <Image
-                    src="/source/icon/telegram.png"
-                    height={64}
-                    width={64}
-                    alt="Telegram"
-                  />
+                    <Image
+                      src="/source/icon/telegram.png"
+                      height={64}
+                      width={64}
+                      alt="Telegram"
+                    />
                   </a>
                 </div>
                 <div className="flex w-full">
@@ -202,30 +216,65 @@ export default function Profile({ session, status, alerts_array }: {
             </div>
           </div>
           <div className="">
+            {/* PAGINATION */}
+
             <ul className="w-full gap-2 flex flex-col">
               {alerts_array &&
-                Object.values(alerts_array).map((alert, index) => {
-                  const alertType = alert.type.toString().toLowerCase();
-                  if (
-                    alertType === "info" ||
-                    alertType === "warning" ||
-                    alertType === "error" ||
-                    alertType === "success"
-                  ) {
-                    return (
-                      <Alert
-                        key={index}
-                        type={
-                          alertType as "info" | "warning" | "error" | "success"
-                        }
-                        message={alert.message}
-                      />
-                    );
-                  } else {
-                    console.error(`Invalid alert type: ${alertType}`);
-                    return null;
-                  }
-                })}
+                Object.values(alerts_array)
+                  .slice((currentPage - 1) * 5, currentPage * 5)
+                  .map((alert, index) => {
+                    const alertType = alert.type.toString().toLowerCase();
+                    if (
+                      alertType === "info" ||
+                      alertType === "warning" ||
+                      alertType === "error" ||
+                      alertType === "success"
+                    ) {
+                      return (
+                        <Alert
+                          key={index}
+                          type={
+                            alertType as
+                              | "info"
+                              | "warning"
+                              | "error"
+                              | "success"
+                          }
+                          message={alert.message}
+                        />
+                      );
+                    } else {
+                      console.error(`Invalid alert type: ${alertType}`);
+                      return null;
+                    }
+                  })}
+              <div className="flex justify-center">
+                <div className="flex items-center">
+                  <button
+                    className="px-2 py-1 text-gray-700 hover:text-gray-900"
+                    onClick={() => {
+                      setCurrentPage(currentPage - 1);
+                    }}
+                    disabled={currentPage <= 1}
+                  >
+                    Prev
+                  </button>
+                  <div className="px-2">
+                    {currentPage} / {Math.ceil(alerts_array.length / 5)}
+                  </div>
+                  <button
+                    className="px-2 py-1 text-gray-700 hover:text-gray-900"
+                    onClick={() => {
+                      setCurrentPage(currentPage + 1);
+                    }}
+                    disabled={
+                      currentPage >= Math.ceil(alerts_array.length / 5)
+                    }
+                  >
+                    Next
+                  </button>
+                </div>
+              </div>
             </ul>
             <div className=" mt-4">
               <div className="w-full h-6 bg-gray-200 rounded-full my-2 ">
@@ -319,6 +368,26 @@ export default function Profile({ session, status, alerts_array }: {
                   : (playerData.kill / playerData.die).toFixed(2)}
               </h1>
               <button onClick={() => updateGameData(gameID)}>Обновить</button>
+            </div>
+            <div className="flex flex-col space-y-2 mt-2">
+              <button
+                className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700"
+                onClick={() => TgInGameNotify("info", session!.user.id)}
+              >
+                Начать сбор
+              </button>
+              <button
+                className="bg-yellow-500 text-white py-2 px-4 rounded hover:bg-yellow-700"
+                onClick={() => TgInGameNotify("warning", session!.user.id)}
+              >
+                Тревожная кнопка
+              </button>
+              <button
+                className="bg-red-500 text-white py-2 px-4 rounded hover:bg-red-700"
+                onClick={() => TgInGameNotify("officer", session!.user.id)}
+              >
+                Вызвать офицера
+              </button>
             </div>
           </div>
         </div>
