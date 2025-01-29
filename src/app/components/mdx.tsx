@@ -4,7 +4,7 @@ import { MDXRemote, type MDXRemoteSerializeResult } from "next-mdx-remote";
 
 
 interface Props {
-  mdxSource: MDXRemoteSerializeResult;
+  mdxSource: any;
 }
 
 export default function MDXPage({ mdxSource }: Props) {
@@ -14,10 +14,3 @@ export default function MDXPage({ mdxSource }: Props) {
     </div>
   );
 }
-
-export const getStaticProps: GetStaticProps<{
-  mdxSource: MDXRemoteSerializeResult;
-}> = async () => {
-  const mdxSource = await serialize("some *mdx* content: <ExampleComponent />");
-  return { props: { mdxSource } };
-};

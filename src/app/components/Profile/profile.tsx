@@ -257,7 +257,7 @@ export default function Profile({ session, status, alerts_array }: {
                     }}
                     disabled={currentPage <= 1}
                   >
-                    Prev
+                    &larr;
                   </button>
                   <div className="px-2">
                     {currentPage} / {Math.ceil(alerts_array.length / 5)}
@@ -271,7 +271,7 @@ export default function Profile({ session, status, alerts_array }: {
                       currentPage >= Math.ceil(alerts_array.length / 5)
                     }
                   >
-                    Next
+                    &rarr;
                   </button>
                 </div>
               </div>
@@ -374,7 +374,7 @@ export default function Profile({ session, status, alerts_array }: {
                 className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700"
                 onClick={() => TgInGameNotify("info", session!.user.id)}
               >
-                Начать сбор
+                Начать сбор группы
               </button>
               <button
                 className="bg-yellow-500 text-white py-2 px-4 rounded hover:bg-yellow-700"

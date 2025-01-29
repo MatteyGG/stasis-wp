@@ -185,6 +185,10 @@ Styles of alerts
   @apply text-3xl text-primaly;
 }
 
+.wiki h3{
+  @apply text-2xl text-primaly;
+}
+
 .tabs {
   @apply flex flex-col md:flex-row text-xs md:text-xl
 }
