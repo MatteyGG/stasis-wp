@@ -33,6 +33,36 @@ Styles of alerts
 */
 
 
+/*
+tooltip for alerts
+*/
+
+.tooltip {
+  @apply relative;
+}
+
+.tooltip .tooltiptext {
+  @apply hidden;
+  @apply absolute;
+  @apply z-10;
+  @apply p-2;
+  @apply bg-gray-200;
+  @apply rounded;
+  @apply shadow-md;
+  @apply text-sm;
+  @apply text-gray-700;
+  @apply top-0;
+  @apply left-1/2;
+  @apply transform -translate-x-1/2;
+}
+
+.tooltip:hover .tooltiptext {
+  @apply block;
+}
+
+.tip {
+  @apply  shadow-md shadow-gray-500 bg-gray-100
+}
 
 .warning {
   @apply  shadow-md shadow-yellow-500 bg-gray-100 
@@ -46,7 +76,47 @@ Styles of alerts
 .success {
   @apply  shadow-md shadow-green-500  bg-gray-100 
 }
+.remark-container {
+  @apply border-l-4 shadow-none bg-gray-100 p-4 rounded-md;
+  &.tip {
+    @apply border-blue-500;
+  }
+  &.danger {
+    @apply border-red-500;
+  }
+  &.info {
+    @apply border-green-500;
+  }
+  &.caution {
+    @apply border-yellow-500;
+  }
+  &.note {
+    @apply border-gray-500;
+  }
+}
 
+table {
+  @apply table-auto w-full;
+  @apply border-collapse;
+}
+
+th, td {
+  @apply py-2 px-4;
+  @apply border-b border-gray-300;
+}
+
+th {
+  @apply font-medium;
+}
+
+tbody {
+  @apply  bg-white;
+
+}
+
+img{
+  @apply rounded-md shadow-md;
+}
 
 .upload {
   @apply flex flex-row p-4  items-center justify-around rounded-md rounded-t-none bg-slate-400 hover:bg-slate-500;
@@ -88,7 +158,9 @@ Styles of alerts
 }
 
 .Editor{
-  @apply px-1 shadow-md bg-gradient-to-br from-white to-blue-100 rounded-xl ;
+  @apply px-1 shadow-md bg-gradient-to-br from-white to-blue-100 rounded-xl;
+  min-height: 50vh;
+  min-width: 50vw;
 }
 
 .Editor h1{
@@ -175,7 +247,7 @@ Styles of alerts
 }
 
 .wiki {
-  @apply flex flex-col mx-0 md:mx-auto w-full p-2 md:p-4 rounded-md
+  @apply flex flex-col mx-0 md:mx-auto w-full p-2 md:p-4 md:w-4/5 pt-0 rounded-md
 }
 .wiki h1{
   @apply text-4xl text-primaly;

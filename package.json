@@ -29,6 +29,7 @@
     "react-markdown": "^9.0.3",
     "react-select": "^5.8.2",
     "react-toastify": "^10.0.6",
+    "remark-flexible-containers": "^1.2.1",
     "remark-gfm": "^4.0.0",
     "remark-toc": "^9.0.0"
   },

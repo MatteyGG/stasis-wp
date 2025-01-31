@@ -41,17 +41,18 @@ export default function Editor() {
   };
   return (
     <>
-      <section className="flex flex-col items-center justify-center">
-        <h1 className="text-4xl">Edit wiki page</h1>
-        <p>Enter your markdown here</p>
+      <section className="flex flex-col items-center justify-center p-12">
+        <h1 className="text-4xl">Страница создания wiki-страниц</h1>
         <button onClick={() => console.log(ref.current?.getMarkdown())}>
-          Get markdown
+          Отладка через консоль
         </button>
-        <div className="Editor">
-          <Suspense fallback={<>Loading...</>}>
-            <EditorComp editorRef={ref} markdown={markdown} />
-          </Suspense>
-          <form>
+        <div className="Editor min-h-3/4">
+          <div className="w-full h-full ">
+            <Suspense fallback={<>Loading...</>}>
+              <EditorComp editorRef={ref} markdown={markdown} />
+            </Suspense>
+          </div>
+          <form className="w-full">
             <div className="grid grid-cols-2">
               <div>
                 <input
@@ -104,17 +105,17 @@ export default function Editor() {
                 />
               </div>
             </div>
+            <button
+              type="submit"
+              className="w-full bg-white p-2 rounded-xl"
+              onClick={EditorSave}
+            >
+              Опубликовать
+            </button>
           </form>
-
-          <button
-            type="submit"
-            className="w-full bg-white p-2 rounded-xl"
-            onClick={EditorSave}
-          >
-            Опубликовать
-          </button>
         </div>
       </section>
     </>
   );
 }
+
