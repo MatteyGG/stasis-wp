@@ -46,10 +46,17 @@ export default async function Wiki_page({
     <>
       <div className="wiki container bg-white border-none border-primaly shadow-2xl shadow-black  mx-auto flex flex-wrap p-4 rounded-xl">
         <h1 className="text-2xl text-left text-primaly w-full my-6">
-          <Link href={`../${wiki.category}`}>
-            {decodeURIComponent(params.category)}
-          </Link>
-          /<b>{wiki.title}</b>
+          <div className="breadcrumb flat">
+            <Link href="/wiki">
+              <b>Wiki</b>
+            </Link>
+            <Link href={`../${wiki.category}`}>
+              {decodeURIComponent(params.category)}
+            </Link>
+            <a className="active" href="#">
+              <b>{wiki.title}</b>
+            </a>
+          </div>
         </h1>
         <MDXRemote source={wiki.md} options={options} />
       </div>

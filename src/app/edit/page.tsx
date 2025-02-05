@@ -2,21 +2,48 @@
 
 import { MDXEditorMethods } from "@mdxeditor/editor";
 import dynamic from "next/dynamic";
-import { Suspense } from "react";
+import { Suspense, useEffect, useState, FormEvent } from "react";
 import React from "react";
-import { useState, FormEvent } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 
-const EditorComp = dynamic(() => import("../../components/EditorComponent"), {
+const EditorComp = dynamic(() => import("@/app/components/EditorComponent"), {
   ssr: false,
 });
 
 export default function Editor() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const pageid = searchParams.get("pageid");
+
   const [title, setTitle] = useState("");
-  const [category, setCategory] = useState("");	
   const [short, setShort] = useState("");
-  const [image, setImage] = useState({ src: "placeholder.png", alt: "placeholder" });
-  
-  const markdown = "# Начните **писать**";
+  const [category, setCategory] = useState( "");
+  const [image, setImage] = useState("");
+  const [imageAlt, setImageAlt] = useState("");
+  const [markdown, setMarkdown] = useState("");
+  useEffect(() => {
+    if (pageid === null) return setMarkdown("# Начните **писать**");
+    (async () => {
+      try {
+        const response = await fetch(`/api/markdown/${pageid}`, {
+          method: "GET",
+        });
+        if (response.ok) {
+          const data = await response.json();
+          setTitle(data.title);
+          setShort(data.short);
+          setCategory(data.category);
+          setImage(data.scr);
+          setImageAlt(data.alt);
+          setMarkdown(data.md);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    })();
+  }, [pageid]);
+
+ 
 
   const ref = React.useRef<MDXEditorMethods>(null);
 
@@ -29,16 +56,23 @@ export default function Editor() {
         short,
         markdown: ref.current?.getMarkdown(),
         category,
-        image: image.src,
-        imageAlt: image.alt,
+        image: image,
+        imageAlt: imageAlt,
+        pageId: pageid,
       }),
     });
     if (response.ok) {
       console.log("Saved markdown: ", response);
+      if (pageid) {
+        router.push(`/wiki/edit/${pageid}`);
+      } else {
+        router.push("/wiki");
+      }
     } else {
       console.error("Failed to save markdown: ", response);
     }
   };
+
   return (
     <>
       <section className="flex flex-col items-center justify-center p-12">
@@ -59,19 +93,21 @@ export default function Editor() {
                   type="text"
                   id="title"
                   className="bg-white p-2 rounded-md w-full"
-                  placeholder="Название"
+                  placeholder="Заголовок"
                   required
                   onChange={(e) => setTitle(e.target.value)}
+                  defaultValue={title}
                 />
               </div>
               <div>
                 <input
                   type="text"
-                  id="title"
+                  id="category"
                   className="bg-white p-2 rounded-md w-full"
                   placeholder="Категория"
                   required
                   onChange={(e) => setCategory(e.target.value)}
+                  defaultValue={category}
                 />
               </div>
               <div className="col-span-2">
@@ -82,6 +118,7 @@ export default function Editor() {
                   placeholder="Короткое описание"
                   required
                   onChange={(e) => setShort(e.target.value)}
+                  defaultValue={short}
                 />
               </div>
               <div className="col-span-2">
@@ -90,18 +127,16 @@ export default function Editor() {
                   id="image"
                   className="bg-white p-2 rounded-md w-1/2"
                   placeholder="Ссылка на Изображение"
-                  onChange={(e) =>
-                    setImage({ src: e.target.value, alt: e.target.value })
-                  }
+                  onChange={(e) => setImage(e.target.value)}
+                  defaultValue={image}
                 />
                 <input
                   type="text"
                   id="imageAlt"
                   className="bg-white p-2 rounded-md w-1/2"
                   placeholder="Описание изображения"
-                  onChange={(e) =>
-                    setImage({ src: image.src, alt: e.target.value })
-                  }
+                  onChange={(e) => setImageAlt(e.target.value)}
+                  defaultValue={imageAlt}
                 />
               </div>
             </div>
@@ -110,7 +145,7 @@ export default function Editor() {
               className="w-full bg-white p-2 rounded-xl"
               onClick={EditorSave}
             >
-              Опубликовать
+              Сохранить
             </button>
           </form>
         </div>
@@ -118,4 +153,3 @@ export default function Editor() {
     </>
   );
 }
-

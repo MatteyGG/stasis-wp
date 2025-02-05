@@ -1,5 +1,5 @@
-import type { GetStaticProps } from "next";
-import { serialize } from "next-mdx-remote/serialize";
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { MDXRemote, type MDXRemoteSerializeResult } from "next-mdx-remote";
 
 
