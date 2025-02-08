@@ -1,8 +1,4 @@
-Dockerfile
-.dockerignore
-node_modules
-npm-debug.log
-README.md
-.env*
-.next
+next.config.mjs
 .git
+.gitignore
+Dockerfile

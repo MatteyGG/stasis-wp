@@ -3,7 +3,12 @@ import { prisma } from "../prisma";
 import WikiCard from "../components/wikicard";
 import Memberlist from "../components/members";
 import Image from "next/image";
-import { Promocode } from "@prisma/client";
+
+interface Promocode {
+  id: number;
+  code: string;
+}
+
 
 export default async function Home() {
   const card_array = await prisma.wiki.findMany({
@@ -145,3 +150,4 @@ export default async function Home() {
     </>
   );
 }
+
