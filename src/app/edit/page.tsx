@@ -17,10 +17,14 @@ export default function Editor() {
 
   const [title, setTitle] = useState("");
   const [short, setShort] = useState("");
-  const [category, setCategory] = useState( "");
+  const [category, setCategory] = useState<string[]>([]);
   const [image, setImage] = useState("");
   const [imageAlt, setImageAlt] = useState("");
   const [markdown, setMarkdown] = useState("");
+  const [categories, setCategories] = useState<
+    { id: number; name: string; createdAt: string }[] | undefined
+  >();
+
   useEffect(() => {
     if (pageid === null) return setMarkdown("# Начните **писать**");
     (async () => {
@@ -36,6 +40,7 @@ export default function Editor() {
           setImage(data.scr);
           setImageAlt(data.alt);
           setMarkdown(data.md);
+          console.log(data);
         }
       } catch (error) {
         console.log(error);
@@ -43,7 +48,17 @@ export default function Editor() {
     })();
   }, [pageid]);
 
- 
+useEffect(() => {
+  fetch("/api/category")
+    .then((res) => res.json())
+    .then((data) => {
+      setCategories(data.data);
+      console.log(data.data);
+    })
+    .catch((err) => {
+      console.error(err);
+    });
+}, []);
 
   const ref = React.useRef<MDXEditorMethods>(null);
 
@@ -56,8 +71,8 @@ export default function Editor() {
         short,
         markdown: ref.current?.getMarkdown(),
         category,
-        image: image,
-        imageAlt: imageAlt,
+        image,
+        imageAlt,
         pageId: pageid,
       }),
     });
@@ -83,7 +98,7 @@ export default function Editor() {
         <div className="Editor min-h-3/4">
           <div className="w-full h-full ">
             <Suspense fallback={<>Loading...</>}>
-              <EditorComp editorRef={ref} markdown={markdown} />
+              <EditorComp markdown={markdown} editorRef={ref} />
             </Suspense>
           </div>
           <form className="w-full">
@@ -100,15 +115,24 @@ export default function Editor() {
                 />
               </div>
               <div>
-                <input
-                  type="text"
+                <select
                   id="category"
                   className="bg-white p-2 rounded-md w-full"
-                  placeholder="Категория"
                   required
-                  onChange={(e) => setCategory(e.target.value)}
-                  defaultValue={category}
-                />
+                  value={category[0]}
+                  onChange={(e) => setCategory([e.target.value])}
+                >
+                  <option value="">Выберите категорию</option>
+                  {categories && categories?.length > 0 ? (
+                    categories.map((category) => (
+                      <option key={category.id} value={category.name}>
+                        {category.name}
+                      </option>
+                    ))
+                  ) : (
+                    <option disabled>Категории не найдены</option>
+                  )}
+                </select>
               </div>
               <div className="col-span-2">
                 <input
@@ -153,3 +177,4 @@ export default function Editor() {
     </>
   );
 }
+

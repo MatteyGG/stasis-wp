@@ -71,6 +71,12 @@ model Image {
   createdAt DateTime @default(now())
 }
 
+model Wikicategory {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
+  createdAt DateTime @default(now())
+}
+
 model Wiki {
   autor     String?
   pageId    String   @id @unique @default(cuid())

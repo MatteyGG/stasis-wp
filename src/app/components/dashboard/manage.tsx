@@ -22,7 +22,7 @@ export default async function Manage_users() {
             <div className="flex items-center p-0 md:p-6 ">
               <Image
                 className="rounded-md w-20 md:w-40 h-full hover:translate-x-1/2 hover:grow hover:shadow-lg hover:scale-[2.3]  transition-all delay-100 duration-500"
-                src="/placeholder.png"
+                src={"/userScreen/" + "userScreen_" + user.id + ".png"}
                 alt=""
                 width={1000}
                 height={1000}
@@ -71,7 +71,6 @@ export default async function Manage_users() {
               </div>
               <AlertMake userId={user.id.toString()} />
             </div>
-            
           </li>
         );
       })}

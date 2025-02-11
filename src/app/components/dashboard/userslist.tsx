@@ -127,7 +127,9 @@ export default function Userlist() {
               <div className="flex items-center p-6 pb-1">
                 <Image
                   className="rounded-md z-10 w-20 md:w-40 h-full hover:translate-x-1/2 hover:grow hover:shadow-lg hover:scale-[2.3]  transition-all delay-100 duration-500"
-                  src="/placeholder.png"
+                  src={
+                    "/userScreen/" + "userScreen_" + user.id + ".png"
+                  }
                   alt=""
                   width={1000}
                   height={1000}

@@ -1,9 +1,12 @@
 import { prisma } from "../../prisma";
 import Link from "next/link";
 
-
 export default async function WikiList() {
-  const wikis = await prisma.wiki.findMany();
+  const wikis = await prisma.wiki.findMany({
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
   return (
     <div className="container h-full min-h-64 md:h-2/3 overflow-y-scroll shadow-sm shadow-black mx-auto p-2 rounded-xl  backdrop-blur-3xl">
       <ul className="flex flex-col gap-1 ">
@@ -12,12 +15,18 @@ export default async function WikiList() {
             className="flex  bg-white rounded-md shadow-sm justify-between p-2"
             key={index}
           >
-            <Link
-              href={`/wiki/${wiki.pageId}`}
-              className="text-lg font-medium hover:text-blue-400"
-            >
-              {wiki.title}
-            </Link>
+            <div className="inline-flex items-baseline  gap-6">
+              <Link
+                href={`/wiki/${wiki.pageId}`}
+                className="text-lg font-medium hover:text-blue-400"
+              >
+                {wiki.title}
+              </Link>
+              <span className="text-sm text-gray-500">{wiki.category}</span>
+              <span className="text-sm text-gray-500">
+                {new Date(wiki.createdAt).toLocaleDateString()}
+              </span>
+            </div>
             <div className="space-x-1">
               <Link
                 href={`/edit/?pageid=${wiki.pageId}`}
@@ -35,4 +44,3 @@ export default async function WikiList() {
     </div>
   );
 }
-

@@ -10,6 +10,7 @@ import { auth } from "../auth";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import AlertMake from "../components/alert/makeAlert";
+import CategoryList from "../components/dashboard/category";
 
 const tabContents = [
   <Main key={0} />,
@@ -18,6 +19,7 @@ const tabContents = [
   <Gallery key={3} />,
   <Manage_users key={4} />,
   <PromoList key={5} />,
+  <CategoryList key={6} />,
 ];
 
 export default async function Dashboard() {
@@ -33,7 +35,7 @@ export default async function Dashboard() {
         <nav className="flex sm:justify-center space-x-4">
           <Link
             className="rounded-lg px-3 py-2 text-slate-700 font-medium hover:bg-slate-100 hover:text-slate-900"
-            href="/wiki/edit"
+            href="/edit"
           >
             Новая статья
           </Link>
@@ -48,6 +50,7 @@ export default async function Dashboard() {
             "Галерея",
             "Пользователи",
             "Промокоды",
+            "Категории",
           ]}
           tabContents={tabContents}
         />
