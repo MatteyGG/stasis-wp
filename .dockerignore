@@ -2,3 +2,4 @@ next.config.mjs
 .git
 .gitignore
 Dockerfile
+.env
