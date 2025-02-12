@@ -1,4 +1,4 @@
-import { readdirSync, readFileSync } from "fs";
+import { readdirSync } from "fs";
 import { join } from "path";
 
 import Image from "next/image";

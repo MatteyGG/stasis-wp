@@ -2,13 +2,14 @@
 
 import { MDXEditorMethods } from "@mdxeditor/editor";
 import dynamic from "next/dynamic";
-import { Suspense, useEffect, useState, FormEvent } from "react";
+import { Suspense, useEffect, useState, FormEvent, useRef } from "react";
 import React from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
 const EditorComp = dynamic(() => import("@/app/components/EditorComponent"), {
   ssr: false,
 });
+
 
 export default function Editor() {
   const router = useRouter();
@@ -24,7 +25,6 @@ export default function Editor() {
   const [categories, setCategories] = useState<
     { id: number; name: string; createdAt: string }[] | undefined
   >();
-
   useEffect(() => {
     if (pageid === null) return setMarkdown("# Начните **писать**");
     (async () => {
@@ -40,31 +40,34 @@ export default function Editor() {
           setImage(data.scr);
           setImageAlt(data.alt);
           setMarkdown(data.md);
-          console.log(data);
+          console.log(data.md);
         }
       } catch (error) {
         console.log(error);
       }
     })();
   }, [pageid]);
-
-useEffect(() => {
-  fetch("/api/category")
-    .then((res) => res.json())
-    .then((data) => {
-      setCategories(data.data);
-      console.log(data.data);
-    })
-    .catch((err) => {
-      console.error(err);
-    });
-}, []);
-
-  const ref = React.useRef<MDXEditorMethods>(null);
+  useEffect(() => {
+    fetch("/api/category")
+      .then((res) => res.json())
+      .then((data) => {
+        setCategories(data.data);
+        console.log(data.data);
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  }, []);
+  const ref = useRef<MDXEditorMethods>(null);
+  useEffect(() => {
+    if (ref.current) {
+      ref.current.setMarkdown(markdown);
+    }
+  }, [markdown]);
 
   const EditorSave = async function (ev: FormEvent) {
     ev.preventDefault();
-    const response = await fetch("/api/markdownNew", {
+    const response = await fetch("/api/markdown", {
       method: "POST",
       body: JSON.stringify({
         title,
@@ -119,7 +122,7 @@ useEffect(() => {
                   id="category"
                   className="bg-white p-2 rounded-md w-full"
                   required
-                  value={category[0]}
+                  value={category}
                   onChange={(e) => setCategory([e.target.value])}
                 >
                   <option value="">Выберите категорию</option>

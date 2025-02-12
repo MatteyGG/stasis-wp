@@ -1,5 +1,6 @@
 import { prisma } from "../../prisma";
 import Link from "next/link";
+import Published from "./published";
 
 export default async function WikiList() {
   const wikis = await prisma.wiki.findMany({
@@ -22,21 +23,14 @@ export default async function WikiList() {
               >
                 {wiki.title}
               </Link>
-              <span className="text-sm text-gray-500">{wiki.category}</span>
+              <span className="text-sm text-gray-500">{wiki.category} </span>
+              <span className="text-sm text-gray-500">{wiki.autor} </span>
               <span className="text-sm text-gray-500">
                 {new Date(wiki.createdAt).toLocaleDateString()}
               </span>
             </div>
-            <div className="space-x-1">
-              <Link
-                href={`/edit/?pageid=${wiki.pageId}`}
-                className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-xl"
-              >
-                Редактировать ↑
-              </Link>
-              <button className="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1 rounded-xl">
-                Опубликовать{" ->"}
-              </button>
+            <div className="inline-flex items-center">
+              <Published published={wiki.published} pageid={wiki.pageId} />
             </div>
           </li>
         ))}

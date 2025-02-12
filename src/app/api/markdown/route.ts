@@ -1,21 +1,29 @@
-import { PrismaClient } from "@prisma/client";
-
+import { prisma } from "@/app/prisma";
 export async function POST(req: Request) {
-    const body = await req.json();
-  console.log(body);
+  const body = await req.json();
+  const { pageId, title, short, markdown, category, image, imageAlt } = body;
 
-  const prisma = new PrismaClient();
 
   try {
-    const response = await prisma.wiki.create({
-      data: {
-        autor: body.autor,
-        title: body.title,
-        category: body.category,
-        short: body.short,
-        md: body.markdown,
-        scr: body.image
-      }
+    const response = await prisma.wiki.upsert({
+      where: { pageId: pageId },
+      update: {
+        title: title,
+        short: short,
+        md: markdown,
+        scr: image,
+        alt: imageAlt,
+        category: category,
+      },
+      create: {
+        pageId: pageId,
+        title: title,
+        short: short,
+        md: markdown,
+        scr: image,
+        alt: imageAlt,
+        category: category,
+      },
     });
     console.log(response);
     return Response.json({ response });
@@ -25,5 +33,4 @@ export async function POST(req: Request) {
   } finally {
     await prisma.$disconnect();
   }
-
 }
