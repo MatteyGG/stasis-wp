@@ -19,7 +19,6 @@
 body { min-height: 100vh; }
 body {
   @apply  bg-auto bg-repeat bg-[url('/white-min.jpg')] bg-sky-100;
-  font-family: Arial, Helvetica, sans-serif;
   background-size: 100%;
 }
 

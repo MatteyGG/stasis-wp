@@ -43,6 +43,11 @@ export default async function Navbar() {
             <li className="mr-6">
               <Link href="/about">О нас</Link>
             </li>
+            <li className="mr-6 bg-green-500 p-1 px-2 rounded-md animate-pulse">
+              <Link target="_blank" href="https://forms.gle/HZfd9Wx6NqVyGuhdA">
+                Регистрация на C4
+              </Link>
+            </li>
           </ul>
         </div>
         <li className="z-30 absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
