@@ -18,7 +18,7 @@ export default function Editor() {
 
   const [title, setTitle] = useState("");
   const [short, setShort] = useState("");
-  const [category, setCategory] = useState<string[]>([]);
+  const [category, setCategory] = useState("");
   const [image, setImage] = useState("");
   const [imageAlt, setImageAlt] = useState("");
   const [markdown, setMarkdown] = useState("");
@@ -67,13 +67,14 @@ export default function Editor() {
 
   const EditorSave = async function (ev: FormEvent) {
     ev.preventDefault();
+    console.log({ title, short, markdown, category, image, imageAlt });
     const response = await fetch("/api/markdown", {
       method: "POST",
       body: JSON.stringify({
         title,
         short,
         markdown: ref.current?.getMarkdown(),
-        category,
+        category: category,
         image,
         imageAlt,
         pageId: pageid,
@@ -123,7 +124,7 @@ export default function Editor() {
                   className="bg-white p-2 rounded-md w-full"
                   required
                   value={category}
-                  onChange={(e) => setCategory([e.target.value])}
+                  onChange={(e) => setCategory(e.target.value)}
                 >
                   <option value="">Выберите категорию</option>
                   {categories && categories?.length > 0 ? (
