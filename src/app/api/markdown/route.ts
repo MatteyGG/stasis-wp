@@ -1,35 +1,42 @@
+import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/app/prisma";
-export async function POST(req: Request) {
+
+export async function POST(req: NextRequest) {
   const body = await req.json();
   const { pageId, title, short, markdown, category, image, imageAlt } = body;
 
-
   try {
-    const response = await prisma.wiki.upsert({
-      where: { pageId: pageId },
-      update: {
-        title: title,
-        short: short,
-        md: markdown,
-        scr: image,
-        alt: imageAlt,
-        category: category,
-      },
-      create: {
-        title: title,
-        short: short,
-        md: markdown,
-        scr: image,
-        alt: imageAlt,
-        category: category,
-      },
-    });
-    console.log(response);
-    return Response.json({ response });
+    let response;
+    if (pageId) {
+      response = await prisma.wiki.update({
+        where: { pageId: pageId },
+        data: {
+          title: title,
+          short: short,
+          md: markdown,
+          scr: image,
+          alt: imageAlt,
+          category: category,
+        },
+      });
+    } else {
+      response = await prisma.wiki.create({
+        data: {
+          title: title,
+          short: short,
+          md: markdown,
+          scr: image,
+          alt: imageAlt,
+          category: category,
+        },
+      });
+    }
+    return NextResponse.json({ response });
   } catch (error) {
     console.error(error);
-    return Response.json({ error });
+    return NextResponse.json({ error });
   } finally {
     await prisma.$disconnect();
   }
 }
+
