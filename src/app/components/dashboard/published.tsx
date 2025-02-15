@@ -24,9 +24,9 @@ export default function Published({ published, pageid }: PublishedProps) {
 
     if (response.ok) {
       setIsPublished(!isPublished);
-      toast.success(`Page ${isPublished ? "un" : ""}published`);
+      toast.success(`Страница ${isPublished ? "не " : ""}опубликована`);
     } else {
-      toast.error("Error occurred while publishing page");
+      toast.error("Ошибка во время публикации страницы");
     }
   };
 
@@ -36,14 +36,14 @@ export default function Published({ published, pageid }: PublishedProps) {
     });
 
     if (response.ok) {
-      toast.success("Page deleted");
+      toast.success("Страница удалена");
     } else {
-      toast.error("Error occurred while deleting page");
+      toast.error("Ошибка во время удаления страницы");
     }
   };
 
   return (
-    <div className="space-x-1 items-baseline">
+    <div className="grid grid-cols-1 gap-1 md:flex md:flex-row space-x-1 items-baseline">
       <Link
         href={`/edit/?pageid=${pageid}`}
         className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-xl"
@@ -59,7 +59,7 @@ export default function Published({ published, pageid }: PublishedProps) {
         {isPublished ? "Скрыть" : "Опубликовать ->"}
       </button>
       <button
-        className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-xl"
+        className="inline-flex items-center bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-xl"
         onClick={handleDelete}
       >
         <svg
@@ -76,6 +76,7 @@ export default function Published({ published, pageid }: PublishedProps) {
             d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
           />
         </svg>
+        <p className="ml-2 md:hidden">Удалить</p>
       </button>
     </div>
   );

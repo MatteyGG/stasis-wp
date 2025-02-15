@@ -11,6 +11,8 @@ import Profile from "../components/Profile/profile";
 import HistoryAlerts from "../components/Profile/alerts";
 import { useEffect, useState } from "react";
 import UpdateTGRef from "../components/Profile/updateTG";
+
+import "react-toastify/dist/ReactToastify.css";
 type AlertProps = {
   type: string;
   message: string;
@@ -45,12 +47,7 @@ export default function UserProfile() {
   }
 
   const tabContents = [
-    <Profile
-      session={session}
-      status={status}
-      alerts_array={alerts}
-      key={0}
-    />,
+    <Profile session={session} status={status} alerts_array={alerts} key={0} />,
     <HistoryAlerts alerts_array={alerts} key={1} />,
     <UpdatePhoto
       userId={session!.user.id}
@@ -58,21 +55,27 @@ export default function UserProfile() {
       key={2}
     />,
     <UpdateTGRef tgref={session!.user.tgref} id={session!.user.id} key={3} />,
-    <UpdateTech nation={session!.user.nation} army={session!.user.army} id={session!.user.id} key={4} />,
+    <UpdateTech
+      nation={session!.user.nation}
+      army={session!.user.army}
+      id={session!.user.id}
+      key={4}
+    />,
     <ResetPass key={5} />,
   ];
   return (
-    <Tabs
-      tabs={[
-        "Профиль",
-        "Уведомления",
-        "Обновить фото",
-        "Контакты",
-        "Сменить технику",
-        "Сменить пароль",
-      ]}
-      tabContents={tabContents}
-    />
+    <>
+      <Tabs
+        tabs={[
+          "Профиль",
+          "Уведомления",
+          "Обновить фото",
+          "Контакты",
+          "Сменить технику",
+          "Сменить пароль",
+        ]}
+        tabContents={tabContents}
+      />
+    </>
   );
 }
-

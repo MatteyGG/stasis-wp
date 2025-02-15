@@ -8,9 +8,10 @@ import Select from "react-select";
     "Icon-infantry",
     "Icon-LTank",
     "Icon-MTank",
-    "Icon-launcher",
+    "Icon-tank-hunter",
     "Icon-HTank",
     "Icon-SH",
+    "Icon-launcher",
     "Icon-howitzer",
   ];
 

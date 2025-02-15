@@ -2,12 +2,9 @@ import { prisma } from "../prisma";
 
 import WikiCard from "../components/wikicard";
 import Memberlist from "../components/members";
-import Image from "next/image";
-
-interface Promocode {
-  id: number;
-  code: string;
-}
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import PromocodeItem from "../components/promocodes";
 
 
 export default async function Home() {
@@ -45,7 +42,11 @@ export default async function Home() {
     `${process.env.NEXT_PUBLIC_BASE_URL}/api/promocode`
   );
   const promocodes = await response.json();
+  const sortedPromocodes = [...promocodes.data].sort(
+    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+  );
 
+  
   return (
     <>
       <div className="container shadow-2xl shadow-black mt-12 mx-auto flex flex-wrap p-4 rounded-xl ">
@@ -78,22 +79,9 @@ export default async function Home() {
                 <b>Промокоды</b>
               </h1>
 
-              <ul className="mt-2 list-none list-inside grid grid-cols-1 md:grid-cols-3 gap-2">
-                {promocodes.data.map((promocode: Promocode, index: number) => (
-                  <li
-                    className="inline-flex text-xs text-black p-2 rounded-lg bg-sky-200"
-                    key={index}
-                  >
-                    <button>
-                      <Image
-                        src="/source/icon/copy.png"
-                        width={24}
-                        height={24}
-                        alt=""
-                      />
-                    </button>
-                    <b className="ml-2 text-center mt-1">{promocode.code}</b>
-                  </li>
+              <ul className="mt-2 list-none list-inside grid grid-cols-1 md:grid-cols-2 gap-2">
+                {sortedPromocodes.slice(0, 10).map((promocode, index) => (
+                  <PromocodeItem key={index} promocode={promocode} />
                 ))}
               </ul>
             </div>
@@ -138,7 +126,7 @@ export default async function Home() {
             {/* Блок с уведомлениями */}
             <div className="w-full  md:w-1/3 flex flex-col mt-4 items-center ">
               <h1 className="text-3xl ">
-                <b>Уведомления</b>
+                <b>Наши C4</b>
               </h1>
               <ul className=" list-inside">
                 <li>Нет новых сообщений</li>
@@ -147,6 +135,17 @@ export default async function Home() {
           </div>
         </div>
       </div>
+      <ToastContainer
+        position="bottom-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
     </>
   );
 }

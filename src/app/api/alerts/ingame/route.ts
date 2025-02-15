@@ -9,6 +9,8 @@ const types: { [key: string]: string } = {
   officer: "вызывает офицера",
 };
 
+
+
 const sendText = async (chatId: string, text: string) => {
   const data = {
     method: "sendMessage",
@@ -55,7 +57,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "User not found" }, { status: 404 });
   }
   sendText(
-    "-1002488337672",
+    process.env.TELEGRAM_CHAT_ID || "",
     `${
       type === "officer" && userinfo.tgref
         ? `@${userinfo.tgref.split("/").pop()}`

@@ -24,9 +24,10 @@ export default function RegistrationPage() {
     "Icon-infantry",
     "Icon-LTank",
     "Icon-MTank",
-    "Icon-launcher",
+    "Icon-tank-hunter",
     "Icon-HTank",
     "Icon-SH",
+    "Icon-launcher",
     "Icon-howitzer",
   ];
 
@@ -102,7 +103,6 @@ export default function RegistrationPage() {
             >
               {playerData.length > 0 &&
                 playerData.map((user) => (
-                 
                   <div
                     key={user.nick}
                     className="grid grid-cols-6 grid-rows-2 mx-auto px-4 py-1 ease-in-out duration-300 hover:scale-[1.05] transition-all bg-white rounded-xl shadow-md md:max-w-2xl"
@@ -210,7 +210,7 @@ export default function RegistrationPage() {
             </button>
           )}
         </form>
-        <Link href="/login" className="text-base mt-4">
+        <Link href="/singin" className="text-base mt-4">
           Войти --&gt;
         </Link>
         <Audio src="/audio/polet.mp3" />

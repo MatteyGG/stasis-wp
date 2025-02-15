@@ -1,4 +1,3 @@
-import Link from "next/link";
 import Gallery from "@/app/components/dashboard/gallery";
 import WikiList from "@/app/components/dashboard/wikilist";
 import Userlist from "@/app/components/dashboard/userslist";
@@ -9,7 +8,6 @@ import PromoList from "../components/dashboard/promocode";
 import { auth } from "../auth";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import AlertMake from "../components/alert/makeAlert";
 import CategoryList from "../components/dashboard/category";
 
 const tabContents = [
@@ -31,17 +29,8 @@ export default async function Dashboard() {
   return (
     <>
       <div className="text-3xl text-center font-bold">
-        <h1>Admin Dashboard</h1>
-        <nav className="flex sm:justify-center space-x-4">
-          <Link
-            className="rounded-lg px-3 py-2 text-slate-700 font-medium hover:bg-slate-100 hover:text-slate-900"
-            href="/edit"
-          >
-            Новая статья
-          </Link>
-          <AlertMake userId={"all"} />
-          
-        </nav>
+        <h1>Админ панель</h1>
+        
         <Tabs
           tabs={[
             "Главная",
