@@ -16,7 +16,6 @@ export async function POST(req: Request) {
         category: category,
       },
       create: {
-        pageId: pageId,
         title: title,
         short: short,
         md: markdown,
