@@ -15,16 +15,7 @@ export default function UpdatePhoto({
           <h1>Фото вашей техники</h1>
           <div>
             <Image
-              className="w-full shadow-2xl border-8  shadow-black object-fill aspect-[3/2] rounded-3xl rounded-b-none"
-              src={"/source/help/army.png"}
-              alt={username}
-              width={700}
-              height={700}
-            />
-          </div>
-          <div>
-            <Image
-              className="w-full border-8  shadow-2xl shadow-black object-fill aspect-[3/2] rounded-3xl rounded-b-none"
+              className="w-full border-8 border-b-0  shadow-2xl shadow-black object-fill aspect-[3/2] rounded-3xl rounded-b-none"
               src={"/userScreen/" + "userScreen_" + userId + ".png"}
               alt={username}
               width={700}
@@ -33,22 +24,20 @@ export default function UpdatePhoto({
             <UploadImage method="userScreen" userId={userId}>
               Обновить
             </UploadImage>
+            <Image
+              className="w-full shadow-2xl border-8 border-t-0  shadow-black object-fill aspect-[3/2] rounded-3xl rounded-t-none"
+              src={"/source/help/army.png"}
+              alt={username}
+              width={700}
+              height={700}
+            />
           </div>
         </div>
         <div className="h-full">
           <h1>Фото вашего профиля</h1>
           <div>
             <Image
-              className="w-full shadow-2xl border-8  shadow-black object-fill aspect-[3/2] rounded-3xl rounded-b-none"
-              src={"/source/help/profile.png"}
-              alt={username}
-              width={700}
-              height={700}
-            />
-          </div>
-          <div>
-            <Image
-              className="w-full shadow-2xl border-8  shadow-black object-fill aspect-[3/2] rounded-3xl rounded-b-none"
+              className="w-full shadow-2xl border-8 border-b-0 shadow-black object-fill aspect-[3/2] rounded-3xl rounded-b-none"
               src={"/userProfile/" + "userProfile_" + userId + ".png"}
               alt={username}
               width={700}
@@ -57,6 +46,13 @@ export default function UpdatePhoto({
             <UploadImage method="userProfile" userId={userId}>
               Обновить
             </UploadImage>
+            <Image
+              className="w-full shadow-2xl border-8 border-t-0  shadow-black object-fill aspect-[3/2] rounded-3xl rounded-t-none"
+              src={"/source/help/profile.png"}
+              alt={username}
+              width={700}
+              height={700}
+            />
           </div>
         </div>
       </div>

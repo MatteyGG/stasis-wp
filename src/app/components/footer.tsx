@@ -3,11 +3,13 @@ import Link from "next/link";
 
 export default function Footer() {
   return (
-    <footer className="hidden md:flex p-2 w-full fixed bottom-0 justify-around backdrop-blur-lg">
+    <footer className="hidden md:flex py-8 w-full justify-around backdrop-blur-lg">
       <p className="text-center">
-        Copyright © 2025 STASIS. Сделано с ❤️ в Стасис.
+        Copyright © 2025 STASIS. Сделано с ❤️ в Стазис.
       </p>
-      <p>TODO:Копилка</p>
+      <Link target="_blank" href="https://boosty.to/matteygg/donate">
+        Поддержать разработчика✌️
+      </Link>
       <Link target="_blank" href="https://vk.com/stasiswp">
         <Image src="/source/icon/vk.png" width={32} height={32} alt="vk" />
       </Link>

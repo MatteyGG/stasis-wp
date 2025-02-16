@@ -26,6 +26,7 @@ export default async function Manage_users() {
                 alt=""
                 width={1000}
                 height={1000}
+                
               />
               <div className="ml-6 w-full md:w-1/2">
                 <div

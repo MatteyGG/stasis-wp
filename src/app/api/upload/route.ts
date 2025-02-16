@@ -2,7 +2,6 @@ import { NextResponse } from "next/server";
 import { writeFile, mkdir } from "fs/promises";
 import { prisma } from "../../prisma";
 
-
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const POST = async (req: any) => {
   const formData = await req.formData();
@@ -19,41 +18,42 @@ export const POST = async (req: any) => {
   }
 
   const buffer = Buffer.from(await file.arrayBuffer());
-  const fileExtension = file.name.split('.').pop();
-  const filename = `${endPath}_${userId}.${fileExtension}`;
-  console.log(filename);
-
-  // Create the uploads directory if it does not exist
-  try {
-    await mkdir(uploadsDir, { recursive: true });
-    console.log("Directory created successfully");
-  } catch (error) {
-    console.error("Error creating uploads directory:", error);
+  let filename = file.name;
+  if (endPath !== "gallery") {
+    const fileExtension = file.name.split('.').pop();
+    filename = `${endPath}_${userId}.${fileExtension}`;
   }
 
   try {
-    console.log("Writing file to:", path.join(uploadsDir, filename));
+    await mkdir(uploadsDir, { recursive: true });
+  } catch (error) {
+    console.error("Error creating uploads directory:", error);
+    return NextResponse.json({ Message: "Failed to create directory", status: 500 });
+  }
+
+  try {
     await writeFile(path.join(uploadsDir, filename), buffer);
-    await prisma.image.upsert({
-      where: { id: userId },
-      update: {
-        filename: filename,
-        filepath: uploadsDir,
-        user: {
-          connect: { id: userId },
+
+    if (endPath !== "gallery") {
+      await prisma.image.upsert({
+        where: { id: userId },
+        update: {
+          filename: filename,
+          filepath: uploadsDir,
+          user: { connect: { id: userId } },
         },
-      },
-      create: {
-        filename: filename,
-        filepath: uploadsDir,
-        user: {
-          connect: { id: userId },
+        create: {
+          filename: filename,
+          filepath: uploadsDir,
+          user: { connect: { id: userId } },
         },
-      },
-    });
+      });
+    }
+
     return NextResponse.json({ Message: "Success", status: 201 });
   } catch (error) {
-    console.log("Error occured ", error);
+    console.error("Error occurred:", error);
     return NextResponse.json({ Message: "Failed", status: 500 });
   }
 };
+

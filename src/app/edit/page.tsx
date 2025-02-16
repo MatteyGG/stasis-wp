@@ -83,10 +83,8 @@ export default function Editor() {
     if (response.ok) {
       console.log("Saved markdown: ", response);
       if (pageid) {
-        router.push(`/wiki/edit/${pageid}`);
-      } else {
-        router.push("/wiki");
-      }
+        router.push(`/wiki/${category}/${pageid}`);
+      } 
     } else {
       console.error("Failed to save markdown: ", response);
     }
