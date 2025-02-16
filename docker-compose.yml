@@ -16,7 +16,7 @@ services:
     networks:
       - app-network
     volumes:
-      - './public:/public'
+      - './public:/src/public'
 
 networks:
   app-network:
