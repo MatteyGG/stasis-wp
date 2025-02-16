@@ -16,10 +16,7 @@ services:
     networks:
       - app-network
     volumes:
-      - './public:/app/public'
-
-volumes:
-  db_data:
+      - './public:/public'
 
 networks:
   app-network:
