@@ -1,67 +1,91 @@
 import { NextResponse } from "next/server";
-import { writeFile, mkdir } from "fs/promises";
-import { prisma } from "../../prisma";
+import { S3Client, PutObjectCommand, ListObjectsCommand, DeleteObjectCommand } from "@aws-sdk/client-s3";
+
+const s3URL = "https://s3.timeweb.cloud";
+const Bucket = "576b093c-bf65d329-1603-4121-b476-e46d7ce3cb2a";
+const accessKeyId = "3FMQPR3J6M0RXQ4ZRPCZ";
+const secretAccessKey = "LcJv5Uw9K8kuzNV5WuE6ESVY5612UJOiA7zhwMSE";
+const region = "ru-1";
+
+const s3Client = new S3Client({
+  forcePathStyle: true,
+  endpoint: s3URL,
+  credentials: {
+    accessKeyId,
+    secretAccessKey,
+  },
+  region,
+});
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const POST = async (req: any) => {
   console.log("Handling POST request");
   const formData = await req.formData();
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const path = require("path");
-  
   const endPath = formData.get("endPath");
   const userId = formData.get("userId");
-  console.log(`Received file for endPath: ${endPath}, userId: ${userId}`);
 
-  const uploadsDir = path.join(process.cwd(), 'public', endPath);
   const file = formData.get("file");
   if (!file) {
     console.error("No files received.");
     return NextResponse.json({ error: "No files received." }, { status: 400 });
   }
 
-  const buffer = Buffer.from(await file.arrayBuffer());
-  let filename = file.name;
-  if (endPath !== "gallery") {
-    const fileExtension = file.name.split('.').pop();
-    filename = `${endPath}_${userId}.${fileExtension}`;
-  }
-  console.log(`Filename determined as: ${filename}`);
+  const filename = file.name;
+  const fileBuffer = await file.arrayBuffer();
 
   try {
-    console.log(`Creating directory at: ${uploadsDir}`);
-    await mkdir(uploadsDir, { recursive: true });
-  } catch (error) {
-    console.error("Error creating uploads directory:", error);
-    return NextResponse.json({ Message: "Failed to create directory", status: 500 });
-  }
+    const command = new PutObjectCommand({
+      ACL: "public-read",
+      Bucket,
+      Key: endPath === "gallery" ? `${endPath}/${filename}` : `${endPath}/${userId}.${file.type.split("/")[1]}`,
+      Body: fileBuffer,
+      ContentType: file.type,
+    });
 
-  try {
-    console.log(`Writing file to ${path.join(uploadsDir, filename)}`);
-    await writeFile(path.join(uploadsDir, filename), buffer);
+    await s3Client.send(command);
 
-    if (endPath !== "gallery") {
-      console.log(`Updating database record for userId: ${userId}`);
-      await prisma.image.upsert({
-        where: { id: userId },
-        update: {
-          filename: filename,
-          filepath: uploadsDir,
-          user: { connect: { id: userId } },
-        },
-        create: {
-          filename: filename,
-          filepath: uploadsDir,
-          user: { connect: { id: userId } },
-        },
-      });
-    }
-
-    console.log("File upload successful");
     return NextResponse.json({ Message: "Success", status: 201 });
-  } catch (error) {
-    console.error("Error occurred during file handling:", error);
+  } catch (e) {
+    console.log("upload error", e);
     return NextResponse.json({ Message: "Failed", status: 500 });
+  }
+};
+
+export const GET = async () => {
+  console.log("Handling GET request");
+  const command = new ListObjectsCommand({
+    Bucket,
+    Prefix: "gallery/",
+  });
+
+  try {
+    const data = await s3Client.send(command);
+    const files: (string | undefined)[] = data.Contents?.map((file) => file.Key).filter((key) => key!.includes("gallery/")) || [];
+    return NextResponse.json({ files });
+  } catch (e) {
+    console.log("Error:", e);
+    return NextResponse.json({ Message: "Failed", status: 500 });
+  }
+};
+
+export const DELETE = async (req: Request) => {
+  const { file } = await req.json();
+  if (!file) {
+    console.error("No file provided.");
+    return NextResponse.json({ error: "No file provided." }, { status: 400 });
+  }
+
+  try {
+    const command = new DeleteObjectCommand({
+      Bucket,
+      Key: file.toString(),
+    });
+
+    await s3Client.send(command);
+    return NextResponse.json({ Message: `Deleted successfully ${file.split("/")[1]}`, status: 200 });
+  } catch (e) {
+    console.log("Delete error", e);
+    return NextResponse.json({ Message: "Failed to delete", status: 500 });
   }
 };
 

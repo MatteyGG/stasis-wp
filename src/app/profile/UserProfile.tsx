@@ -76,6 +76,7 @@ export default function UserProfile() {
         ]}
         tabContents={tabContents}
       />
+      
     </>
   );
 }

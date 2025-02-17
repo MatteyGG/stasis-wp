@@ -6,10 +6,12 @@ export default function UploadImage({
   children,
   userId,
   method,
+  onUploadComplete,
 }: Readonly<{
   children: React.ReactNode;
   userId: string;
   method: "userScreen" | "userProfile" | "gallery";
+  onUploadComplete?: () => void;
 }>) {
   const [file, setFile] = useState<File | null>(null);
 
@@ -29,7 +31,7 @@ export default function UploadImage({
     setFile(selectedFile);
   };
 
-  const handleUpload = () => {
+  const handleUpload = async () => {
     if (file === null) {
       console.error("No file selected");
       return;
@@ -40,18 +42,25 @@ export default function UploadImage({
     formData.append("userId", userId);
     formData.append("endPath", method);
 
-    fetch("/api/upload", {
-      method: "POST",
-      body: formData,
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        return response.json();
-      })
-      .then((data) => console.log("data is:", data))
-      .catch((error) => console.error("Error:", error));
+    try {
+      const response = await fetch("/api/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log("data is:", data);
+
+      if (onUploadComplete) {
+        onUploadComplete();
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
   };
 
   return (
@@ -61,5 +70,4 @@ export default function UploadImage({
     </div>
   );
 }
-
 

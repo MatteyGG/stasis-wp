@@ -14,6 +14,15 @@ const nextConfig = {
   // Optional: override the default (1 year) `stale-while-revalidate`
   // header time for static pages
   // swrDelta: 3600 // seconds
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "s3.timeweb.cloud",
+      },
+    ],
+  },
 };
 
 export default nextConfig;
+
