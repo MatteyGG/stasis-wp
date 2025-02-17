@@ -17,8 +17,11 @@ const nextConfig = {
   images: {
     remotePatterns: [
       {
-        protocol: "https",
         hostname: "s3.timeweb.cloud",
+      },
+      {
+        protocol: "https",
+        hostname: "www.s3.timeweb.cloud",
       },
     ],
   },
