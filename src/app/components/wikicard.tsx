@@ -21,7 +21,7 @@ const WikiCard =  ( { title, category, description, img, link }: WikiCardProps )
         </span>
         <div className="h-full relative">
           <Image
-            src={"/uploads/" + img.src}
+            src={img.src}
             alt={img.alt}
             quality={100}
             className="w-full rounded-2xl animate-bounceIn"
