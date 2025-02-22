@@ -1,7 +1,9 @@
 "use client";
 // InitializedMDXEditor.tsx
 import { FC } from "react";
-import { MDXEditor, MDXEditorMethods } from "@mdxeditor/editor";
+import { markdownShortcutPlugin, MDXEditor, MDXEditorMethods } from "@mdxeditor/editor";
+
+import "@/app/components/edit/HTMLToolbarComponent.tsx";
 
 import {
   headingsPlugin,
@@ -51,6 +53,7 @@ const Editor: FC<EditorProps> = ({ markdown, editorRef }) => {
         frontmatterPlugin(),
         imagePlugin(),
         sandpackPlugin(),
+        markdownShortcutPlugin(),
         directivesPlugin({
           directiveDescriptors: [AdmonitionDirectiveDescriptor],
         }),

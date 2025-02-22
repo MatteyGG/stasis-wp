@@ -5,10 +5,16 @@ import Link from "next/link";
 import remarkGfm from "remark-gfm";
 import remarkToc from "remark-toc";
 import remarkFlexibleContainers from "remark-flexible-containers";
+import remarkYoutube from "remark-youtube";
 
 const options = {
   mdxOptions: {
-    remarkPlugins: [remarkGfm, remarkToc, remarkFlexibleContainers],
+    remarkPlugins: [
+      remarkGfm,
+      remarkToc,
+      remarkFlexibleContainers,
+      remarkYoutube,
+    ],
     rehypePlugins: [],
   },
 };
@@ -58,7 +64,7 @@ export default async function Wiki_page({
             </a>
           </div>
         </h1>
-        <MDXRemote source={wiki.md} options={options} />
+          <MDXRemote source={wiki.md} options={options} />
       </div>
     </>
   );

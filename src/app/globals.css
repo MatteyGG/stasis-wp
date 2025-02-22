@@ -187,9 +187,6 @@ tbody {
   @apply text-base text-primaly;
 }
 
-.Editor img{
-  @apply rounded-md p-5;
-}
 
 .Editor blockquote{
   @apply italic text-2xl text-primaly;
@@ -255,6 +252,18 @@ tbody {
 
 .wiki h3{
   @apply text-2xl text-primaly;
+}
+
+.wiki h4{
+  @apply text-xl text-primaly;
+}
+
+.wiki img{
+  @apply inline-flex items-baseline rounded-md;
+}
+
+.wiki p{
+  @apply text-base text-primaly;
 }
 
 .tabs {
