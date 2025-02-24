@@ -47,10 +47,10 @@ const notifyError = (message: string) =>
 export default function Userlist() {
   const [users, setUsers] = useState<User[]>([]);
   const [isLoading, setLoading] = useState(true);
-  const [selectedIds, setSelectedIds] = useState<number[]>([]);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
   const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const checkedId = Number(event.target.value);
+    const checkedId = event.target.value;
     if (event.target.checked) {
       setSelectedIds([...selectedIds, checkedId]);
     } else {
@@ -70,7 +70,7 @@ export default function Userlist() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          gameID: selectedIds.toLocaleString(),
+          gameID: selectedIds,
           approved: true,
         }),
       });
@@ -82,6 +82,29 @@ export default function Userlist() {
     } catch (error) {
       console.error("Error approving users:", error);
       notifyError("Error approving users");
+    }
+  };
+
+  const handleBan = async (Delete_id: number) => {
+    console.log(Delete_id);
+    try {
+      const response = await fetch("/api/user_list", {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          GameId: Delete_id.toString(),
+        }),
+      });
+      if (!response.ok) {
+        notifyError("Error banning user");
+      } else {
+        notifySuccess("User banned successfully");
+      }
+    } catch (error) {
+      console.error("Error banning user:", error);
+      notifyError("Error banning user");
     }
   };
 
@@ -128,12 +151,20 @@ export default function Userlist() {
                 <Image
                   className="rounded-md z-10 w-20 md:w-40 h-full hover:translate-x-1/2 hover:grow hover:shadow-lg hover:scale-[2.3]  transition-all delay-100 duration-500"
                   src={
-                    "/userScreen/" + "userScreen_" + user.id + ".png"
+                    "https://s3.timeweb.cloud/576b093c-bf65d329-1603-4121-b476-e46d7ce3cb2a/userScreen/" +
+                    user.id +
+                    ".png"
                   }
-                  alt=""
-                  width={1000}
-                  height={1000}
+                  alt={user.username}
+                  width={700}
+                  height={700}
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                  onError={(event: any) => {
+                    event.target.id = "/noimage.png";
+                    event.target.srcset = "/noimage.png";
+                  }}
                 />
+
                 <div className="ml-6 w-1/2">
                   <h2
                     className={`w-full ${user.rank} text-xl font-semibold rounded-md p-1`}
@@ -191,7 +222,30 @@ export default function Userlist() {
                     </p>
                   )}
                 </div>
+                <div>
+                  <button
+                    className="inline-flex items-center bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-xl"
+                    onClick={() => handleBan(user.gameID)}
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-6 w-6"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                      />
+                    </svg>
+
+                  </button>
+                </div>
               </div>
+
               <div className="flex justify-between p-4 pt-1">
                 <div className="flex flex-row">
                   <Image
@@ -207,58 +261,60 @@ export default function Userlist() {
                     alt=""
                   />
                 </div>
-                <label className="flex cursor-pointer select-none items-center gap-2">
-                  <div className="relative ">
-                    <input
-                      type="checkbox"
-                      checked={selectedIds.includes(Number(user.gameID))}
-                      value={user.gameID}
-                      onChange={(event) => {
-                        handleCheckboxChange(event);
-                      }}
-                      className={`sr-only peer`}
-                    />
-                    <div
-                      className={`block h-8 w-14 rounded-full bg-red-500 peer-checked:bg-green-500 `}
-                    ></div>
-                    <div className="dot flex transition ease-in-out duration-300 delay-150 translate-x-0  peer-checked:translate-x-6  absolute left-1 top-1  h-6 w-6 items-center justify-center rounded-full bg-white">
-                      {!selectedIds.includes(Number(user.gameID)) ? (
-                        <span>
-                          <svg
-                            className="h-4 w-4 stroke-current"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            xmlns="http://www.w3.org/2000/svg"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth="2"
-                              d="M6 18L18 6M6 6l12 12"
-                            ></path>
-                          </svg>
-                        </span>
-                      ) : (
-                        <span>
-                          <svg
-                            width="11"
-                            height="8"
-                            viewBox="0 0 11 8"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
-                          >
-                            <path
-                              d="M10.0915 0.951972L10.0867 0.946075L10.0813 0.940568C9.90076 0.753564 9.61034 0.753146 9.42927 0.939309L4.16201 6.22962L1.58507 3.63469C1.40401 3.44841 1.11351 3.44879 0.932892 3.63584C0.755703 3.81933 0.755703 4.10875 0.932892 4.29224L0.932878 4.29225L0.934851 4.29424L3.58046 6.95832C3.73676 7.11955 3.94983 7.2 4.1473 7.2C4.36196 7.2 4.55963 7.11773 4.71406 6.9584L10.0468 1.60234C10.2436 1.4199 10.2421 1.1339 10.0915 0.951972ZM4.2327 6.30081L4.2317 6.2998C4.23206 6.30015 4.23237 6.30049 4.23269 6.30082L4.2327 6.30081Z"
-                              fill="black"
-                              stroke="black"
-                              strokeWidth="0.4"
-                            ></path>
-                          </svg>
-                        </span>
-                      )}
+                {!user.approved && (
+                  <label className="flex cursor-pointer select-none items-center gap-2">
+                    <div className="relative ">
+                      <input
+                        type="checkbox"
+                        checked={selectedIds.includes(String(user.gameID))}
+                        value={user.gameID}
+                        onChange={(event) => {
+                          handleCheckboxChange(event);
+                        }}
+                        className={`sr-only peer`}
+                      />
+                      <div
+                        className={`block h-8 w-14 rounded-full bg-red-500 peer-checked:bg-green-500 `}
+                      ></div>
+                      <div className="dot flex transition ease-in-out duration-300 delay-150 translate-x-0  peer-checked:translate-x-6  absolute left-1 top-1  h-6 w-6 items-center justify-center rounded-full bg-white">
+                        {!selectedIds.includes(String(user.gameID)) ? (
+                          <span>
+                            <svg
+                              className="h-4 w-4 stroke-current"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              xmlns="http://www.w3.org/2000/svg"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth="2"
+                                d="M6 18L18 6M6 6l12 12"
+                              ></path>
+                            </svg>
+                          </span>
+                        ) : (
+                          <span>
+                            <svg
+                              width="11"
+                              height="8"
+                              viewBox="0 0 11 8"
+                              fill="none"
+                              xmlns="http://www.w3.org/2000/svg"
+                            >
+                              <path
+                                d="M10.0915 0.951972L10.0867 0.946075L10.0813 0.940568C9.90076 0.753564 9.61034 0.753146 9.42927 0.939309L4.16201 6.22962L1.58507 3.63469C1.40401 3.44841 1.11351 3.44879 0.932892 3.63584C0.755703 3.81933 0.755703 4.10875 0.932892 4.29224L0.932878 4.29225L0.934851 4.29424L3.58046 6.95832C3.73676 7.11955 3.94983 7.2 4.1473 7.2C4.36196 7.2 4.55963 7.11773 4.71406 6.9584L10.0468 1.60234C10.2436 1.4199 10.2421 1.1339 10.0915 0.951972ZM4.2327 6.30081L4.2317 6.2998C4.23206 6.30015 4.23237 6.30049 4.23269 6.30082L4.2327 6.30081Z"
+                                fill="black"
+                                stroke="black"
+                                strokeWidth="0.4"
+                              ></path>
+                            </svg>
+                          </span>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                </label>
+                  </label>
+                )}
               </div>
             </li>
           );
@@ -274,4 +330,3 @@ export default function Userlist() {
     </form>
   );
 }
-

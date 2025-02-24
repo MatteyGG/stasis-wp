@@ -83,9 +83,16 @@ export default function Profile({ session, status, alerts_array }: {
          setPlayerData(data);
        }
      };
-
      const TgInGameNotify = async function (type: string, userid: any) {
        if (userid) {
+         const cooldownTime = 1800000; // 30 minutes
+         const lastNotification = localStorage.getItem(`inGameNotify-${userid}`);
+         if (lastNotification && Date.now() - Number(lastNotification) < cooldownTime) {
+           toast.error(
+             "Вы не можете отправлять уведомление слишком часто");
+           return;
+         }
+         localStorage.setItem(`inGameNotify-${userid}`, Date.now().toString());
          const response = await fetch(`/api/alerts/ingame`, {
            method: "POST",
            headers: {
@@ -154,9 +161,7 @@ export default function Profile({ session, status, alerts_array }: {
                       position: "relative",
                       zIndex: 3, // Полоса прогресса под текстом
                     }}
-                    src={
-                      "/userScreen/" + "userScreen_" + session!.user.id + ".png"
-                    }
+                    src={`https://s3.timeweb.cloud/576b093c-bf65d329-1603-4121-b476-e46d7ce3cb2a/userScreen/${session!.user.id}.png`}
                     alt={username}
                     width={700}
                     height={700}
@@ -412,3 +417,4 @@ export default function Profile({ session, status, alerts_array }: {
     </>
   );
 }
+

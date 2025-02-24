@@ -3,8 +3,6 @@
 import { FC } from "react";
 import { markdownShortcutPlugin, MDXEditor, MDXEditorMethods } from "@mdxeditor/editor";
 
-import "@/app/components/edit/HTMLToolbarComponent.tsx";
-
 import {
   headingsPlugin,
   quotePlugin,

@@ -18,7 +18,7 @@ export default async function WikiList() {
           >
             <div className="flex flex-col md:flex-row md:inline-flex items-baseline gap-1 md:gap-6">
               <Link
-                href={`/wiki/${wiki.pageId}`}
+                href={`/wiki/${wiki.category}/${wiki.pageId}`}
                 className="text-sm text-left md:text-lg font-medium hover:text-blue-400"
               >
                 {wiki.title}

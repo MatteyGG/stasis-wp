@@ -37,7 +37,8 @@
     "remark-flexible-containers": "^1.2.1",
     "remark-gfm": "^4.0.0",
     "remark-toc": "^9.0.0",
-    "remark-youtube": "github:MatteyGG/remark-youtube-and-vk"
+    "remark-youtube": "github:MatteyGG/remark-youtube-and-vk",
+    "swiper": "^11.2.4"
   },
   "devDependencies": {
     "@tailwindcss/typography": "^0.5.15",

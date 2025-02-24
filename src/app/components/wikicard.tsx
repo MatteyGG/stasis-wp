@@ -14,9 +14,9 @@ export interface WikiCardProps {
 
 const WikiCard =  ( { title, category, description, img, link }: WikiCardProps ) => {
   return (
-    <div className="wikicard container">
-      <div className="wikicard h-full container flex flex-col text-wrap w-full bg-primaly rounded-2xl p-2">
-        <span className="z-1 wikicard-category absolute text-white text-1xl bg-primaly p-2 rounded-br-xl ">
+    <div className="wikicard container will-change-transform ">
+      <div className="wikicard h-full container flex flex-col text-wrap w-full bg-primaly rounded-2xl p-2 ">
+        <span className="z-20 wikicard-category absolute text-white text-xs bg-primaly p-2 rounded-br-xl ">
           {category}
         </span>
         <div className="h-full relative">
@@ -29,10 +29,12 @@ const WikiCard =  ( { title, category, description, img, link }: WikiCardProps )
             height={150}
           />
 
-          <h1 className="wikicard-title">
+          <h1 className="wikicard-title text-base">
             <b>{title}</b>
           </h1>
-          <p className="wikicard-description text-wrap">{description}</p>
+          <p className="wikicard-description text-wrap text-xs">
+            {description}
+          </p>
         </div>
         <div className="flex justify-center ">
           <Link href={link}>

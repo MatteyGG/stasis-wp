@@ -1,10 +1,10 @@
 import { prisma } from "../prisma";
 
-import WikiCard from "../components/wikicard";
 import Memberlist from "../components/members";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import PromocodeItem from "../components/promocodes";
+import WikiContainer from "../components/wiki/wikicontainer";
 
 
 export default async function Home() {
@@ -50,26 +50,13 @@ export default async function Home() {
   return (
     <>
       <div className="container shadow-2xl shadow-black mt-12 mx-auto flex flex-wrap p-4 rounded-xl ">
-        <h1 className="text-6xl text-primaly text-center w-full my-6">
+        <h1 className=" text-6xl text-primaly text-center w-full my-6">
           <b>Добро пожаловать в Стазис</b>
         </h1>
-        <div className="w-full">
+        <div className="w-full ">
           {/* Блок с случайными wiki страницами */}
           <div className="w-full ">
-            <section className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-4 text-white">
-              {Object.values(card_array).map((card, index) => {
-                return (
-                  <WikiCard
-                    key={index} // assuming each card has a unique id
-                    title={card.title ?? "Туториал"}
-                    category={card.category ?? ""}
-                    description={card.short ?? ""}
-                    img={{ src: card.scr, alt: card.alt ?? "" }}
-                    link={`wiki/${card.category}/${card.pageId}`}
-                  />
-                );
-              })}
-            </section>
+            <WikiContainer card_array={card_array}/>
           </div>
 
           <div className="container flex-col w-full mt-4 flex md:flex-row items-center text-primaly">

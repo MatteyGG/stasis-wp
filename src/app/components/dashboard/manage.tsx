@@ -22,7 +22,11 @@ export default async function Manage_users() {
             <div className="flex items-center p-0 md:p-6 ">
               <Image
                 className="rounded-md w-20 md:w-40 h-full hover:translate-x-1/2 hover:grow hover:shadow-lg hover:scale-[2.3]  transition-all delay-100 duration-500"
-                src={"/userScreen/" + "userScreen_" + user.id + ".png"}
+                src={
+                  "https://s3.timeweb.cloud/576b093c-bf65d329-1603-4121-b476-e46d7ce3cb2a/userScreen/" +
+                  user.id +
+                  ".png"
+                }
                 alt=""
                 width={1000}
                 height={1000}
