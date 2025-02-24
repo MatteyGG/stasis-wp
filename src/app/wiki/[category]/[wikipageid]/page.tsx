@@ -5,7 +5,7 @@ import Link from "next/link";
 import remarkGfm from "remark-gfm";
 import remarkToc from "remark-toc";
 import remarkFlexibleContainers from "remark-flexible-containers";
-import remarkYoutube from "remark-youtube";
+import remarkvideo from "remark-video";
 
 const options = {
   mdxOptions: {
@@ -13,7 +13,7 @@ const options = {
       remarkGfm,
       remarkToc,
       remarkFlexibleContainers,
-      remarkYoutube,
+      remarkvideo,
     ],
     rehypePlugins: [],
   },
