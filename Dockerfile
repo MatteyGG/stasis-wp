@@ -8,7 +8,7 @@ RUN apk add --no-cache openssl3   # or the equivalent OpenSSL package for your A
 
 RUN openssl version
 
-RUN npm i https://github.com/MatteyGG/remark-youtube-and-vk.git
+RUN npm install git
 
 RUN npm install
 
