@@ -8,8 +8,9 @@ RUN apk add --no-cache openssl3   # or the equivalent OpenSSL package for your A
 
 RUN openssl version
 
-RUN npm install git
-
+RUN apt-get update
+RUN apt-get install git
+RUN  git -v
 RUN npm install
 
 
