@@ -18,7 +18,6 @@ export default function WikiContainer({
       <section className="relative overflow-hidden">
         <Swiper
           modules={[Navigation, Pagination, Parallax]}
-
           spaceBetween={10}
           grabCursor={true}
           height={600}
@@ -32,12 +31,12 @@ export default function WikiContainer({
           }}
           navigation
           pagination={{ clickable: true }}
-          className="text-white relative"
+          className="text-white relative "
         >
           {card_array.map((card, index) => (
             <SwiperSlide
               key={card.pageId || index}
-              className="isolate relative overflow-visible z-40"
+              className="isolate relative overflow-visible z-40 min-h-[300px]"
             >
               <WikiCard
                 title={card.title ?? "Туториал"}

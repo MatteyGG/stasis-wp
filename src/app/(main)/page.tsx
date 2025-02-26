@@ -50,9 +50,6 @@ export default async function Home() {
   return (
     <>
       <div className="container shadow-2xl shadow-black mt-12 mx-auto flex flex-wrap p-4 rounded-xl ">
-        <h1 className=" text-6xl text-primaly text-center w-full my-6">
-          <b>Добро пожаловать в Стазис</b>
-        </h1>
         <div className="w-full ">
           {/* Блок с случайными wiki страницами */}
           <div className="w-full ">

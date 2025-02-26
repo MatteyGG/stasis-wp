@@ -1,5 +1,5 @@
 import { NextAuthConfig } from "next-auth";
-import NextAuth, { User } from "next-auth";
+import NextAuth, { User, Session } from "next-auth";
 import { encode as defaultEncode } from "next-auth/jwt";
 import Credentials from "next-auth/providers/credentials";
 import Discord from "next-auth/providers/discord";
@@ -13,6 +13,21 @@ import { compare } from "bcrypt-ts";
 import { v4 as uuid } from "uuid";
 
 import { PrismaAdapter } from "@auth/prisma-adapter";
+
+type ExtendedSession = Session & {
+  id: string;
+  email: string;
+  username: string;
+  role: string; // user or admin
+  rank: string;
+  army: string;
+  nation: string;
+  image: string;
+  created_at: Date;
+  approved: boolean;
+  gameID: number;
+  tgref: string;
+};
 
 const authConfig: NextAuthConfig = {
   adapter: PrismaAdapter(prisma),
@@ -68,6 +83,23 @@ const authConfig: NextAuthConfig = {
         token.credentials = true;
       }
       return token;
+    },
+    async session({ session, user, token }) {
+      if (token?.credentials) {
+        session.id = user.id;
+        session.email = user.email;
+        session.username = user.username;
+        session.role = user.role;
+        session.rank = user.rank;
+        session.army = user.army;
+        session.nation = user.nation;
+        session.image = user.image;
+        session.created_at = user.created_at;
+        session.approved = user.approved;
+        session.gameID = user.gameID;
+        session.tgref = user.tgref;
+      }
+      return session as ExtendedSession;
     },
   },
   jwt: {
