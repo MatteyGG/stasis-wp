@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { auth } from "../auth";
+import { auth } from "../../lib/auth";
 import SignOutButton from "./signoutButton";
 import DropdownButton from "./base/dropdownButton";
 import Image from "next/image";

@@ -5,7 +5,7 @@ import Main from "@/app/components/dashboard/main";
 import Tabs from "../components/tabs";
 import Manage_users from "../components/dashboard/manage";
 import PromoList from "../components/dashboard/promocode";
-import { auth } from "../auth";
+import { auth } from "../../lib/auth";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import CategoryList from "../components/dashboard/category";

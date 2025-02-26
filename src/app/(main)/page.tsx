@@ -1,4 +1,4 @@
-import { prisma } from "../prisma";
+import { prisma } from "../../lib/prisma";
 
 import Memberlist from "../components/members";
 import { ToastContainer } from "react-toastify";
