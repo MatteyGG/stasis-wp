@@ -5,11 +5,15 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import PromocodeItem from "../components/promocodes";
 import WikiContainer from "../components/wiki/wikicontainer";
+import C4Container from "../components/c4/c4container";
 
 
 export default async function Home() {
   const card_array = await prisma.wiki.findMany({
     where: { published: true },
+    orderBy: {
+      createdAt: "desc",
+    },
   });
   const leader = await prisma.user.findMany({
     where: {
@@ -110,11 +114,9 @@ export default async function Home() {
             {/* Блок с уведомлениями */}
             <div className="w-full  md:w-1/3 flex flex-col mt-4 items-center ">
               <h1 className="text-3xl ">
-                <b>Наши C4</b>
+                <b>Сражение</b>
               </h1>
-              <ul className=" list-inside">
-                <li>Нет новых сообщений</li>
-              </ul>
+              <C4Container serverName="STASIS" status="В процессе" players="12" map="Средиземное море" mapImage="/source/c4/cairo.png" />
             </div>
           </div>
         </div>

@@ -2,9 +2,8 @@
 
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination, Parallax } from "swiper/modules";
-import "swiper/css";
-import "swiper/css/navigation";
-import "swiper/css/pagination";
+import "../swiper-bundle.css";
+
 import WikiCard from "../wikicard";
 
 export default function WikiContainer({
@@ -36,7 +35,7 @@ export default function WikiContainer({
           {card_array.map((card, index) => (
             <SwiperSlide
               key={card.pageId || index}
-              className="isolate relative overflow-visible z-40 min-h-[300px]"
+              className="relative z-40 min-h-[300px]"
             >
               <WikiCard
                 title={card.title ?? "Туториал"}

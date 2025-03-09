@@ -21,10 +21,10 @@ const WikiCard = ({
 }: WikiCardProps) => {
   return (
     <Link
-      className="grid grid-cols-1 grid-rows-10 h-[300px] text-wrap w-full bg-primaly rounded-2xl p-2 "
+      className="z-5 grid grid-cols-1 grid-rows-10 h-[300px] text-wrap w-full bg-primaly rounded-2xl p-2 select-none"
       href={link}
     >
-      <span className="z-20 wikicard-category absolute text-white text-xs bg-primaly p-2 rounded-br-xl ">
+      <span className=" wikicard-category absolute text-white text-xs bg-primaly p-2 rounded-br-xl ">
         {category}
       </span>
       <Image
