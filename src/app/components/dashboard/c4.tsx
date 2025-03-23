@@ -1,33 +1,24 @@
 "use client";
 
-import React, { useState } from "react";
-import C4Container from "../c4/c4container";
+import React, { useEffect, useState } from "react";
+import C4Card from "../c4/c4Card";
+
+const maps = {"cairo" : "Каир", "newyork" : "Нью-Йорк", "moscow" : "Москва", "sea" : "Эгейское море", "vancouver" : "Ванкувер", "berlin" : "Берлин", "paris" : "Париж", "london" : "Лондон", "rome" : "Рим", "chicago":"Чикаго", "sanfrancisco" : "Сан-Франциско"};
 
 const C4Dashboard: React.FC = () => {
-  const [currentC4, setCurrentC4] = useState({
-    serverName: "Server 1",
-    status: "В процессе",
-    players: "64",
-    map: "Эгейское море",
-    mapImage: "/source/c4/cairo.png",
-  });
+  const [currentC4, setCurrentC4] = useState({ status: "", players: "", map: "", link: "" });
+
+  useEffect(() => {
+    fetch("/api/c4")
+      .then((res) => res.json())
+      .then((data) => setCurrentC4(data.c4));
+  }, []);
 
 
   return (
-    <div className="flex flex-col gap-3 justify-center">
-      <div className="flex flex-col gap-2">
-        <label>
-          Server Name
-          <input
-            type="text"
-            value={currentC4.serverName}
-            onChange={(e) =>
-              setCurrentC4({ ...currentC4, serverName: e.target.value })
-            }
-            className="p-2 border-2 rounded"
-          />
-        </label>
-        <label>
+    <div className="px-5 w-full  md:w-1/2 flex flex-col gap-3 justify-center">
+      <div className="flex flex-col justify-items-start gap-3">
+        <label className="flex justify-start">
           Status
           <input
             type="text"
@@ -35,10 +26,10 @@ const C4Dashboard: React.FC = () => {
             onChange={(e) =>
               setCurrentC4({ ...currentC4, status: e.target.value })
             }
-            className="p-2 border-2 rounded"
+            className="p-2 border-2 rounded ml-2"
           />
         </label>
-        <label>
+        <label className="flex justify-start">
           Players
           <input
             type="text"
@@ -46,34 +37,32 @@ const C4Dashboard: React.FC = () => {
             onChange={(e) =>
               setCurrentC4({ ...currentC4, players: e.target.value })
             }
-            className="p-2 border-2 rounded"
+            className="p-2 border-2 rounded ml-2"
           />
         </label>
-        <label>
+        <label className="flex justify-start">
           Map
-          <input
-            type="text"
+          <select
             value={currentC4.map}
             onChange={(e) =>
               setCurrentC4({ ...currentC4, map: e.target.value })
             }
-            className="p-2 border-2 rounded"
-          />
-        </label>
-        <label>
-          Map Image
-          <input
-            type="text"
-            value={currentC4.mapImage}
-            onChange={(e) =>
-              setCurrentC4({ ...currentC4, mapImage: e.target.value })
-            }
-            className="p-2 border-2 rounded"
-          />
+            className="p-2 border-2 rounded ml-2"
+          >
+            {Object.entries(maps).map(([key, value]) => (
+              <option value={key} key={key}>
+                {value}
+              </option>
+            ))}
+          </select>
         </label>
       </div>
-      <div className="flex justify-center">
-        <C4Container {...currentC4} />
+
+      <div className="flex flex-col place-items-center justify-center">
+        <C4Card {...currentC4} />
+        <button
+        className="p-2 border-2 rounded"
+        onClick={() => fetch("/api/c4", { method: "POST", body: JSON.stringify(currentC4) })}>Обновить</button>
       </div>
     </div>
   );

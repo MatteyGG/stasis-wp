@@ -49,8 +49,11 @@ export default async function Home() {
   const sortedPromocodes = [...promocodes.data].sort(
     (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
   );
-
   
+  const currentC4 = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/c4`)
+    .then((res) => res.json())
+    .then((data) => data.c4);
+
   return (
     <>
       <div className="container shadow-2xl shadow-black mt-12 mx-auto flex flex-wrap p-4 rounded-xl ">
@@ -116,7 +119,7 @@ export default async function Home() {
               <h1 className="text-3xl ">
                 <b>Сражение</b>
               </h1>
-              <C4Container serverName="STASIS" status="В процессе" players="12" map="Средиземное море" mapImage="/source/c4/cairo.png" />
+              <C4Container {...currentC4} />
             </div>
           </div>
         </div>

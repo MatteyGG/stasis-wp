@@ -1,19 +1,29 @@
-import Image from "next/image";
 import React from "react";
 
 interface C4CardProps {
-  serverName: string;
   status: string;
   players: string;
   map: string;
-  mapImage: string;
 }
+const maps = {
+  cairo: "Каир",
+  newyork: "Нью-Йорк",
+  moscow: "Москва",
+  sea: "Эгейское море",
+  vancouver: "Ванкувер",
+  berlin: "Берлин",
+  paris: "Париж",
+  london: "Лондон",
+  rome: "Рим",
+  chicago: "Чикаго",
+  sanfrancisco: "Сан-Франциско",
+};
 
-export default function C4Card({ serverName, status, players, map, mapImage }: C4CardProps) {
+export default function C4Card({  status, players, map }: C4CardProps) {
   return (
     <div
       className="serverCard rounded-md shadow-md shadow-black"
-      style={{ backgroundImage: `url(${mapImage})` }}
+      style={{ backgroundImage: `url(/source/c4/${map}.png)` }}
     >
       <div className=" fill-inherit  rounded-md">
         <div className="overlay"></div>
@@ -25,7 +35,7 @@ export default function C4Card({ serverName, status, players, map, mapImage }: C
             Игроки: <span>{players}</span>
           </p>
           <p className="map text-sm">
-            Карта: <span>{map}</span>
+            Карта: <span>{maps[map as keyof typeof maps]}</span>
           </p>
         </div>
 

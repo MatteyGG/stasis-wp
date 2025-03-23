@@ -9,19 +9,18 @@ export interface C4ContainerProps {
   mapImage: string;
 }
 
-export default function C4Container({serverName, status, players, map, mapImage}: C4ContainerProps) {
+export default function C4Container({ status, players, map}: C4ContainerProps) {
   
   return (
-    <div className="flex flex-col gap-3 justify-center">
-      <C4Card 
-        serverName={serverName} 
+    <div className=" flex flex-col  gap-3 justify-center">
+      <C4Card
         status={status} 
         players={players} 
         map={map} 
-        mapImage={mapImage} 
       />
     </div>
   );
 };
+
 
 
