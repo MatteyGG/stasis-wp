@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { auth } from "../../lib/auth";
+import { auth } from "../auth";
 import SignOutButton from "./signoutButton";
 import DropdownButton from "./base/dropdownButton";
 import Image from "next/image";
@@ -50,9 +50,9 @@ export default async function Navbar() {
             </li>
           </ul>
         </div>
-        <li className="z-50  absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
+        <li className="z-30 absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
           {session?.user ? (
-            <div className="relative  ml-3 space-x-1 items-center inline-flex">
+            <div className="relative ml-3 space-x-1 items-center inline-flex">
               <DropdownButton>
                 <Link href="/profile">Профиль</Link>
                 {session?.user.role.includes("admin") ? (

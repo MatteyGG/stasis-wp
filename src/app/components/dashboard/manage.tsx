@@ -1,4 +1,4 @@
-import { prisma } from "@/lib/prisma";
+import { prisma } from "@/app/prisma";
 import Image from "next/image";
 import AlertMake from "../alert/makeAlert";
 

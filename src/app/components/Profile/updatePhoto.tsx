@@ -14,7 +14,7 @@ export default function UpdatePhoto({
 }) {
   return (
     <>
-      <div className="mx-2 md:mx-48 grid grid-cols-1 md:grid-cols-2 gap-2">
+      <div className="mx-2 md:mx-12 grid grid-cols-1 md:grid-cols-2 gap-2">
         <div className="h-full">
           <h1>Фото вашей техники</h1>
           <div>
@@ -28,11 +28,6 @@ export default function UpdatePhoto({
               alt={username}
               width={700}
               height={700}
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              onError={(event: any) => {
-                event.target.id = "/source/help/army.png";
-                event.target.srcset = "/source/help/army.png";
-              }}
             />
             <UploadImage
               method="userScreen"
@@ -43,6 +38,18 @@ export default function UpdatePhoto({
             >
               Обновить
             </UploadImage>
+            <Image
+              className="w-full shadow-2xl border-8 border-t-0  shadow-black object-fill aspect-[3/2] rounded-3xl rounded-t-none"
+              src={"/source/help/army.png"}
+              alt={username}
+              width={700}
+              height={700}
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              onError={(event: any) => {
+                event.target.id = "/noimage.png";
+                event.target.srcset = "/noimage.png";
+              }}
+            />
           </div>
         </div>
         <div className="h-full">
@@ -60,8 +67,8 @@ export default function UpdatePhoto({
               height={700}
               // eslint-disable-next-line @typescript-eslint/no-explicit-any
               onError={(event: any) => {
-                event.target.id = "/source/help/profile.png";
-                event.target.srcset = "/source/help/profile.png";
+                event.target.id = "/noimage.png";
+                event.target.srcset = "/noimage.png";
               }}
             />
             <UploadImage
@@ -73,10 +80,19 @@ export default function UpdatePhoto({
             >
               Обновить
             </UploadImage>
+            <Image
+              className="w-full shadow-2xl border-8 border-t-0  shadow-black object-fill aspect-[3/2] rounded-3xl rounded-t-none"
+              src={"/source/help/profile.png"}
+              alt={username}
+              width={700}
+              height={700}
+            />
           </div>
         </div>
       </div>
-      <ToastContainer position="bottom-center" />
+      <ToastContainer
+      position="bottom-center" 
+      />
     </>
   );
 }

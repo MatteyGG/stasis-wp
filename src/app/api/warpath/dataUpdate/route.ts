@@ -1,4 +1,4 @@
-import { prisma } from "@/lib/prisma";
+import { prisma } from "@/app/prisma";
 
 import { NextResponse } from "next/server";
 interface Player {

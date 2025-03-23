@@ -1,5 +1,5 @@
 import { NextRequest } from "next/server";
-import { prisma } from "@/lib/prisma";
+import { prisma } from "@/app/prisma";
 
 export async function GET(req: NextRequest) {
   const pageid = req.url.split("/").pop();

@@ -222,7 +222,7 @@ export default function Userlist() {
                     </p>
                   )}
                 </div>
-                <div className="place-self-start p-2 py-0">
+                <div>
                   <button
                     className="inline-flex items-center bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-xl"
                     onClick={() => handleBan(user.gameID)}

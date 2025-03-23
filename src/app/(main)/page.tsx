@@ -1,19 +1,15 @@
-import { prisma } from "../../lib/prisma";
+import { prisma } from "../prisma";
 
 import Memberlist from "../components/members";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import PromocodeItem from "../components/promocodes";
 import WikiContainer from "../components/wiki/wikicontainer";
-import C4Container from "../components/c4/c4container";
 
 
 export default async function Home() {
   const card_array = await prisma.wiki.findMany({
     where: { published: true },
-    orderBy: {
-      createdAt: "desc",
-    },
   });
   const leader = await prisma.user.findMany({
     where: {
@@ -49,14 +45,14 @@ export default async function Home() {
   const sortedPromocodes = [...promocodes.data].sort(
     (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
   );
-  
-  const currentC4 = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/c4`)
-    .then((res) => res.json())
-    .then((data) => data.c4);
 
+  
   return (
     <>
       <div className="container shadow-2xl shadow-black mt-12 mx-auto flex flex-wrap p-4 rounded-xl ">
+        <h1 className=" text-6xl text-primaly text-center w-full my-6">
+          <b>Добро пожаловать в Стазис</b>
+        </h1>
         <div className="w-full ">
           {/* Блок с случайными wiki страницами */}
           <div className="w-full ">
@@ -117,9 +113,11 @@ export default async function Home() {
             {/* Блок с уведомлениями */}
             <div className="w-full  md:w-1/3 flex flex-col mt-4 items-center ">
               <h1 className="text-3xl ">
-                <b>Сражение</b>
+                <b>Наши C4</b>
               </h1>
-              <C4Container {...currentC4} />
+              <ul className=" list-inside">
+                <li>Нет новых сообщений</li>
+              </ul>
             </div>
           </div>
         </div>

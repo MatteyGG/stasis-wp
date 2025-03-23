@@ -5,11 +5,10 @@ import Main from "@/app/components/dashboard/main";
 import Tabs from "../components/tabs";
 import Manage_users from "../components/dashboard/manage";
 import PromoList from "../components/dashboard/promocode";
-import { auth } from "../../lib/auth";
+import { auth } from "../auth";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import CategoryList from "../components/dashboard/category";
-import C4Dashboard from "../components/dashboard/c4";
 
 const tabContents = [
   <Main key={0} />,
@@ -19,7 +18,6 @@ const tabContents = [
   <Manage_users key={4} />,
   <PromoList key={5} />,
   <CategoryList key={6} />,
-  <C4Dashboard key={7} />,
 ];
 
 export default async function Dashboard() {
@@ -42,7 +40,6 @@ export default async function Dashboard() {
             "Пользователи",
             "Промокоды",
             "Категории",
-            "C4",
           ]}
           tabContents={tabContents}
         />
