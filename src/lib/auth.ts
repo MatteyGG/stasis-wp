@@ -1,45 +1,38 @@
-import { NextAuthConfig } from "next-auth";
-import NextAuth, { User, Session } from "next-auth";
+import type { NextAuthConfig } from "next-auth";
+import NextAuth, { User } from "next-auth";
 import { encode as defaultEncode } from "next-auth/jwt";
 import Credentials from "next-auth/providers/credentials";
 import Discord from "next-auth/providers/discord";
-import Facebook from "next-auth/providers/facebook";
-import Github from "next-auth/providers/github";
-import Passkey from "next-auth/providers/passkey";
-import { prisma } from "./prisma";
-import { compare } from "bcrypt-ts";
-
-// Importing the v4 function from the 'uuid' package and aliasing it as 'uuid'
 import { v4 as uuid } from "uuid";
-
 import { PrismaAdapter } from "@auth/prisma-adapter";
+import { prisma } from "./prisma";
+import type { Adapter } from "next-auth/adapters";
+import { compare } from "bcrypt";
+import { Session } from "inspector/promises";
 
-type ExtendedSession = Session & {
-  id: string;
-  email: string;
-  username: string;
-  role: string; // user or admin
-  rank: string;
-  army: string;
-  nation: string;
-  image: string;
-  created_at: Date;
-  approved: boolean;
-  gameID: number;
-  tgref: string;
-};
+export type {
+  Account,
+  DefaultSession,
+  Profile,
+  Session,
+  User,
+} from "@auth/core/types";
+
+// The PrismaAdapter requires a PrismaClient instance, not an Adapter type.
+// We pass the prisma instance directly to the PrismaAdapter.
+const adapter = PrismaAdapter(prisma) as Adapter;
 
 const authConfig: NextAuthConfig = {
-  adapter: PrismaAdapter(prisma),
+  adapter,
   providers: [
-    Github({
-      clientId: process.env.GITHUB_ID!,
-      clientSecret: process.env.GITHUB_SECRET!,
-    }),
-    Facebook({
-      clientId: process.env.FACEBOOK_ID!,
-      clientSecret: process.env.FACEBOOK_SECRET!,
-    }),
+    // Github({
+    //   clientId: process.env.GITHUB_ID!,
+    //   clientSecret: process.env.GITHUB_SECRET!,
+    // }),
+    // Facebook({
+    //   clientId: process.env.FACEBOOK_ID!,
+    //   clientSecret: process.env.FACEBOOK_SECRET!,
+    // }),
     Discord({
       clientId: process.env.DISCORD_CLIENT_ID!,
       clientSecret: process.env.DISCORD_CLIENT_SECRET!,
@@ -62,7 +55,7 @@ const authConfig: NextAuthConfig = {
           return null;
         }
 
-        const isPasswordValid = await compare(password, user.password);
+        const isPasswordValid = compare(password, user.password);
 
         if (!isPasswordValid) {
           return null;
@@ -75,12 +68,12 @@ const authConfig: NextAuthConfig = {
         } as User;
       },
     }),
-    Passkey,
   ],
   callbacks: {
     async jwt({ token, user, account }) {
       if (account?.provider === "credentials") {
         token.credentials = true;
+        token.user = user;
       }
       return token;
     },
@@ -99,7 +92,7 @@ const authConfig: NextAuthConfig = {
         session.gameID = user.gameID;
         session.tgref = user.tgref;
       }
-      return session as ExtendedSession;
+      return session;
     },
   },
   jwt: {
@@ -111,12 +104,10 @@ const authConfig: NextAuthConfig = {
           throw new Error("No user ID found in token");
         }
 
-        const createdSession = await prisma.session.create({
-          data: {
-            sessionToken,
-            userId: params.token.sub,
-            expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days
-          },
+        const createdSession = await adapter?.createSession?.({
+          sessionToken: sessionToken,
+          userId: params.token.sub,
+          expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days
         });
 
         if (!createdSession) {
@@ -133,4 +124,3 @@ const authConfig: NextAuthConfig = {
 };
 
 export const { handlers, signIn, signOut, auth } = NextAuth(authConfig);
-

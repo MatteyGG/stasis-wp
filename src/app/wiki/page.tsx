@@ -1,4 +1,3 @@
-import WikiCard from "@/app/components/wikicard";
 import { prisma } from "../../lib/prisma";
 import Link from "next/link";
 import WikiContainer from "../components/wiki/wikicontainer";

@@ -3,7 +3,7 @@ import { useState } from "react";
 
 export default function UpdateNickname({ nickname, id }: { nickname: string, id: string }) {
   const [newNickname, setNewNickname] = useState(nickname);
-  const { data: session, update } = useSession();
+  const { data: session } = useSession();
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     try {
@@ -19,12 +19,16 @@ export default function UpdateNickname({ nickname, id }: { nickname: string, id:
       }
       const data = await response.json();
       console.log(data);
-      await update({
-        ...session,
-        username: newNickname,
-        army: session!.user.army,
-        nation: session!.user.nation,
-      });
+      if (session) {
+        await session.update({
+          ...session,
+          username: newNickname,
+          army: session.user?.army,
+          nation: session.user?.nation,
+        });
+      } else {
+        console.error("Session is undefined");
+      }
     } catch (error) {
       console.error("Error:", error);
     }
