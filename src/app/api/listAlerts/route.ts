@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { prisma } from "../../prisma";
+import { prisma } from "../../../lib/prisma";
 
 export async function GET() {
   const alerts_array = await prisma.alert.findMany();

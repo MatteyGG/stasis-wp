@@ -496,3 +496,54 @@ tbody {
 
 
 /* /Breadcrumb */
+
+.serverCard {
+  position: relative;
+  background-size: cover;
+  background-position: center;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  width: 300px;
+  text-align: center;
+  color: white;
+  overflow: hidden;
+}
+
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.4); /* Затемнение фона */
+  z-index: 1;
+}
+
+.serverCard h2,
+.serverCard p {
+  position: relative;
+  z-index: 2; /* Текст поверх затемнения */
+}
+
+.serverCard h2 {
+  margin: 0 0 10px;
+  font-size: 1.5em;
+}
+
+.serverCard p {
+  margin: 5px 0;
+}
+
+.status {
+  font-weight: bold;
+  color: #ffffff;
+}
+
+.players {
+  color: #00FF00;
+}
+
+.map {
+  color: #FFFFF0;
+}

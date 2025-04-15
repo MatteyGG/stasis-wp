@@ -1,4 +1,4 @@
-import { prisma } from "@/app/prisma";
+import { prisma } from "@/lib/prisma";
 import { MDXRemote } from "next-mdx-remote/rsc";
 
 import Link from "next/link";

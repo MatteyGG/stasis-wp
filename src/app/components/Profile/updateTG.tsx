@@ -65,13 +65,15 @@ export default function UpdateTGRef({
       const data = await response.json();
       console.log(data);
       notify("Новый Telegram-ник: @" + newTGRef.slice(1));
-      await update({
-        ...session,
-        tgref: newTGRef.slice(1),
-        username: session!.user.username,
-        army: session!.user.army,
-        nation: session!.user.nation,
-      });
+      if (session?.user) {
+        await update({
+          ...session,
+          tgref: newTGRef.slice(1),
+          username: session.user.username,
+          army: session.user.army,
+          nation: session.user.nation,
+        });
+      }
     } catch (error) {
       notifyError("Ошибка: " + error);
     }
