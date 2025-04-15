@@ -1,13 +1,6 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import NextAuth, { DefaultSession } from "next-auth";
 import "next-auth/jwt";
-export type {
-  Account,
-  DefaultSession,
-  Profile,
-  Session,
-  User,
-} from "@auth/core/types";
 
 declare module "next-auth/jwt" {
   interface JWT {
@@ -62,3 +55,4 @@ declare module "next-auth" {
     tgref: string;
   }
 }
+

@@ -1,4 +1,4 @@
-import type { NextAuthConfig } from "next-auth";
+import type { ExtendedSession, NextAuthConfig } from "next-auth";
 import NextAuth, { User } from "next-auth";
 import { encode as defaultEncode } from "next-auth/jwt";
 import Credentials from "next-auth/providers/credentials";
@@ -8,7 +8,6 @@ import { PrismaAdapter } from "@auth/prisma-adapter";
 import { prisma } from "./prisma";
 import type { Adapter } from "next-auth/adapters";
 import { compare } from "bcrypt";
-import { Session } from "inspector/promises";
 
 export type {
   Account,
@@ -18,8 +17,7 @@ export type {
   User,
 } from "@auth/core/types";
 
-// The PrismaAdapter requires a PrismaClient instance, not an Adapter type.
-// We pass the prisma instance directly to the PrismaAdapter.
+
 const adapter = PrismaAdapter(prisma) as Adapter;
 
 const authConfig: NextAuthConfig = {
@@ -44,10 +42,9 @@ const authConfig: NextAuthConfig = {
       },
       async authorize(credentials) {
         const { email, password } = credentials;
-
         const user = await prisma.user.findFirst({
           where: {
-            email,
+            email: email as string,
           },
         });
 
@@ -55,7 +52,7 @@ const authConfig: NextAuthConfig = {
           return null;
         }
 
-        const isPasswordValid = compare(password, user.password);
+        const isPasswordValid = typeof password === "string" && compare(password, user.password as string);
 
         if (!isPasswordValid) {
           return null;
@@ -86,13 +83,12 @@ const authConfig: NextAuthConfig = {
         session.rank = user.rank;
         session.army = user.army;
         session.nation = user.nation;
-        session.image = user.image;
         session.created_at = user.created_at;
         session.approved = user.approved;
         session.gameID = user.gameID;
         session.tgref = user.tgref;
       }
-      return session;
+      return session as ExtendedSession;
     },
   },
   jwt: {
