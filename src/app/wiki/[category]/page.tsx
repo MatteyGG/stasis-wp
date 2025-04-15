@@ -1,5 +1,5 @@
 import WikiCard from "@/app/components/wikicard";
-import { prisma } from "@/lib/prisma";
+import { prisma } from "@/app/prisma";
 import Link from "next/link";
 
 export default async function Wiki_category({

@@ -92,15 +92,6 @@ model Wiki {
   createdAt DateTime @default(now())
 }
 
-model C4 {
-  id        Int      @id @default(autoincrement())
-  map       String   
-  status    String
-  players   String
-  link      String?  
-  createdAt DateTime @default(now())
-}
-
 model Alert {
   id        Int      @id @default(autoincrement())
   userId    String

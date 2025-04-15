@@ -1,6 +1,6 @@
 
 import WikiCard from "@/app/components/wikicard";
-import { prisma } from "../../lib/prisma";
+import { prisma } from "../prisma";
 
 export default async function WikiEXample() {
   const card_array = await prisma.wiki.findMany({
