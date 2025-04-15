@@ -46,7 +46,7 @@ export default function UpdateTech({
       await update(
         {
           ...session,
-          username: session?.user.username,
+          username: session?.user?.username ?? "",
           army: newArmy,
           nation: newNation,
         }

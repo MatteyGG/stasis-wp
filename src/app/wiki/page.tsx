@@ -1,5 +1,9 @@
+<<<<<<< HEAD
+import { prisma } from "../../lib/prisma";
+=======
 import WikiCard from "@/app/components/wikicard";
 import { prisma } from "../prisma";
+>>>>>>> 0ef83df0358dc61862fc173358519aebe5767674
 import Link from "next/link";
 
 export default async function WikiMain() {
