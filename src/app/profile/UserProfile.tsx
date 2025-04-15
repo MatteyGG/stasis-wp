@@ -29,12 +29,9 @@ export default function UserProfile() {
   useEffect(() => {
     (async () => {
       try {
-        const response = await fetch(
-          `/api/alerts/${session?.user?.id || ""}`,
-          {
-            method: "GET",
-          }
-        );
+        const response = await fetch(`/api/alerts/${session?.user.id}`, {
+          method: "GET",
+        });
         if (response) {
           const data = await response.json();
           setAlerts(data);
@@ -49,23 +46,19 @@ export default function UserProfile() {
     return <div>Loading...</div>;
   }
 
-  if (!session || !session.user) {
-    return <div>Session not found</div>;
-  }
-
   const tabContents = [
     <Profile session={session} status={status} alerts_array={alerts} key={0} />,
     <HistoryAlerts alerts_array={alerts} key={1} />,
     <UpdatePhoto
-      userId={session.user.id!}
-      username={session.user.username!}
+      userId={session!.user.id}
+      username={session!.user.username!.toString()}
       key={2}
     />,
-    <UpdateTGRef tgref={session.user.tgref} id={session.user.id!} key={3} />,
+    <UpdateTGRef tgref={session!.user.tgref} id={session!.user.id} key={3} />,
     <UpdateTech
-      nation={session.user.nation}
-      army={session.user.army}
-      id={session.user.id!}
+      nation={session!.user.nation}
+      army={session!.user.army}
+      id={session!.user.id}
       key={4}
     />,
     <ResetPass key={5} />,
@@ -83,8 +76,7 @@ export default function UserProfile() {
         ]}
         tabContents={tabContents}
       />
+      
     </>
   );
 }
-
-
