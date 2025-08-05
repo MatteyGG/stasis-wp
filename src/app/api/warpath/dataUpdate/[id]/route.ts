@@ -18,6 +18,7 @@ interface Player {
   sumkill: number;
   onSite: boolean;
 }
+
 export async function POST(req: NextRequest) {
   const userId = req.url.split("/").pop();
 
@@ -25,7 +26,7 @@ export async function POST(req: NextRequest) {
   const response = await fetch(url);
   if (response) {
     const data = await response.json();
-    const player = data.Data.map((player: Player) =>
+    const player = data.Data.filter((player: Player) => player.gnick === "ST").map((player: Player) =>
       prisma.serverUser.upsert({
         where: { id: Number(userId) },
         update: {
@@ -62,19 +63,18 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Failed to fetch data" });
   }
 }
+
 export async function GET(req: NextRequest) {
   const userId = req.url.split("/").pop();
 
   try {
     const player = await prisma.serverUser.findFirst({
-      where: { id: Number(userId) },
+      where: { id: Number(userId), ally: "ST" },
     });
-     return NextResponse.json(player);
+    return NextResponse.json(player);
   } catch (error) {
     console.log(error);
     return NextResponse.json({ error: "Failed to fetch data" });
   }
-
 }
-
 

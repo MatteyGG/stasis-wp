@@ -10,6 +10,8 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import CategoryList from "../components/dashboard/category";
 import C4Dashboard from "../components/dashboard/c4";
+import C4ManagerDashboard from "../components/dashboard/manage_c4";
+import PlayersLeaderboard from "../components/dashboard/leaderboardPlayers";
 
 const tabContents = [
   <Main key={0} />,
@@ -20,6 +22,8 @@ const tabContents = [
   <PromoList key={5} />,
   <CategoryList key={6} />,
   <C4Dashboard key={7} />,
+  <C4ManagerDashboard key={8} />,
+  <PlayersLeaderboard key={9} />,
 ];
 
 export default async function Dashboard() {
@@ -43,6 +47,8 @@ export default async function Dashboard() {
             "Промокоды",
             "Категории",
             "C4",
+            "New C4",
+            "Игроки",
           ]}
           tabContents={tabContents}
         />
