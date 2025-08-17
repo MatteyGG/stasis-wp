@@ -92,13 +92,48 @@ model Wiki {
   createdAt DateTime @default(now())
 }
 
+model Player {
+  id        Int       @id
+  ally      String
+  username  String
+  TownHall  Int
+  power     Int
+  kill      Int
+  die       Int
+  kd        Float
+  onSite    Boolean   @default(false)
+
+  //snapshots PlayerSnapshot[]
+}
+
+model PlayerSnapshot {
+  id         Int      @id @default(autoincrement())
+  playerId   Int
+  c4Id       Int
+  ally       String
+  username   String
+  TownHall   Int
+  power      Int
+  kill       Int
+  die        Int
+  kd         Float
+  snapshotAt DateTime @default(now())
+
+  //player Player @relation(fields: [playerId], references: [id], onDelete: Cascade)
+  c4     C4     @relation(fields: [c4Id], references: [id])
+}
+
 model C4 {
   id        Int      @id @default(autoincrement())
-  map       String   
-  status    String
-  players   String
-  link      String?  
+  map       String
+  status    String   @default("active") // pending | active | finished
+  players   String?
+  link      String?
+  startedAt DateTime?
+  endedAt   DateTime?
   createdAt DateTime @default(now())
+
+  stats PlayerSnapshot[]
 }
 
 model Alert {
@@ -125,17 +160,7 @@ model Guild {
   updatedAt DateTime
 }
 
-model serverUser {
-  id       Int     @id
-  ally     String
-  username String
-  TownHall Int
-  power    Int
-  kill     Int
-  die      Int
-  kd       Float
-  onSite   Boolean
-}
+
 // Optional for WebAuthn support
 model Authenticator {
   credentialID         String  @unique

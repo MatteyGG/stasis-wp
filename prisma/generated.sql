@@ -28,6 +28,34 @@ CREATE TABLE "Alert" (
 );
 
 -- CreateTable
+CREATE TABLE "Authenticator" (
+    "credentialID" TEXT NOT NULL,
+    "userId" TEXT NOT NULL,
+    "providerAccountId" TEXT NOT NULL,
+    "credentialPublicKey" TEXT NOT NULL,
+    "counter" INTEGER NOT NULL,
+    "credentialDeviceType" TEXT NOT NULL,
+    "credentialBackedUp" BOOLEAN NOT NULL,
+    "transports" TEXT,
+
+    CONSTRAINT "Authenticator_pkey" PRIMARY KEY ("userId","credentialID")
+);
+
+-- CreateTable
+CREATE TABLE "C4" (
+    "id" SERIAL NOT NULL,
+    "map" TEXT NOT NULL,
+    "status" TEXT NOT NULL DEFAULT 'active',
+    "players" TEXT,
+    "link" TEXT,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "endedAt" TIMESTAMP(3),
+    "startedAt" TIMESTAMP(3),
+
+    CONSTRAINT "C4_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "Guild" (
     "id" INTEGER NOT NULL DEFAULT 1,
     "power" BIGINT NOT NULL,
@@ -46,6 +74,38 @@ CREATE TABLE "Image" (
     "userId" TEXT NOT NULL,
 
     CONSTRAINT "Image_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "Player" (
+    "id" INTEGER NOT NULL,
+    "ally" TEXT NOT NULL,
+    "username" TEXT NOT NULL,
+    "TownHall" INTEGER NOT NULL,
+    "power" INTEGER NOT NULL,
+    "kill" INTEGER NOT NULL,
+    "die" INTEGER NOT NULL,
+    "kd" DOUBLE PRECISION NOT NULL,
+    "onSite" BOOLEAN NOT NULL DEFAULT false,
+
+    CONSTRAINT "Player_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "PlayerSnapshot" (
+    "id" SERIAL NOT NULL,
+    "playerId" INTEGER NOT NULL,
+    "c4Id" INTEGER NOT NULL,
+    "ally" TEXT NOT NULL,
+    "username" TEXT NOT NULL,
+    "TownHall" INTEGER NOT NULL,
+    "power" INTEGER NOT NULL,
+    "kill" INTEGER NOT NULL,
+    "die" INTEGER NOT NULL,
+    "kd" DOUBLE PRECISION NOT NULL,
+    "snapshotAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "PlayerSnapshot_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -119,23 +179,11 @@ CREATE TABLE "Wikicategory" (
     CONSTRAINT "Wikicategory_pkey" PRIMARY KEY ("id")
 );
 
--- CreateTable
-CREATE TABLE "serverUser" (
-    "id" INTEGER NOT NULL,
-    "TownHall" INTEGER NOT NULL,
-    "kill" INTEGER NOT NULL,
-    "die" INTEGER NOT NULL,
-    "onSite" BOOLEAN NOT NULL,
-    "username" TEXT NOT NULL,
-    "power" INTEGER NOT NULL,
-    "kd" DOUBLE PRECISION NOT NULL,
-    "ally" TEXT NOT NULL,
-
-    CONSTRAINT "serverUser_pkey" PRIMARY KEY ("id")
-);
-
 -- CreateIndex
 CREATE UNIQUE INDEX "Account_provider_providerAccountId_key" ON "Account"("provider" ASC, "providerAccountId" ASC);
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Authenticator_credentialID_key" ON "Authenticator"("credentialID" ASC);
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Session_sessionToken_key" ON "Session"("sessionToken" ASC);
@@ -165,7 +213,13 @@ ALTER TABLE "Account" ADD CONSTRAINT "Account_userId_fkey" FOREIGN KEY ("userId"
 ALTER TABLE "Alert" ADD CONSTRAINT "Alert_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE "Authenticator" ADD CONSTRAINT "Authenticator_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "Image" ADD CONSTRAINT "Image_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "PlayerSnapshot" ADD CONSTRAINT "PlayerSnapshot_c4Id_fkey" FOREIGN KEY ("c4Id") REFERENCES "C4"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Session" ADD CONSTRAINT "Session_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;

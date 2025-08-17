@@ -9,7 +9,6 @@ import { auth } from "../../lib/auth";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import CategoryList from "../components/dashboard/category";
-import C4Dashboard from "../components/dashboard/c4";
 import C4ManagerDashboard from "../components/dashboard/manage_c4";
 import PlayersLeaderboard from "../components/dashboard/leaderboardPlayers";
 
@@ -21,10 +20,12 @@ const tabContents = [
   <Manage_users key={4} />,
   <PromoList key={5} />,
   <CategoryList key={6} />,
-  <C4Dashboard key={7} />,
-  <C4ManagerDashboard key={8} />,
-  <PlayersLeaderboard key={9} />,
+  <C4ManagerDashboard key={7} />,
+  <PlayersLeaderboard key={8} />,
+
 ];
+
+
 
 export default async function Dashboard() {
   const session = await auth();
@@ -46,7 +47,6 @@ export default async function Dashboard() {
             "Пользователи",
             "Промокоды",
             "Категории",
-            "C4",
             "New C4",
             "Игроки",
           ]}

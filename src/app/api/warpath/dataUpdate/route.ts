@@ -51,7 +51,7 @@ export async function GET() {
     }));
 
     const upserts = players.map((player:any) =>
-      prisma.serverUser.upsert({
+      prisma.player.upsert({
         where: { id: player.id },
         update: {
           username: player.nick || "",
