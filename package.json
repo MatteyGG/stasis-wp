@@ -22,8 +22,11 @@
     "aws-sdk": "^2.1692.0",
     "bcrypt": "^5.1.1",
     "bcrypt-ts": "^5.0.2",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
     "dotenv": "^16.4.5",
     "jodit-react": "^4.1.2",
+    "lucide-react": "^0.540.0",
     "multer": "^1.4.5-lts.1",
     "next": "14.2.13",
     "next-auth": "^5.0.0-beta.22",
@@ -38,7 +41,9 @@
     "remark-gfm": "^4.0.0",
     "remark-toc": "^9.0.0",
     "remark-video": "github:MatteyGG/remark-youtube-and-vk",
-    "swiper": "^11.2.4"
+    "swiper": "^11.2.4",
+    "tailwind-merge": "^3.3.1",
+    "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
     "@tailwindcss/typography": "^0.5.15",

@@ -1,15 +1,6 @@
+import { lastDate } from "@/lib/getDate";
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
-
-interface WarpathPlayer {
-  pid: number;
-  nick: string;
-  gnick: string;
-  lv: number;
-  maxpower: number;
-  sumkill: number;
-  die: number;
-}
 
 export async function POST() {
   const activeC4 = await prisma.c4.findFirst({
@@ -22,10 +13,7 @@ export async function POST() {
   }
 
   try {
-    // Получаем свежие данные с Warpath API
-    const today = new Date();
-    const twoDaysBefore = new Date(today.setDate(today.getDate() - 2));
-    const date = twoDaysBefore.toISOString().split("T")[0].replace(/-/g, "");
+        const date = await lastDate();
     const url = `https://yx.dmzgame.com/intl_warpath/rank_pid?day=${date}&wid=130&ccid=0&rank=power&is_benfu=1&is_quanfu=0&page=1&perPage=3000`;
     
     const response = await fetch(url);
@@ -33,11 +21,12 @@ export async function POST() {
     
     const data = await response.json();
     
-    // Фильтруем только игроков ST
+    // Фильтрация игроков нужного альянса
+    const targetAlliance = "ST";
     const stPlayers = data.Data
-      .filter((p: WarpathPlayer) => p.gnick === "ST")
-      .map((p: WarpathPlayer) => ({
-        id: p.pid,
+      .filter((p: any) => p.gnick === targetAlliance)
+      .map((p: any) => ({
+        warpathId: p.pid,
         username: p.nick,
         ally: p.gnick,
         TownHall: p.lv,
@@ -46,6 +35,26 @@ export async function POST() {
         die: p.die,
         kd: parseFloat((p.sumkill / (p.die || 1)).toFixed(2)),
       }));
+         // Создаем финальные снапшоты
+    const snapshots = await Promise.all(stPlayers.map(async (player) => {
+      const existingPlayer = await prisma.player.findUnique({
+        where: { warpathId: player.warpathId }
+      });
+
+      return prisma.playerSnapshot.create({
+        data: {
+          warpathId: player.warpathId,
+          playerId: existingPlayer?.id || null,
+          username: player.username,
+          c4Id: activeC4.id,
+          TownHall: player.TownHall,
+          power: player.power,
+          kill: player.kill,
+          die: player.die,
+          kd: player.kd,
+        }
+      });
+    }));
 
     // Обновляем статус C4
     const finishedC4 = await prisma.c4.update({
@@ -56,20 +65,7 @@ export async function POST() {
       },
     });
 
-    // Создаем финальные снапшоты
-    const snapshots = stPlayers.map(player => 
-      prisma.playerSnapshot.create({
-        data: {
-          ...player,
-          c4Id: finishedC4.id,
-          playerId: player.id,
-        }
-      })
-    );
-
-    await Promise.all(snapshots);
-
-    return NextResponse.json(finishedC4);
+    return NextResponse.json({ ...finishedC4, snapshotsCount: snapshots.length });
   } catch (error: any) {
     return NextResponse.json(
       { error: "Failed to finish C4: " + error.message },

@@ -93,9 +93,10 @@ model Wiki {
 }
 
 model Player {
-  id        Int       @id
-  ally      String
+  id        String    @id @default(cuid())
+  warpathId Int?      @unique // Идентификатор из Warpath API
   username  String
+  ally      String?
   TownHall  Int
   power     Int
   kill      Int
@@ -103,15 +104,15 @@ model Player {
   kd        Float
   onSite    Boolean   @default(false)
 
-  //snapshots PlayerSnapshot[]
+  snapshots PlayerSnapshot[]
 }
 
 model PlayerSnapshot {
-  id         Int      @id @default(autoincrement())
-  playerId   Int
-  c4Id       Int
-  ally       String
-  username   String
+  id         String   @id @default(cuid())
+  warpathId  Int      // Сохраняем исходный ID из API
+  username   String   @default("NoNick")
+  playerId   String?  // Может быть null, если игрок не зарегистрирован
+  c4Id       String
   TownHall   Int
   power      Int
   kill       Int
@@ -119,16 +120,17 @@ model PlayerSnapshot {
   kd         Float
   snapshotAt DateTime @default(now())
 
-  //player Player @relation(fields: [playerId], references: [id], onDelete: Cascade)
-  c4     C4     @relation(fields: [c4Id], references: [id])
+  player Player? @relation(fields: [playerId], references: [id])
+  c4     C4      @relation(fields: [c4Id], references: [id])
+  
+  @@index([warpathId])
+  @@index([playerId])
 }
 
 model C4 {
-  id        Int      @id @default(autoincrement())
+  id        String   @id @default(cuid())
   map       String
-  status    String   @default("active") // pending | active | finished
-  players   String?
-  link      String?
+  status    String   @default("active")
   startedAt DateTime?
   endedAt   DateTime?
   createdAt DateTime @default(now())

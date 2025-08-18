@@ -50,7 +50,7 @@ export default async function Home() {
     (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
   );
   
-  const currentC4 = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/c4`)
+  const currentC4 = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/c4/current`)
     .then((res) => res.json())
     .then((data) => data.c4);
 

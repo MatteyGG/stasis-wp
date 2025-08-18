@@ -38,7 +38,7 @@ export async function POST(req: Request) {
     try
     {
       await prisma.player.update({
-        where: { id: Number(gameID) },
+        where: { id: gameID },
         data: {
           onSite: true
         }
