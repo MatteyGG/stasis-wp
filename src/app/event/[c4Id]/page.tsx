@@ -1,105 +1,219 @@
-// app/c4/[c4Id]/page.tsx
-import React from "react";
 import { prisma } from "@/lib/prisma";
-import C4StatsTable from "@/app/components/C4StatsTable";
+import { notFound } from "next/navigation";
+import Link from "next/link";
 
 
-interface C4StatsPageProps {
-  params: { c4Id: string };
-}
+export default async function C4StatsPage({ params } : { params: { c4id: string } }) {
+  console.log(params.c4id);
 
-export default async function C4StatsPage({ params }: C4StatsPageProps) {
-  const c4Event = await prisma.c4.findUnique({
-    where: { id: params.c4Id },
+  // Получаем данные C4 и статистику
+  const c4 = await prisma.c4.findUnique({
+    where: { id: params.c4id },
     include: {
-      stats: {
+      statistics: {
         include: {
-          player: true
-        }
+          player: true,
+        },
+        orderBy: [
+          { powerGain: "desc" },
+          { killGain: "desc" }
+        ]
       }
     }
   });
 
-  if (!c4Event) {
-    return <div>Событие не найдено</div>;
+  if (!c4) {
+    notFound();
   }
 
-  // Формируем данные для таблиц
-  const statsData = c4Event.stats.map(s => ({
-    id: s.id,
-    warpathId: s.warpathId,
-    username: s.username, // Используем ник из снапшота
-    TownHall: s.TownHall,
-    power: s.power,
-    kill: s.kill,
-    die: s.die,
-    kd: s.kd
-  }));
+  // Остальной код остается без изменений...
+  // Форматируем даты
+  const startedAt = new Date(c4.startedAt).toLocaleString('ru-RU');
+  const endedAt = c4.endedAt ? new Date(c4.endedAt).toLocaleString('ru-RU') : 'Не завершено';
+  const duration = c4.endedAt 
+    ? `${((new Date(c4.endedAt).getTime() - new Date(c4.startedAt).getTime()) / 3600000).toFixed(1)} часов`
+    : 'В процессе';
+
+  // Карты для отображения
+  const maps = {
+    cairo: "Каир",
+    newyork: "Нью-Йорк",
+    moscow: "Москва",
+    sea: "Эгейское море",
+    vancouver: "Ванкувер",
+    berlin: "Берлин",
+    paris: "Париж",
+    london: "Лондон",
+    rome: "Рим",
+    chicago: "Чикаго",
+    sanfrancisco: "Сан-Франциско",
+  };
 
   return (
-    <div className="max-w-6xl mx-auto py-8 px-4">
-      <h1 className="text-2xl font-bold mb-6">
-        Статистика завоевания: {c4Event.map}
-      </h1>
-      
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div className="bg-white rounded-lg shadow p-4">
-          <h3 className="font-medium mb-2">Общая информация</h3>
-          <p>Начало: {new Date(c4Event.startedAt).toLocaleString()}</p>
-          <p>Окончание: {c4Event.endedAt ? 
-            new Date(c4Event.endedAt).toLocaleString() : "В процессе"}</p>
-          <p>Участников: {c4Event.stats.length}</p>
+    <div className="container mx-auto px-4 py-8 max-w-6xl">
+      {/* Хлебные крошки */}
+      <nav className="mb-6">
+        <Link href="/manage-c4" className="text-blue-500 hover:text-blue-700">
+          ← Назад к управлению C4
+        </Link>
+      </nav>
+
+      {/* Заголовок */}
+      <div className="bg-white rounded-lg shadow p-6 mb-6">
+        <div className="flex items-center justify-between mb-4">
+          <h1 className="text-2xl font-bold">
+            Статистика завоевания: {maps[c4.map as keyof typeof maps] || c4.map}
+          </h1>
+          <span className={`px-3 py-1 rounded text-sm font-medium ${
+            c4.status === 'active' 
+              ? 'bg-green-100 text-green-800' 
+              : 'bg-gray-100 text-gray-800'
+          }`}>
+            {c4.status === 'active' ? 'Активно' : 'Завершено'}
+          </span>
         </div>
-        
-        <div className="bg-white rounded-lg shadow p-4">
-          <h3 className="font-medium mb-2">Альянсы</h3>
-          {/* Топ альянсов по количеству участников */}
-          {Array.from(
-            new Map(statsData.map(s => [s.ally, statsData.filter(p => p.ally === s.ally).length]))
-            .entries()
-          )
-          .sort((a, b) => b[1] - a[1])
-          .slice(0, 3)
-          .map(([ally, count]) => (
-            <p key={ally}>{ally}: {count} игроков</p>
-          ))}
+
+        {/* Общая информация */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+          <div className="bg-gray-50 p-4 rounded">
+            <p className="text-gray-600 text-sm">Начато</p>
+            <p className="font-medium">{startedAt}</p>
+          </div>
+          <div className="bg-gray-50 p-4 rounded">
+            <p className="text-gray-600 text-sm">Завершено</p>
+            <p className="font-medium">{endedAt}</p>
+          </div>
+          <div className="bg-gray-50 p-4 rounded">
+            <p className="text-gray-600 text-sm">Длительность</p>
+            <p className="font-medium">{duration}</p>
+          </div>
+          <div className="bg-gray-50 p-4 rounded">
+            <p className="text-gray-600 text-sm">Участников</p>
+            <p className="font-medium">{c4.totalPlayers || c4.statistics.length}</p>
+          </div>
         </div>
-        
-        <div className="bg-white rounded-lg shadow p-4">
-          <h3 className="font-medium mb-2">Средние показатели</h3>
-          <p>Сила: {(statsData.reduce((sum, p) => sum + p.power, 0) / statsData.length).toLocaleString()}</p>
-          <p>Убийства: {(statsData.reduce((sum, p) => sum + p.kill, 0) / statsData.length).toFixed(1)}</p>
-          <p>К/Д: {(statsData.reduce((sum, p) => sum + p.kd, 0) / statsData.length).toFixed(2)}</p>
-        </div>
+
+        {/* Агрегированная статистика */}
+        {c4.status === 'finished' && (
+          <div className="bg-blue-50 p-4 rounded border border-blue-200">
+            <h2 className="text-lg font-semibold mb-3 text-blue-800">Общая статистика</h2>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div>
+                <p className="text-blue-600 text-sm">Средний прирост силы</p>
+                <p className="font-medium text-blue-800">
+                  {c4.avgPowerGain ? Math.round(c4.avgPowerGain).toLocaleString() : 0}
+                </p>
+              </div>
+              <div>
+                <p className="text-blue-600 text-sm">Средний прирост убийств</p>
+                <p className="font-medium text-blue-800">
+                  {c4.avgKillGain ? Math.round(c4.avgKillGain) : 0}
+                </p>
+              </div>
+              <div>
+                <p className="text-blue-600 text-sm">Средний прирост смертей</p>
+                <p className="font-medium text-blue-800">
+                  {c4.avgDieGain ? Math.round(c4.avgDieGain) : 0}
+                </p>
+              </div>
+              <div>
+                <p className="text-blue-600 text-sm">Средний прирост K/D</p>
+                <p className="font-medium text-blue-800">
+                  {c4.avgKdGain ? c4.avgKdGain.toFixed(2) : 0}
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
-      
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <C4StatsTable
-          snapshots={statsData} 
-          title="Топ по силе" 
-          sortField="power" 
-        />
+
+      {/* Таблица статистики игроков */}
+      <div className="bg-white rounded-lg shadow overflow-hidden">
+        <h2 className="text-xl font-semibold p-6 border-b">Статистика игроков</h2>
         
-        <C4StatsTable 
-          snapshots={statsData} 
-          title="Топ по убийствам" 
-          sortField="kill" 
-        />
-        
-        <C4StatsTable 
-          snapshots={statsData} 
-          title="Топ по К/Д" 
-          sortField="kd" 
-        />
-      </div>
-      
-      <div className="mt-8">
-        <h2 className="text-xl font-semibold mb-4">Полная статистика</h2>
-        <C4StatsTable 
-          snapshots={statsData} 
-          title="Все участники" 
-          sortField="power" 
-        />
+        <div className="overflow-x-auto">
+          <table className="min-w-full divide-y divide-gray-200">
+            <thead className="bg-gray-50">
+              <tr>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Игрок
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Начальная сила
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Прирост силы
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Прирост убийств
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Прирост смертей
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Прирост K/D
+                </th>
+              </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {c4.statistics.map((stat, index) => (
+                <tr key={stat.id} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="flex items-center">
+                      <div className="ml-4">
+                        <div className="text-sm font-medium text-gray-900">
+                          {stat.player?.username || `ID: ${stat.warpathId}`}
+                        </div>
+                        {stat.player?.ally && (
+                          <div className="text-sm text-gray-500">
+                            {stat.player.ally}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    {stat.startPower.toLocaleString()}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm">
+                    <span className={`font-medium ${
+                      (stat.powerGain || 0) >= 0 ? 'text-green-600' : 'text-red-600'
+                    }`}>
+                      {stat.powerGain ? (stat.powerGain >= 0 ? '+' : '') + stat.powerGain : 'N/A'}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm">
+                    <span className={`font-medium ${
+                      (stat.killGain || 0) >= 0 ? 'text-green-600' : 'text-red-600'
+                    }`}>
+                      {stat.killGain ? (stat.killGain >= 0 ? '+' : '') + stat.killGain : 'N/A'}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm">
+                    <span className={`font-medium ${
+                      (stat.dieGain || 0) >= 0 ? 'text-red-600' : 'text-green-600'
+                    }`}>
+                      {stat.dieGain ? (stat.dieGain >= 0 ? '+' : '') + stat.dieGain : 'N/A'}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm">
+                    <span className={`font-medium ${
+                      (stat.kdGain || 0) >= 0 ? 'text-green-600' : 'text-red-600'
+                    }`}>
+                      {stat.kdGain ? (stat.kdGain >= 0 ? '+' : '') + stat.kdGain.toFixed(2) : 'N/A'}
+                    </span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        {c4.statistics.length === 0 && (
+          <div className="text-center py-8 text-gray-500">
+            Нет данных статистики для этого события C4
+          </div>
+        )}
       </div>
     </div>
   );

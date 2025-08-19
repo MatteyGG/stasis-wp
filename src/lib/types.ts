@@ -16,6 +16,7 @@ export interface C4 {
   avgKillGain?: number;
   avgDieGain?: number;
   avgKdGain?: number;
+  statistics?: C4Statistic[];
 }
 
 export interface PlayerSnapshot {
@@ -29,6 +30,35 @@ export interface PlayerSnapshot {
   die: number;
   kd: number;
   snapshotAt: Date;
+}
+
+export interface C4Statistic {
+  id: string;
+  c4Id: string;
+  playerId: string | null;
+  username: string;
+  warpathId: number;
+  startPower: number;
+  startKill: number;
+  startDie: number;
+  startKd: number;
+  powerGain: number | null;
+  killGain: number | null;
+  dieGain: number | null;
+  kdGain: number | null;
+  player?: Player;
+}
+
+export interface Player {
+  id: string;
+  warpathId: number | null;
+  username: string;
+  ally: string | null;
+  power: number;
+  kill: number;
+  die: number;
+  kd: number;
+  onSite: boolean;
 }
 
 // Тип для игрока с Warpath API
