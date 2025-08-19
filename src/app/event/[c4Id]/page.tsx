@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 
 
-export default async function C4StatsPage({ params } : { params: { c4id: string } }) {
+export default async function C4StatsPage({ params }: { params: { c4id: string } }) {
   console.log(params.c4id);
 
   // Получаем данные C4 и статистику
@@ -30,7 +30,7 @@ export default async function C4StatsPage({ params } : { params: { c4id: string 
   // Форматируем даты
   const startedAt = new Date(c4.startedAt).toLocaleString('ru-RU');
   const endedAt = c4.endedAt ? new Date(c4.endedAt).toLocaleString('ru-RU') : 'Не завершено';
-  const duration = c4.endedAt 
+  const duration = c4.endedAt
     ? `${((new Date(c4.endedAt).getTime() - new Date(c4.startedAt).getTime()) / 3600000).toFixed(1)} часов`
     : 'В процессе';
 
@@ -64,11 +64,10 @@ export default async function C4StatsPage({ params } : { params: { c4id: string 
           <h1 className="text-2xl font-bold">
             Статистика завоевания: {maps[c4.map as keyof typeof maps] || c4.map}
           </h1>
-          <span className={`px-3 py-1 rounded text-sm font-medium ${
-            c4.status === 'active' 
-              ? 'bg-green-100 text-green-800' 
+          <span className={`px-3 py-1 rounded text-sm font-medium ${c4.status === 'active'
+              ? 'bg-green-100 text-green-800'
               : 'bg-gray-100 text-gray-800'
-          }`}>
+            }`}>
             {c4.status === 'active' ? 'Активно' : 'Завершено'}
           </span>
         </div>
@@ -130,11 +129,14 @@ export default async function C4StatsPage({ params } : { params: { c4id: string 
       {/* Таблица статистики игроков */}
       <div className="bg-white rounded-lg shadow overflow-hidden">
         <h2 className="text-xl font-semibold p-6 border-b">Статистика игроков</h2>
-        
+
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  ID
+                </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Игрок
                 </th>
@@ -158,49 +160,80 @@ export default async function C4StatsPage({ params } : { params: { c4id: string 
             <tbody className="bg-white divide-y divide-gray-200">
               {c4.statistics.map((stat, index) => (
                 <tr key={stat.id} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
+                  {/* Альянс или ID */}
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center">
                       <div className="ml-4">
                         <div className="text-sm font-medium text-gray-900">
-                          {stat.player?.username || `ID: ${stat.warpathId}`}
+                          {stat.player?.ally || `ID: ${stat.warpathId}`}
                         </div>
-                        {stat.player?.ally && (
-                          <div className="text-sm text-gray-500">
-                            {stat.player.ally}
-                          </div>
-                        )}
                       </div>
                     </div>
                   </td>
+
+                  {/* Имя пользователя */}
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    {stat.player?.username || stat.username || `Игрок ${stat.warpathId}`}
+                  </td>
+
+                  {/* Начальная сила */}
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                     {stat.startPower.toLocaleString()}
                   </td>
+
+                  {/* Прирост силы */}
                   <td className="px-6 py-4 whitespace-nowrap text-sm">
-                    <span className={`font-medium ${
-                      (stat.powerGain || 0) >= 0 ? 'text-green-600' : 'text-red-600'
-                    }`}>
-                      {stat.powerGain ? (stat.powerGain >= 0 ? '+' : '') + stat.powerGain : 'N/A'}
+                    <span className={`font-medium ${(stat.powerGain || 0) > 0
+                        ? 'text-green-600'
+                        : (stat.powerGain || 0) < 0
+                          ? 'text-red-600'
+                          : 'text-gray-600'
+                      }`}>
+                      {stat.powerGain !== null && stat.powerGain !== undefined
+                        ? (stat.powerGain > 0 ? '+' : '') + stat.powerGain.toLocaleString()
+                        : '0'}
                     </span>
                   </td>
+
+                  {/* Прирост убийств */}
                   <td className="px-6 py-4 whitespace-nowrap text-sm">
-                    <span className={`font-medium ${
-                      (stat.killGain || 0) >= 0 ? 'text-green-600' : 'text-red-600'
-                    }`}>
-                      {stat.killGain ? (stat.killGain >= 0 ? '+' : '') + stat.killGain : 'N/A'}
+                    <span className={`font-medium ${(stat.killGain || 0) > 0
+                        ? 'text-green-600'
+                        : (stat.killGain || 0) < 0
+                          ? 'text-red-600'
+                          : 'text-gray-600'
+                      }`}>
+                      {stat.killGain !== null && stat.killGain !== undefined
+                        ? (stat.killGain > 0 ? '+' : '') + stat.killGain
+                        : '0'}
                     </span>
                   </td>
+
+                  {/* Прирост смертей */}
                   <td className="px-6 py-4 whitespace-nowrap text-sm">
-                    <span className={`font-medium ${
-                      (stat.dieGain || 0) >= 0 ? 'text-red-600' : 'text-green-600'
-                    }`}>
-                      {stat.dieGain ? (stat.dieGain >= 0 ? '+' : '') + stat.dieGain : 'N/A'}
+                    <span className={`font-medium ${(stat.dieGain || 0) > 0
+                        ? 'text-red-600'
+                        : (stat.dieGain || 0) < 0
+                          ? 'text-green-600'
+                          : 'text-gray-600'
+                      }`}>
+                      {stat.dieGain !== null && stat.dieGain !== undefined
+                        ? (stat.dieGain > 0 ? '+' : '') + stat.dieGain
+                        : '0'}
                     </span>
                   </td>
+
+                  {/* Прирост K/D */}
                   <td className="px-6 py-4 whitespace-nowrap text-sm">
-                    <span className={`font-medium ${
-                      (stat.kdGain || 0) >= 0 ? 'text-green-600' : 'text-red-600'
-                    }`}>
-                      {stat.kdGain ? (stat.kdGain >= 0 ? '+' : '') + stat.kdGain.toFixed(2) : 'N/A'}
+                    <span className={`font-medium ${(stat.kdGain || 0) > 0
+                        ? 'text-green-600'
+                        : (stat.kdGain || 0) < 0
+                          ? 'text-red-600'
+                          : 'text-gray-600'
+                      }`}>
+                      {stat.kdGain !== null && stat.kdGain !== undefined
+                        ? (stat.kdGain > 0 ? '+' : '') + stat.kdGain.toFixed(2)
+                        : '0.00'}
                     </span>
                   </td>
                 </tr>

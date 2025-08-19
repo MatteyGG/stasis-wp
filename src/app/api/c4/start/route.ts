@@ -65,6 +65,7 @@ export async function POST(req: Request) {
       statisticsData.push({
         c4Id: newC4.id,
         warpathId: player.warpathId,
+        username: player.username,
         startPower: player.power,
         startKill: player.kill,
         startDie: player.die,
