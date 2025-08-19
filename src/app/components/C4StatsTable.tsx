@@ -5,7 +5,6 @@ interface PlayerStat {
   id: string;
   warpathId: number;
   username: string;
-  ally: string;
   TownHall: number;
   power: number;
   kill: number;
@@ -48,7 +47,6 @@ const C4StatsTable: React.FC<C4StatsTableProps> = ({
             {sorted.map((player) => (
               <tr key={player.id} className="hover:bg-gray-50">
                 <td className="px-4 py-2 font-medium">{player.username}</td>
-                <td className="px-4 py-2">{player.ally}</td>
                 <td className="px-4 py-2">{player.TownHall}</td>
                 <td className="px-4 py-2">{player.power.toLocaleString()}</td>
                 <td className="px-4 py-2">{player.kill.toLocaleString()}</td>

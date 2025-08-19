@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { C4Status, C4, PlayerSnapshot } from "@/lib/types";
+import { lastDate } from "@/lib/getDate";
 
 const maps = {
   cairo: "Каир",
@@ -21,14 +22,18 @@ const C4ManagerDashboard: React.FC = () => {
   const [c4, setC4] = useState<C4 | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [mapSelection, setMapSelection] = useState("cairo");
-  const [dateOfData, setDateofData] = useState("");
+  const [dateOfData, setDateofData] = useState<string>("");
   const [bindStatus, setBindStatus] = useState<string | null>(null);
   const [unboundSnapshots, setUnboundSnapshots] = useState<PlayerSnapshot[]>([]);
 
-  useEffect(() => {
-    fetchC4();
+useEffect(() => {
+  const init = async () => {
+    await fetchC4();
+    setDateofData(await lastDate());
     fetchUnboundSnapshots();
-  }, []);
+  };
+  init();
+}, []);
 
   async function fetchUnboundSnapshots() {
     try {
@@ -214,7 +219,7 @@ const C4StartForm: React.FC<C4StartFormProps> = ({
   <div className="bg-white rounded-lg shadow p-6">
     <h2 className="text-xl font-semibold mb-4">C4 не активно</h2>
     <p className="text-gray-600 mb-4">
-      Последнее обновление данных: {dateOfData || "неизвестно"}
+      Последнее обновление данных: {dateOfData && dateOfData.length === 8 ? `${dateOfData.slice(6, 8)}.${dateOfData.slice(4, 6)}.${dateOfData.slice(0, 4)}` : "Нет ответа от сервера"}
     </p>
 
     <div className="mb-4">
@@ -309,42 +314,48 @@ interface C4FinishedProps {
   c4: C4;
 }
 
-const C4Finished: React.FC<C4FinishedProps> = ({ c4 }) => (
-  <div className="bg-white rounded-lg shadow p-6">
-    <div className="flex items-center justify-between mb-4">
-      <h2 className="text-xl font-semibold">
-        Завершённое завоевание: {maps[c4.map as keyof typeof maps] || c4.map}
-      </h2>
-      <span className="bg-gray-100 text-gray-800 px-2 py-1 rounded text-sm font-medium">
-        Завершено
-      </span>
-    </div>
-
-    <div className="grid grid-cols-2 gap-4 mb-4">
-      <div>
-        <p className="text-gray-600">Начато:</p>
-        <p className="font-medium">
-          {new Date(c4.startedAt).toLocaleString('ru-RU')}
-        </p>
+const C4Finished: React.FC<C4FinishedProps> = ({ c4 }) => {
+  const durationHours = c4.endedAt 
+    ? ((new Date(c4.endedAt).getTime() - new Date(c4.startedAt).getTime()) / 3600000)
+    : 0;
+    
+  return (
+    <div className="bg-white rounded-lg shadow p-6">
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-xl font-semibold">
+          Завершённое завоевание: {maps[c4.map as keyof typeof maps] || c4.map}
+        </h2>
+        <span className="bg-gray-100 text-gray-800 px-2 py-1 rounded text-sm font-medium">
+          Завершено
+        </span>
       </div>
-      <div>
-        <p className="text-gray-600">Завершено:</p>
-        <p className="font-medium">
-          {c4.endedAt ? new Date(c4.endedAt).toLocaleString('ru-RU') : "N/A"}
-        </p>
+
+      <div className="grid grid-cols-2 gap-4 mb-4">
+        <div>
+          <p className="text-gray-600">Начато:</p>
+          <p className="font-medium">
+            {new Date(c4.startedAt).toLocaleString('ru-RU')}
+          </p>
+        </div>
+        <div>
+          <p className="text-gray-600">Завершено:</p>
+          <p className="font-medium">
+            {c4.endedAt ? new Date(c4.endedAt).toLocaleString('ru-RU') : "N/A"}
+          </p>
+        </div>
+      </div>
+
+      <div className="mt-6">
+        <h3 className="font-medium mb-2">Статистика:</h3>
+        <ul className="space-y-2">
+          <li>• Участников: {c4.totalPlayers || 0}</li>
+          <li>• Продолжительность: {durationHours.toFixed(1)} часов</li>
+          {c4.avgPowerGain && <li>• Средний прирост силы: {c4.avgPowerGain.toLocaleString()}</li>}
+          {c4.avgKillGain && <li>• Средний прирост убийств: {c4.avgKillGain.toLocaleString()}</li>}
+        </ul>
       </div>
     </div>
-
-    <div className="mt-6">
-      <h3 className="font-medium mb-2">Статистика:</h3>
-      <ul className="space-y-2">
-        <li>• Снапшотов игроков: {c4.stats?.length || 0}</li>
-        <li>• Продолжительность: {(
-          (new Date(c4.endedAt!).getTime() - new Date(c4.startedAt).getTime()) / 3600000
-        ).toFixed(1)} часов</li>
-      </ul>
-    </div>
-  </div>
-);
+  );
+};
 
 export default C4ManagerDashboard;

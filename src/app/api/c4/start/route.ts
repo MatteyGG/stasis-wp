@@ -22,7 +22,6 @@ export async function POST(req: Request) {
         warpathId: p.pid,
         username: p.nick,
         ally: p.gnick,
-        TownHall: p.lv,
         power: p.maxpower,
         kill: p.sumkill,
         die: p.die,
@@ -39,29 +38,47 @@ export async function POST(req: Request) {
       },
     });
 
-    // Создаем снапшоты с возможностью последующей привязки
-    const snapshots = await Promise.all(stPlayers.map(async (player) => {
+    // Создаем снапшоты и статистику
+    const statisticsData = [];
+    
+    for (const player of stPlayers) {
       // Проверяем существование игрока в базе
       const existingPlayer = await prisma.player.findUnique({
         where: { warpathId: player.warpathId }
       });
 
-      return prisma.playerSnapshot.create({
+      // Создаем снапшот
+      await prisma.playerSnapshot.create({
         data: {
           warpathId: player.warpathId,
           playerId: existingPlayer?.id || null,
           c4Id: newC4.id,
           username: player.username,
-          TownHall: player.TownHall,
           power: player.power,
           kill: player.kill,
           die: player.die,
           kd: player.kd,
         }
       });
-    }));
 
-    return NextResponse.json({ ...newC4, snapshotsCount: snapshots.length });
+      // Подготавливаем данные для статистики
+      statisticsData.push({
+        c4Id: newC4.id,
+        warpathId: player.warpathId,
+        startPower: player.power,
+        startKill: player.kill,
+        startDie: player.die,
+        startKd: player.kd,
+        playerId: existingPlayer?.id || null
+      });
+    }
+
+    // Создаем записи статистики
+    await prisma.c4Statistic.createMany({
+      data: statisticsData
+    });
+
+    return NextResponse.json({ ...newC4, playersCount: stPlayers.length });
   } catch (error: any) {
     return NextResponse.json(
       { error: "Failed to start C4: " + error.message },

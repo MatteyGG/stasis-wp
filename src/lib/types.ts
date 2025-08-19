@@ -4,30 +4,31 @@ export enum C4Status {
   Finished = "finished",
 }
 
+export interface C4 {
+  id: string;
+  map: string;
+  status: C4Status;
+  startedAt: Date;
+  endedAt?: Date;
+  createdAt: Date;
+  totalPlayers?: number;
+  avgPowerGain?: number;
+  avgKillGain?: number;
+  avgDieGain?: number;
+  avgKdGain?: number;
+}
+
 export interface PlayerSnapshot {
-  id: number;
-  playerId: number;
-  c4Id: number;
-  ally: string;
+  id: string;
+  warpathId: number;
   username: string;
-  TownHall: number;
+  playerId: string | null;
+  c4Id: string;
   power: number;
   kill: number;
   die: number;
   kd: number;
   snapshotAt: Date;
-}
-
-export interface C4 {
-  id: number;
-  map: string;
-  status: C4Status;
-  players?: string | null;
-  link?: string | null;
-  startedAt: Date;
-  endedAt?: Date | null;
-  createdAt: Date;
-  stats?: PlayerSnapshot[];
 }
 
 // Тип для игрока с Warpath API

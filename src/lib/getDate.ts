@@ -1,6 +1,3 @@
-import { NextResponse } from "next/server"
-
-
 export async function lastDate() {
 
     const url = "https://yx.dmzgame.com/intl_warpath/total/total_latest_day";
@@ -9,7 +6,7 @@ export async function lastDate() {
         const data = await response.json();
         const result = data.Data;
         console.log(result);
-        return result;
+        return result.toString();
     }
     console.log("Failed to fetch data");
 

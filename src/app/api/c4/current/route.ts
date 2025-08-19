@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 export async function GET() {
   const c4 = await prisma.c4.findFirst({
     orderBy: { createdAt: "desc" },
-    include: { stats: true },
+    include: { statistics: true },
     take: 1,
   });
 
