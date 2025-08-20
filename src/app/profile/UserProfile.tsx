@@ -3,14 +3,14 @@
 import { redirect } from "next/navigation";
 import { useSession } from "next-auth/react";
 
-import Tabs from "@/app/components/tabs";
-import ResetPass from "@/app/components/Profile/resetPassword";
-import UpdatePhoto from "@/app/components/Profile/updatePhoto";
-import UpdateTech from "@/app/components/Profile/UpdateTech";
-import Profile from "../components/Profile/profile";
-import HistoryAlerts from "../components/Profile/alerts";
+import Tabs from "@/components/tabs";
+import ResetPass from "@/components/Profile/resetPassword";
+import UpdatePhoto from "@/components/Profile/updatePhoto";
+import UpdateTech from "@/components/Profile/UpdateTech";
+import Profile from "../../components/Profile/profile";
+import HistoryAlerts from "../../components/Profile/alerts";
 import { useEffect, useState } from "react";
-import UpdateTGRef from "../components/Profile/updateTG";
+import UpdateTGRef from "../../components/Profile/updateTG";
 
 import "react-toastify/dist/ReactToastify.css";
 type AlertProps = {

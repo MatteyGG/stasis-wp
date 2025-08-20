@@ -1,4 +1,4 @@
-import WikiCard from "@/app/components/wikicard";
+import WikiCard from "@/components/wikicard";
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 

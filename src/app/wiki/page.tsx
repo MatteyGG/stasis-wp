@@ -1,6 +1,6 @@
 import { prisma } from "../../lib/prisma";
 import Link from "next/link";
-import WikiContainer from "../components/wiki/wikicontainer";
+import WikiContainer from "../../components/wiki/wikicontainer";
 
 export default async function WikiMain() {
   const card_category = await prisma.wiki.findMany({

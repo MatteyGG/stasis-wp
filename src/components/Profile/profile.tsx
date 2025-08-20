@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import SignOut from "@/app/components/signoutButton";
-import Alert from "@/app/components/alert/mainalert";
+import SignOut from "@/components/signoutButton";
+import Alert from "@/components/alert/mainalert";
 import { useEffect, useState } from "react";
 import Image from "next/image";
 

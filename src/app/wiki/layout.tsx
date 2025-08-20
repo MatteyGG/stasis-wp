@@ -3,8 +3,8 @@ import "@/app/globals.css";
 import { Inter } from "next/font/google";
 import "@mdxeditor/editor/style.css";
 
-import Navbar from "@/app/components/navbar";
-import Footer from "@/app/components/footer";
+import Navbar from "@/components/navbar";
+import Footer from "@/components/footer";
 
 const inter = Inter({ subsets: ["latin"] });
 

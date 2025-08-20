@@ -1,11 +1,11 @@
 import { prisma } from "../../lib/prisma";
 
-import Memberlist from "../components/members";
+import Memberlist from "../../components/members";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import PromocodeItem from "../components/promocodes";
-import WikiContainer from "../components/wiki/wikicontainer";
-import C4Container from "../components/c4/c4container";
+import PromocodeItem from "../../components/promocodes";
+import WikiContainer from "../../components/wiki/wikicontainer";
+import C4Container from "../../components/c4/c4container";
 
 
 export default async function Home() {

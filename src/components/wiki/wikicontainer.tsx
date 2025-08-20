@@ -2,10 +2,10 @@
 
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination, Parallax } from "swiper/modules";
-import "../swiper-bundle.css";
 
 import WikiCard from "../wikicard";
 
+import "../../components/swiper-bundle.css";
 export default function WikiContainer({
   card_array,
 }: {

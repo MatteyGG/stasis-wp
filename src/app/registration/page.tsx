@@ -4,8 +4,8 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Select from "react-select";
-import MakeHelper from "../components/base/helper";
-import { Audio } from "../components/base/audio";
+import MakeHelper from "../../components/base/helper";
+import { Audio } from "../../components/base/audio";
 
 interface Player {
   username: string;

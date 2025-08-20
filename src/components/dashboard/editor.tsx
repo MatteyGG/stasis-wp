@@ -6,7 +6,7 @@ import { Suspense } from "react";
 import React from "react";
 import { useState, FormEvent } from "react";
 
-const EditorComp = dynamic(() => import("../../components/EditorComponent"), {
+const EditorComp = dynamic(() => import("../EditorComponent"), {
   ssr: false,
 });
 

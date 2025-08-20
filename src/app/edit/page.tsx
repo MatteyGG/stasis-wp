@@ -6,7 +6,7 @@ import { Suspense, useEffect, useState, FormEvent, useRef } from "react";
 import React from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
-const EditorComp = dynamic(() => import("@/app/components/EditorComponent"), {
+const EditorComp = dynamic(() => import("@/components/EditorComponent"), {
   ssr: false,
 });
 

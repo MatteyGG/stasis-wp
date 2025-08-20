@@ -1,4 +1,4 @@
-import { signIn } from "../../../lib/auth";
+import { signIn } from "../../lib/auth";
 
 export function SignIn(email: string, password: string) {
   return (

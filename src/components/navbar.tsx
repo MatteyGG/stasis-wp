@@ -3,11 +3,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import Link from "next/link";
-import { auth } from "../../lib/auth";
+import { auth } from "../lib/auth";
 import SignOutButton from "./signoutButton";
 import DropdownButton from "./base/dropdownButton";
 import Image from "next/image";
 import { Session } from "next-auth";
+import { Header } from "./NewUi/header";
 
 export type User = Session["user"] & {
   id: string;
@@ -21,6 +22,7 @@ export default async function Navbar() {
   const session = await auth();
   return (
     <>
+    <Header />
       <nav className="hidden md:flex z-0 overflow-visible flex-row justify-evenly backdrop-blur-2xl pb-2 text-center items-center">
         <Link href="/">
           <div className="inline-flex items-center gap-1">
@@ -55,11 +57,6 @@ export default async function Navbar() {
             </li>
             <li className="mr-6">
               <Link href="/about">О нас</Link>
-            </li>
-            <li className="mr-6 bg-green-500 p-1 px-2 rounded-md animate-pulse">
-              <Link target="_blank" href="https://forms.gle/HZfd9Wx6NqVyGuhdA">
-                Регистрация на C4
-              </Link>
             </li>
           </ul>
         </div>

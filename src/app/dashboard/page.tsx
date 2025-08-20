@@ -1,16 +1,16 @@
-import Gallery from "@/app/components/dashboard/gallery";
-import WikiList from "@/app/components/dashboard/wikilist";
-import Userlist from "@/app/components/dashboard/userslist";
-import Main from "@/app/components/dashboard/main";
-import Tabs from "../components/tabs";
-import Manage_users from "../components/dashboard/manage";
-import PromoList from "../components/dashboard/promocode";
+import Gallery from "@/components/dashboard/gallery";
+import WikiList from "@/components/dashboard/wikilist";
+import Userlist from "@/components/dashboard/userslist";
+import Main from "@/components/dashboard/main";
+import Tabs from "../../components/tabs";
+import Manage_users from "../../components/dashboard/manage";
+import PromoList from "../../components/dashboard/promocode";
 import { auth } from "../../lib/auth";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import CategoryList from "../components/dashboard/category";
-import C4ManagerDashboard from "../components/dashboard/manage_c4";
-import PlayersLeaderboard from "../components/dashboard/leaderboardPlayers";
+import CategoryList from "../../components/dashboard/category";
+import C4ManagerDashboard from "../../components/dashboard/manage_c4";
+import PlayersLeaderboard from "../../components/dashboard/leaderboardPlayers";
 
 const tabContents = [
   <Main key={0} />,

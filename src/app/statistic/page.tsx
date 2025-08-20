@@ -1,5 +1,5 @@
-import Leaderboard from "../components/statistic/leaderboard";
-import AllyWidget from "../components/allyWid";
+import Leaderboard from "../../components/statistic/leaderboard";
+import AllyWidget from "../../components/allyWid";
 
 export default function About() {
   return (
