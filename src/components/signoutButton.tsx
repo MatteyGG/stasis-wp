@@ -13,7 +13,7 @@ const colorVariants = {
 export default function SignOutButton( {color}: {color: keyof typeof colorVariants} ) {
   return (
     <button
-      className={`${colorVariants[color]} px-3 py-1 rounded-md hover:bg-${color}-600 w-full`}
+      className={`${colorVariants[color]} px-4 py-1 mx-0 rounded-md hover:bg-${color}-600 w-full`}
       onClick={() => signOut()}
     >
       Выход

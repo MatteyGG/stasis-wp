@@ -22,7 +22,7 @@ export default async function Navbar() {
   const session = await auth();
   return (
     <>
-    <Header />
+    <Header user={session?.user}  />
       <nav className="hidden md:flex z-0 overflow-visible flex-row justify-evenly backdrop-blur-2xl pb-2 text-center items-center">
         <Link href="/">
           <div className="inline-flex items-center gap-1">
@@ -122,15 +122,7 @@ export default async function Navbar() {
               />
             </Link>
           </li>
-          <li>
-            <Link
-              className="bg-green-500 text-xs p-1 px-2 rounded-md animate-pulse"
-              target="_blank"
-              href="https://forms.gle/HZfd9Wx6NqVyGuhdA"
-            >
-              Регистрация на C4
-            </Link>
-          </li>
+          
         </ul>
 
         <li className="z-30 absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
