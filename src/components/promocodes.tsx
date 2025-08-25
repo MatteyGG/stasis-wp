@@ -28,10 +28,10 @@ export default function PromocodeItem({ promocode }: { promocode: { code: string
 
   return (
     <li
-      className={`inline-flex text-black p-2 rounded-lg ${
+      className={`inline-flex text-black text-sm p-1 rounded-lg ${
         isRecent(new Date(promocode.createdAt))
-          ? "bg-green-300"
-          : "bg-blue-300"
+          ? "bg-green-200"
+          : "bg-gray-300"
       }`}
     >
       <button

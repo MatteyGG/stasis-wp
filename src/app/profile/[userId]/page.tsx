@@ -1,5 +1,5 @@
 import { SessionProvider } from "next-auth/react";
-import UserProfile from "./UserProfile";
+import UserProfile from "../UserProfile";
 
 export default function Profile() {
   return (

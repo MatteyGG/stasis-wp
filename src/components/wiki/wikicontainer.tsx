@@ -25,8 +25,8 @@ export default function WikiContainer({
           breakpoints={{
             640: { slidesPerView: 2 },
             768: { slidesPerView: 4 },
-            1024: { slidesPerView: 6 },
-            1280: { slidesPerView: 8 },
+            1024: { slidesPerView: 5 },
+            1280: { slidesPerView: 5 },
           }}
           navigation
           pagination={{ clickable: true }}

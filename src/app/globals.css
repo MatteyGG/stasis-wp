@@ -9,7 +9,8 @@
 }
 body { min-height: 100vh; }
 body {
-  @apply  bg-auto bg-repeat bg-[url('/white-min.jpg')] bg-gray-100 ; /*bg-[url('/white-min.jpg')] */
+  /* @apply  bg-auto bg-repeat bg-[url('/white-min.jpg')] bg-gray-100 ; bg-[url('/white-min.jpg')] */
+  background-color: #e3e3e3;
   background-size: 100%;
 }
 

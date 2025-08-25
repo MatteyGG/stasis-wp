@@ -4,6 +4,8 @@ import { Inter } from "next/font/google";
 
 import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
+import { Sidebar } from "@/components/NewUi/sidebar";
+import { SessionProvider } from "next-auth/react";
 
 
 const inter = Inter({ subsets: ["latin"] });
@@ -18,14 +20,16 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  
+
   return (
     <html lang="en">
       <body
         className={inter.className}
       >
         <Navbar />
-        {children}
+        <SessionProvider>
+          {children}
+        </SessionProvider>
         <Footer />
       </body>
     </html>

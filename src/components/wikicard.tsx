@@ -21,10 +21,10 @@ const WikiCard = ({
 }: WikiCardProps) => {
   return (
     <Link
-      className="z-5 grid grid-cols-1 grid-rows-10 h-[300px] text-wrap w-full bg-primaly rounded-2xl p-2 select-none"
+      className="z-5 grid grid-cols-1 grid-rows-10 h-[300px] text-wrap w-full bg-gray-800 rounded-2xl p-2 select-none"
       href={link}
     >
-      <span className=" wikicard-category absolute text-white text-xs bg-primaly p-2 rounded-br-xl ">
+      <span className=" wikicard-category absolute text-white text-xs bg-gray-800 p-2 rounded-br-xl ">
         {category}
       </span>
       <Image
@@ -36,7 +36,7 @@ const WikiCard = ({
         height={150}
       />
 
-      <span className="flex flex-col bg-primaly row-start-6 row-end-10">
+      <span className="flex flex-col bg-gray-800 row-start-6 row-end-10">
         <h1 className="wikicard-title py-1 tracking-tight text-sm/4">
           <b>{title}</b>
         </h1>
@@ -46,7 +46,7 @@ const WikiCard = ({
         </p>
       </span>
       <span className="flex justify-center row-start-10 row-end-10">
-        <button className="wikicard-button w-full bg-primaly pb-2 rounded-2xl">
+        <button className="wikicard-button w-full bg-gray-800 pb-2 rounded-2xl">
           Читать!
         </button>
       </span>

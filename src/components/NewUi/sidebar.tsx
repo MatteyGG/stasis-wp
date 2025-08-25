@@ -1,34 +1,48 @@
-// components/warpath/Sidebar.tsx
+// components/NewUi/sidebar.tsx
+'use client';
+
+import { useRouter, usePathname } from 'next/navigation';
 import { Card, CardHeader, CardContent, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
-import { Home, Users2, Factory, Sword, Wallet, MessagesSquare, Shield, Wrench, LibraryBig } from 'lucide-react';
+import { Home, Users2, Factory, Sword, Wallet, MessagesSquare, Shield, Wrench, LibraryBig, Bell, Camera, Phone, Key, Settings } from 'lucide-react';
+
+// Обновляем элементы сайдбара для профиля
+const sidebarItems = [
+  { key: "profile", label: "Профиль", icon: Users2 },
+  { key: "notifications", label: "Уведомления", icon: Bell },
+  { key: "photo", label: "Обновить фото", icon: Camera },
+  { key: "contacts", label: "Контакты", icon: Phone },
+  { key: "tech", label: "Сменить технику", icon: Settings },
+  { key: "password", label: "Сменить пароль", icon: Key },
+];
 
 interface SidebarProps {
   current: string;
-  onChange: (key: string) => void;
+  onChange: (section: string) => void;
 }
 
-const sidebarItems = [
-  { key: "dashboard", label: "Главная", icon: Home },
-  { key: "profile", label: "Профиль", icon: Users2 },
-  { key: "base", label: "Управление базой", icon: Factory },
-  { key: "army", label: "Армия и офицеры", icon: Sword },
-  { key: "economy", label: "Ресурсы и экономика", icon: Wallet },
-  { key: "social", label: "Социальные функции", icon: MessagesSquare },
-  { key: "security", label: "Безопасность", icon: Shield },
-  { key: "tech", label: "Техническая информация", icon: Wrench },
-  { key: "support", label: "Поддержка", icon: LibraryBig },
-];
-
 export function Sidebar({ current, onChange }: SidebarProps) {
+  const router = useRouter();
+  const pathname = usePathname();
+
+  // Извлекаем userId из пути
+  const pathParts = pathname.split('/');
+  const userId = pathParts[2];
+
+  const handleNavigation = (key: string) => {
+    onChange(key);
+    // Обновляем URL без перезагрузки страницы
+    router.push(`/profile/${userId}/${key}`);
+  };
+
   return (
     <aside className="hidden lg:flex w-72 flex-col gap-2 p-3 border-r bg-background/40">
       <div className="flex items-center gap-2 px-2 py-3">
         <div className="h-9 w-9 rounded-2xl bg-foreground/10" />
         <div>
-          <div className="text-sm text-muted-foreground">Warpath</div>
-          <div className="font-semibold">Личный кабинет</div>
+          <div className="text-sm text-muted-foreground">Профиль</div>
+          <div className="font-semibold">Настройки</div>
         </div>
       </div>
       <Separator />
@@ -38,25 +52,12 @@ export function Sidebar({ current, onChange }: SidebarProps) {
             key={key}
             variant={current === key ? "default" : "ghost"}
             className="justify-start gap-2 rounded-2xl"
-            onClick={() => onChange(key)}
+            onClick={() => handleNavigation(key)}
           >
             <Icon className="h-4 w-4" /> {label}
           </Button>
         ))}
       </nav>
-      <div className="mt-auto p-2">
-        <Card className="rounded-2xl">
-          <CardHeader>
-            <CardTitle className="text-base">Советы дня</CardTitle>
-            <CardDescription>Ускорь исследования в часы Буста</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Button variant="secondary" className="w-full rounded-2xl">
-              Подробнее
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
     </aside>
   );
 }

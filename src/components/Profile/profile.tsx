@@ -149,7 +149,7 @@ export default function Profile({ session, status, alerts_array }: {
 
   return (
     <>
-      <div className="container  w-full bg-gray-200 bg-opacity-55 p-4 shadow-2xl shadow-black mx-auto rounded-3xl">
+      <div className="container  w-full bg-gray-200 bg-opacity-55 p-4 mx-auto rounded-3xl">
         <div className="grid md:grid-cols-3 gap-2">
           <div className="z-2 relative w-full justify-center ">
             <div className="mx-auto w-10/12 place-items-center">

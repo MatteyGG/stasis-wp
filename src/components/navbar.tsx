@@ -9,6 +9,7 @@ import DropdownButton from "./base/dropdownButton";
 import Image from "next/image";
 import { Session } from "next-auth";
 import { Header } from "./NewUi/header";
+import { getMaxAge } from "next/dist/server/image-optimizer";
 
 export type User = Session["user"] & {
   id: string;
@@ -23,7 +24,7 @@ export default async function Navbar() {
   return (
     <>
     <Header user={session?.user}  />
-      <nav className="hidden md:flex z-0 overflow-visible flex-row justify-evenly backdrop-blur-2xl pb-2 text-center items-center">
+      {/* <nav className="hidden md:flex z-0 overflow-visible flex-row justify-evenly backdrop-blur-2xl pb-2 text-center items-center">
         <Link href="/">
           <div className="inline-flex items-center gap-1">
             <h1 className="inline-flex text-black p-2 rounded-lg bg-emerald-300 text-2xl ">
@@ -49,7 +50,7 @@ export default async function Navbar() {
           href="/"
         >
           STASIS
-        </Link> */}
+        </Link> 
         <div className="flex flex-row text-nowrap items-center">
           <ul className="flex flex-row">
             <li className="mr-6">
@@ -90,7 +91,7 @@ export default async function Navbar() {
           href="/"
         >
           STASIS
-        </Link> */}
+        </Link>
         <ul className="flex flex-row items-start p-2 gap-4">
           <li>
             <Link href="/">
@@ -145,7 +146,7 @@ export default async function Navbar() {
             </div>
           )}
         </li>
-      </nav>
+      </nav> */}
     </>
   );
 }

@@ -3,7 +3,6 @@
 import { redirect } from "next/navigation";
 import { useSession } from "next-auth/react";
 
-import Tabs from "@/components/tabs";
 import ResetPass from "@/components/Profile/resetPassword";
 import UpdatePhoto from "@/components/Profile/updatePhoto";
 import UpdateTech from "@/components/Profile/UpdateTech";
@@ -11,20 +10,46 @@ import Profile from "../../components/Profile/profile";
 import HistoryAlerts from "../../components/Profile/alerts";
 import { useEffect, useState } from "react";
 import UpdateTGRef from "../../components/Profile/updateTG";
+import PublicProfile from "../../components/Profile/PublicProfile";
 
 import "react-toastify/dist/ReactToastify.css";
+import { Sidebar } from "@/components/NewUi/sidebar";
+import { useParams, usePathname } from "next/navigation";
+
 type AlertProps = {
   type: string;
   message: string;
 };
+
+// Определяем тип для секций профиля
+type ProfileSection = 
+  | "profile" 
+  | "notifications" 
+  | "photo" 
+  | "contacts" 
+  | "tech" 
+  | "password";
+
 export default function UserProfile() {
   const { data: session, status } = useSession();
-
+  const params = useParams();
+  const pathname = usePathname();
+  
   const [alerts, setAlerts] = useState<AlertProps[]>([]);
+  const [currentSection, setCurrentSection] = useState<ProfileSection>("profile");
 
   if (status === "unauthenticated") {
     redirect("/singin");
   }
+
+  // Определяем текущую секцию из URL
+  useEffect(() => {
+    const pathParts = pathname.split('/');
+    if (pathParts.length > 3) {
+      const section = pathParts[3] as ProfileSection;
+      setCurrentSection(section);
+    }
+  }, [pathname]);
 
   useEffect(() => {
     (async () => {
@@ -53,38 +78,44 @@ export default function UserProfile() {
     return <div>Session not found</div>;
   }
 
-  const tabContents = [
-    <Profile session={session} status={status} alerts_array={alerts} key={0} />,
-    <HistoryAlerts alerts_array={alerts} key={1} />,
-    <UpdatePhoto
-      userId={session.user.id!}
-      username={session.user.username!}
-      key={2}
-    />,
-    <UpdateTGRef tgref={session.user.tgref} id={session.user.id!} key={3} />,
-    <UpdateTech
-      nation={session.user.nation}
-      army={session.user.army}
-      id={session.user.id!}
-      key={4}
-    />,
-    <ResetPass key={5} />,
-  ];
+  // Проверяем, является ли текущий пользователь владельцем профиля
+  const isOwnProfile = session.user.id === params.userId;
+
+  // Функция для отображения контента в зависимости от выбранной секции
+  const renderContent = () => {
+    if (!isOwnProfile) {
+      return <PublicProfile userData={session.user} />;
+    }
+
+    switch (currentSection) {
+      case "profile":
+        return <Profile session={session} status={status} alerts_array={alerts} />;
+      case "notifications":
+        return <HistoryAlerts alerts_array={alerts} />;
+      case "photo":
+        return <UpdatePhoto userId={session.user.id!} username={session.user.username!} />;
+      case "contacts":
+        return <UpdateTGRef tgref={session.user.tgref} id={session.user.id!} />;
+      case "tech":
+        return <UpdateTech nation={session.user.nation} army={session.user.army} id={session.user.id!} />;
+      case "password":
+        return <ResetPass />;
+      default:
+        return <Profile session={session} status={status} alerts_array={alerts} />;
+    }
+  };
+
   return (
-    <>
-      <Tabs
-        tabs={[
-          "Профиль",
-          "Уведомления",
-          "Обновить фото",
-          "Контакты",
-          "Сменить технику",
-          "Сменить пароль",
-        ]}
-        tabContents={tabContents}
-      />
-    </>
+    <div className="flex">
+      {isOwnProfile && (
+        <Sidebar 
+          current={currentSection} 
+          onChange={(section) => setCurrentSection(section as ProfileSection)} 
+        />
+      )}
+      <div className="flex-1 p-4">
+        {renderContent()}
+      </div>
+    </div>
   );
 }
-
-
