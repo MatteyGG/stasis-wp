@@ -1,81 +1,87 @@
-// app/profile/settings/page.tsx
-'use client';
+// app/settings/page.tsx
+import { auth } from '@/lib/auth';
+import { redirect } from 'next/navigation';
 
-import { useSession } from "next-auth/react";
-import { redirect } from "next/navigation";
-import Tabs from "@/components/tabs";
-import ResetPass from "@/components/Profile/resetPassword";
-import UpdatePhoto from "@/components/Profile/updatePhoto";
-import UpdateTech from "@/components/Profile/UpdateTech";
-import Profile from "@/components/Profile/profile";
-import HistoryAlerts from "@/components/Profile/alerts";
-import { useEffect, useState } from "react";
-import UpdateTGRef from "@/components/Profile/updateTG";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import AvatarUpload from '@/components/profile/AvatarUpload';
+import UpdateTech from '@/components/profile/UpdateTech';
 
-export default function SettingsPage() {
-  const { data: session, status } = useSession();
-  const [alerts, setAlerts] = useState<{ type: string; message: string }[]>([]);
+export default async function SettingsPage() {
+  const session = await auth();
 
-  if (status === "unauthenticated") {
-    redirect('/signin');
+  if (!session?.user) {
+    redirect('/login');
   }
 
-  useEffect(() => {
-    (async () => {
-      try {
-        const response = await fetch(
-          `/api/alerts/${session?.user?.id || ""}`,
-          {
-            method: "GET",
-          }
-        );
-        if (response) {
-          const data = await response.json();
-          setAlerts(data);
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    })();
-  }, [session]);
-
-  if (status === "loading") {
-    return <div>Loading...</div>;
-  }
-
-  if (!session || !session.user) {
-    return <div>Session not found</div>;
-  }
-
-  const tabContents = [
-    <Profile session={session} status={status} alerts_array={alerts} key={0} />,
-    <HistoryAlerts alerts_array={alerts} key={1} />,
-    <UpdatePhoto
-      userId={session.user.id!}
-      username={session.user.username!}
-      key={2}
-    />,
-    <UpdateTGRef tgref={session.user.tgref} id={session.user.id!} key={3} />,
-    <UpdateTech
-      nation={session.user.nation}
-      army={session.user.army}
-      id={session.user.id!}
-      key={4}
-    />,
-    <ResetPass key={5} />,
-  ];
+  const { user } = session;
 
   return (
-    <Tabs
-      tabs={[
-        "Профиль",
-        "Уведомления",
-        "Обновить фото",
-        "Контакты",
-        "Сменить технику",
-        "Сменить пароль",
-      ]}
-      tabContents={tabContents}
-    />
+    <div className="flex flex-col p-3 sm:p-4 md:p-6 max-w-6xl mx-auto space-y-4 md:space-y-6">
+      <h1 className="text-xl sm:text-2xl font-bold">Настройки профиля</h1>
+      
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
+        {/* Левая колонка - аватар и основная информация */}
+        <div className="lg:col-span-1 space-y-4 md:space-y-6">
+          <Card className="rounded-lg md:rounded-xl">
+            <CardHeader className="pb-3 md:pb-4">
+              <CardTitle className="text-base md:text-lg">Аватар профиля</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <AvatarUpload 
+                userId={user.id} 
+                username={user.username} 
+              />
+            </CardContent>
+          </Card>
+
+          <Card className="rounded-lg md:rounded-xl">
+            <CardHeader className="pb-3 md:pb-4">
+              <CardTitle className="text-base md:text-lg">Основная информация</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3 md:space-y-4">
+              <div>
+                <p className="text-xs md:text-sm text-muted-foreground">Имя пользователя</p>
+                <p className="text-sm md:text-base">{user.username}</p>
+              </div>
+              <div>
+                <p className="text-xs md:text-sm text-muted-foreground">Игровой ID</p>
+                <p className="text-sm md:text-base">{user.gameID || 'Не привязан'}</p>
+              </div>
+              <div>
+                <p className="text-xs md:text-sm text-muted-foreground">Роль</p>
+                <p className="text-sm md:text-base">{user.role}</p>
+              </div>
+              <div>
+                <p className="text-xs md:text-sm text-muted-foreground">Нация</p>
+                <p className="text-sm md:text-base">{user.nation}</p>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Правая колонка - настройки техники */}
+        <div className="lg:col-span-2">
+          <Card className="rounded-lg md:rounded-xl">
+            <CardHeader className="pb-3 md:pb-4">
+              <CardTitle className="text-base md:text-lg">Настройки техники</CardTitle>
+              <CardDescription>
+                Выберите технику для каждого слота (5 наземных юнитов, 3 авиации, 3 морских юнита)
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <UpdateTech 
+                nation={user.nation} 
+                army={user.army} 
+                id={user.id} 
+              />
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+      
+      <ToastContainer position="bottom-right" />
+    </div>
   );
 }

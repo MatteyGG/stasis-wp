@@ -1,6 +1,9 @@
 import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel";
+import { MVPcard } from "@/components/MVPcard";
+import Image from "next/image";
 
 
 export default async function C4StatsPage({ params }: { params: { c4id: string } }) {
@@ -65,8 +68,8 @@ export default async function C4StatsPage({ params }: { params: { c4id: string }
             Статистика завоевания: {maps[c4.map as keyof typeof maps] || c4.map}
           </h1>
           <span className={`px-3 py-1 rounded text-sm font-medium ${c4.status === 'active'
-              ? 'bg-green-100 text-green-800'
-              : 'bg-gray-100 text-gray-800'
+            ? 'bg-green-100 text-green-800'
+            : 'bg-gray-100 text-gray-800'
             }`}>
             {c4.status === 'active' ? 'Активно' : 'Завершено'}
           </span>
@@ -91,6 +94,8 @@ export default async function C4StatsPage({ params }: { params: { c4id: string }
             <p className="font-medium">{c4.totalPlayers || c4.statistics.length}</p>
           </div>
         </div>
+        
+
 
         {/* Агрегированная статистика */}
         {c4.status === 'finished' && (
@@ -124,6 +129,35 @@ export default async function C4StatsPage({ params }: { params: { c4id: string }
             </div>
           </div>
         )}
+                <Carousel className="mt-2 w-full">
+          <CarouselContent className="-ml-2 md:-ml-4">
+            <CarouselItem className="pl-2 md:pl-4 basis-1/2 md:basis-1/5">
+              <MVPcard nickname="Mafon" description="Главный фермер">
+                <Image src="/test.jpg" alt="1" width={240} height={400} quality={100} />
+              </MVPcard>
+            </CarouselItem>
+            <CarouselItem className="pl-2 md:pl-4 basis-1/2 md:basis-1/5">
+              <MVPcard nickname="Mafon" description="Главный фермер">
+                <Image src="/test.jpg" alt="1" width={240} height={400} quality={100} />
+              </MVPcard>
+            </CarouselItem>
+            <CarouselItem className="pl-2 md:pl-4 basis-1/2 md:basis-1/5">
+              <MVPcard nickname="Mafon" description="Главный фермер">
+                <Image src="/test.jpg" alt="1" width={240} height={400} quality={100} />
+              </MVPcard>
+            </CarouselItem>
+            <CarouselItem className="pl-2 md:pl-4 basis-1/2 md:basis-1/5">
+              <MVPcard nickname="Mafon" description="Главный фермер">
+                <Image src="/test.jpg" alt="1" width={240} height={400} quality={100} />
+              </MVPcard>
+            </CarouselItem>
+            <CarouselItem className="pl-2 md:pl-4 basis-1/2 md:basis-1/5">
+              <MVPcard nickname="Mafon" description="Главный фермер">
+                <Image src="/test.jpg" alt="1" width={240} height={400} quality={100} />
+              </MVPcard>
+            </CarouselItem>
+          </CarouselContent>
+        </Carousel>
       </div>
 
       {/* Таблица статистики игроков */}
@@ -184,10 +218,10 @@ export default async function C4StatsPage({ params }: { params: { c4id: string }
                   {/* Прирост силы */}
                   <td className="px-6 py-4 whitespace-nowrap text-sm">
                     <span className={`font-medium ${(stat.powerGain || 0) > 0
-                        ? 'text-green-600'
-                        : (stat.powerGain || 0) < 0
-                          ? 'text-red-600'
-                          : 'text-gray-600'
+                      ? 'text-green-600'
+                      : (stat.powerGain || 0) < 0
+                        ? 'text-red-600'
+                        : 'text-gray-600'
                       }`}>
                       {stat.powerGain !== null && stat.powerGain !== undefined
                         ? (stat.powerGain > 0 ? '+' : '') + stat.powerGain.toLocaleString()
@@ -198,10 +232,10 @@ export default async function C4StatsPage({ params }: { params: { c4id: string }
                   {/* Прирост убийств */}
                   <td className="px-6 py-4 whitespace-nowrap text-sm">
                     <span className={`font-medium ${(stat.killGain || 0) > 0
-                        ? 'text-green-600'
-                        : (stat.killGain || 0) < 0
-                          ? 'text-red-600'
-                          : 'text-gray-600'
+                      ? 'text-green-600'
+                      : (stat.killGain || 0) < 0
+                        ? 'text-red-600'
+                        : 'text-gray-600'
                       }`}>
                       {stat.killGain !== null && stat.killGain !== undefined
                         ? (stat.killGain > 0 ? '+' : '') + stat.killGain
@@ -212,10 +246,10 @@ export default async function C4StatsPage({ params }: { params: { c4id: string }
                   {/* Прирост смертей */}
                   <td className="px-6 py-4 whitespace-nowrap text-sm">
                     <span className={`font-medium ${(stat.dieGain || 0) > 0
-                        ? 'text-red-600'
-                        : (stat.dieGain || 0) < 0
-                          ? 'text-green-600'
-                          : 'text-gray-600'
+                      ? 'text-red-600'
+                      : (stat.dieGain || 0) < 0
+                        ? 'text-green-600'
+                        : 'text-gray-600'
                       }`}>
                       {stat.dieGain !== null && stat.dieGain !== undefined
                         ? (stat.dieGain > 0 ? '+' : '') + stat.dieGain
@@ -226,10 +260,10 @@ export default async function C4StatsPage({ params }: { params: { c4id: string }
                   {/* Прирост K/D */}
                   <td className="px-6 py-4 whitespace-nowrap text-sm">
                     <span className={`font-medium ${(stat.kdGain || 0) > 0
-                        ? 'text-green-600'
-                        : (stat.kdGain || 0) < 0
-                          ? 'text-red-600'
-                          : 'text-gray-600'
+                      ? 'text-green-600'
+                      : (stat.kdGain || 0) < 0
+                        ? 'text-red-600'
+                        : 'text-gray-600'
                       }`}>
                       {stat.kdGain !== null && stat.kdGain !== undefined
                         ? (stat.kdGain > 0 ? '+' : '') + stat.kdGain.toFixed(2)

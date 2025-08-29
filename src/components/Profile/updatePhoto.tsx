@@ -1,83 +1,76 @@
-import Image from "next/image";
-import UploadImage from "../userImageUpload";
+// components/settings/UpdatePhoto.tsx
+'use client';
 
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import ImageWithFallback from '@/components/ImageWithFallback';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import UploadImage from '../userImageUpload';
 
+export default function UpdatePhoto({ username, userId }: { username: string; userId: string; }) {
+  const userProfileImage = `https://s3.timeweb.cloud/576b093c-bf65d329-1603-4121-b476-e46d7ce3cb2a/userProfile/${userId}.png`;
+  const userScreenImage = `https://s3.timeweb.cloud/576b093c-bf65d329-1603-4121-b476-e46d7ce3cb2a/userScreen/${userId}.png`;
+  const fallbackProfile = "/source/help/profile.png";
+  const fallbackScreen = "/source/help/army.png";
 
-export default function UpdatePhoto({
-  username,
-  userId,
-}: {
-  username: string;
-  userId: string;
-}) {
   return (
-    <>
-      <div className="mx-2 md:mx-48 grid grid-cols-1 md:grid-cols-2 gap-2">
-        <div className="h-full">
-          <h1>Фото вашей техники</h1>
-          <div>
-            <Image
-              className="w-full border-8 border-b-0  shadow-2xl shadow-black object-fill aspect-[3/2] rounded-3xl rounded-b-none"
-              src={
-                "https://s3.timeweb.cloud/576b093c-bf65d329-1603-4121-b476-e46d7ce3cb2a/userScreen/" +
-                userId +
-                ".png"
-              }
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <Card>
+        <CardHeader>
+          <CardTitle>Фото техники</CardTitle>
+          <CardDescription>Изображение вашей техники в игре</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="border rounded-lg overflow-hidden">
+            <ImageWithFallback
+              className="w-full object-cover aspect-video"
+              src={userScreenImage}
+              fallbackSrc={fallbackScreen}
               alt={username}
-              width={700}
-              height={700}
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              onError={(event: any) => {
-                event.target.id = "/source/help/army.png";
-                event.target.srcset = "/source/help/army.png";
-              }}
+              width={400}
+              height={250}
             />
-            <UploadImage
-              method="userScreen"
-              userId={userId}
-              onUploadComplete={() => {
-                toast.success("Картинка загружена!");
-              }}
-            >
-              Обновить
-            </UploadImage>
           </div>
-        </div>
-        <div className="h-full">
-          <h1>Фото вашего профиля</h1>
-          <div>
-            <Image
-              className="w-full shadow-2xl border-8 border-b-0 shadow-black object-fill aspect-[3/2] rounded-3xl rounded-b-none"
-              src={
-                "https://s3.timeweb.cloud/576b093c-bf65d329-1603-4121-b476-e46d7ce3cb2a/userProfile/" +
-                userId +
-                ".png"
-              }
+          <UploadImage
+            method="userScreen"
+            userId={userId}
+            onUploadComplete={() => {
+              // Принудительно обновляем страницу после загрузки
+              window.location.reload();
+            }}
+            className="w-full"
+          >
+            Обновить фото техники
+          </UploadImage>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Фото профиля</CardTitle>
+          <CardDescription>Ваше основное изображение профиля</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="border rounded-lg overflow-hidden">
+            <ImageWithFallback
+              className="w-full object-cover aspect-square"
+              src={userProfileImage}
+              fallbackSrc={fallbackProfile}
               alt={username}
-              width={700}
-              height={700}
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              onError={(event: any) => {
-                event.target.id = "/source/help/profile.png";
-                event.target.srcset = "/source/help/profile.png";
-              }}
+              width={250}
+              height={250}
             />
-            <UploadImage
-              method="userProfile"
-              userId={userId}
-              onUploadComplete={() => {
-                toast.success("Картинка загружена!");
-              }}
-            >
-              Обновить
-            </UploadImage>
           </div>
-        </div>
-      </div>
-      <ToastContainer position="bottom-center" />
-    </>
+          <UploadImage
+            method="userProfile"
+            userId={userId}
+            onUploadComplete={() => {
+              window.location.reload();
+            }}
+            className="w-full"
+          >
+            Обновить фото профиля
+          </UploadImage>
+        </CardContent>
+      </Card>
+    </div>
   );
 }
-

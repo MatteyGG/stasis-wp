@@ -9,7 +9,7 @@ export interface MVPcardProps {
 export const MVPcard = ({ nickname, description, children }: MVPcardProps) => {
     return (
         <div className="relative min-h-[300px] flex flex-col overflow-hidden rounded-2xl bg-cover bg-center bg-no-repeat">
-            <Image src="/test.jpg" alt="1" className="object-cover z-0" fill quality={100} />
+            {children}
             <div className="absolute inset-0 bg-black bg-opacity-20"></div>
             <div className="relative z-10 p-4 text-white">
                 <h3 className="text-4xl font-bold">{nickname}</h3>

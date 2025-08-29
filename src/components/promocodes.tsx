@@ -28,13 +28,12 @@ export default function PromocodeItem({ promocode }: { promocode: { code: string
 
   return (
     <li
-      className={`inline-flex text-black text-sm p-1 rounded-lg ${
-        isRecent(new Date(promocode.createdAt))
-          ? "bg-green-200"
-          : "bg-gray-300"
+      className={`flex items-center text-black text-sm p-1 rounded-lg ${
+        isRecent(new Date(promocode.createdAt)) ? "bg-green-100" : "bg-gray-100"
       }`}
     >
       <button
+        className="flex items-center justify-center w-8 h-8 rounded-full"
         onClick={() => {
           navigator.clipboard.writeText(promocode.code);
           notifyCopy("Промокод скопирован");
@@ -42,7 +41,7 @@ export default function PromocodeItem({ promocode }: { promocode: { code: string
       >
         <Image src="/source/icon/copy.png" width={24} height={24} alt="" />
       </button>
-      <b className="ml-2 text-center mt-1">{promocode.code}</b>
+      <span className="ml-2">{promocode.code}</span>
     </li>
   );
 };

@@ -3,14 +3,14 @@
 import { redirect } from "next/navigation";
 import { useSession } from "next-auth/react";
 
-import ResetPass from "@/components/Profile/resetPassword";
-import UpdatePhoto from "@/components/Profile/updatePhoto";
-import UpdateTech from "@/components/Profile/UpdateTech";
-import Profile from "../../components/Profile/profile";
-import HistoryAlerts from "../../components/Profile/alerts";
+import ResetPass from "@/components/profile/resetPassword";
+import UpdatePhoto from "@/components/profile/updatePhoto";
+import UpdateTech from "@/components/profile/UpdateTech";
+import Profile from "../../components/profile/profile";
+import HistoryAlerts from "../../components/profile/alerts";
 import { useEffect, useState } from "react";
-import UpdateTGRef from "../../components/Profile/updateTG";
-import PublicProfile from "../../components/Profile/PublicProfile";
+import UpdateTGRef from "../../components/profile/updateTG";
+import PublicProfile from "../../components/profile/PublicProfile";
 
 import "react-toastify/dist/ReactToastify.css";
 import { Sidebar } from "@/components/NewUi/sidebar";

@@ -24,6 +24,7 @@ Styles of alerts
 */
 
 
+
 /*
 tooltip for alerts
 */
@@ -607,4 +608,14 @@ tbody {
   body {
     @apply bg-background text-foreground;
   }
+}
+
+/* Добавьте в ваш глобальный CSS */
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
 }

@@ -20,12 +20,6 @@ import Image from "next/image";
 import { MVPcard } from "@/components/MVPcard";
 
 export default async function Home() {
-  const card_array = await prisma.wiki.findMany({
-    where: { published: true },
-    orderBy: {
-      createdAt: "desc",
-    },
-  });
 
   const response = await fetch(
     `${process.env.NEXT_PUBLIC_BASE_URL}/api/promocode`
@@ -43,57 +37,62 @@ export default async function Home() {
 
   return (
     <>
-      <div className="container mt-12 mx-auto flex flex-wrap p-4 rounded-xl ">
-        {/* Блок с случайными wiki страницами */} 
+      <div className="container mt-4 md:mt-12 mx-auto flex flex-wrap p-2 md:p-4 rounded-xl">
+        {/* Карусель */}
         <Carousel className="mt-2 w-full">
-          <CarouselContent>
-            <CarouselItem className="basis-1/2 md:basis-1/5">
-              <MVPcard nickname="Mafon" description="Главный фермер">
-                <Image src="/test.jpg" alt="1" width={240} height={400} quality={100} />
+          <CarouselContent className="-ml-2 md:-ml-4">
+            <CarouselItem className="pl-2 md:pl-4 basis-1/2 md:basis-1/5">
+              <MVPcard nickname="Mafon" description="Убийца">
+            <Image src="/test.png" alt="1" className="object-cover z-0" fill quality={100} />
               </MVPcard>
             </CarouselItem>
-            <CarouselItem className="basis-1/2 md:basis-1/5">
+            <CarouselItem className="pl-2 md:pl-4 basis-1/2 md:basis-1/5">
               <MVPcard nickname="Mafon" description="Главный фермер">
-                <Image src="/test.jpg" alt="1" width={240} height={400} quality={100} />
+                <Image src="/KD.png" alt="1" className="object-cover z-0" fill quality={100} />
               </MVPcard>
             </CarouselItem>
-            <CarouselItem className="basis-1/2 md:basis-1/5">
+            <CarouselItem className="pl-2 md:pl-4 basis-1/2 md:basis-1/5">
               <MVPcard nickname="Mafon" description="Главный фермер">
-                <Image src="/test.jpg" alt="1" width={240} height={400} quality={100} />
+                <Image src="/die.png" alt="1" className="object-cover z-0" fill quality={100} />
               </MVPcard>
             </CarouselItem>
-            <CarouselItem className="basis-1/2 md:basis-1/5">
+            <CarouselItem className="pl-2 md:pl-4 basis-1/2 md:basis-1/5">
               <MVPcard nickname="Mafon" description="Главный фермер">
-                <Image src="/test.jpg" alt="1" width={240} height={400} quality={100} />
+                <Image src="/die.png" alt="1" className="object-cover z-0" fill quality={100} />
               </MVPcard>
             </CarouselItem>
-            <CarouselItem className="basis-1/2 md:basis-1/5">
+            <CarouselItem className="pl-2 md:pl-4 basis-1/2 md:basis-1/5">
               <MVPcard nickname="Mafon" description="Главный фермер">
-                <Image src="/test.jpg" alt="1" width={240} height={400} quality={100} />
+                <Image src="/collect.png" alt="1" className="object-cover z-0" fill quality={100} />
               </MVPcard>
             </CarouselItem>
           </CarouselContent>
+            <CarouselPrevious className=" hidden" />
+            <CarouselNext className=" hidden"/>
         </Carousel>
 
-        <div className="w-full mt-2 grid grid-cols-3 gap-4">
+       <div className="w-full mt-4 grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4">
           {/* Блок с промокодами */}
-          <WarpathCard>
-            {/* <h1 className=" mx-auto text-xl">Промокоды</h1> */}
-            <ul className="m-4 mt-12 list-none list-inside grid grid-cols-1 md:grid-cols-2 gap-2">
+          <WarpathCard className="md:col-span-1 ">
+            <ul className="m-2 md:m-4 mt-8 md:mt-12 grid grid-cols-2 gap-2">
               {sortedPromocodes.slice(0, 10).map((promocode, index) => (
                 <PromocodeItem key={index} promocode={promocode} />
               ))}
             </ul>
           </WarpathCard>
+          
           {/* Блок с уведомлениями */}
-          <WarpathCard>
-            {/* <p className="text-xl">Гостевой чат</p> */}
+          <WarpathCard className="md:col-span-1">
             <TelegramChat discussion="stasis_guest/4"
-              commentsLimit={10}
+              commentsLimit={4}
               color="#FFFFF"
             />
           </WarpathCard>
-          <C4Card status={currentC4.status} players={currentC4.players} map={currentC4.map} />
+          
+          {/* Блок C4 */}
+          <div className="md:col-span-1">
+            <C4Card status={currentC4.status} players={currentC4.players} map={currentC4.map} />
+          </div>
         </div>
       </div>
       <ToastContainer
