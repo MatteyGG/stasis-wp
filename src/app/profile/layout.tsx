@@ -28,7 +28,7 @@ export default async function ProfileLayout({
 
   // Если пользователь не авторизован
   if (!session?.user) {
-    redirect('/login');
+    redirect('/singin');
   }
 
   return (

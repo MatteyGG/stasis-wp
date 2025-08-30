@@ -1,15 +1,22 @@
 // app/settings/page.tsx
 import { auth } from '@/lib/auth';
 import { redirect } from 'next/navigation';
-
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import AvatarUpload from '@/components/profile/AvatarUpload';
 import UpdateTech from '@/components/profile/UpdateTech';
+import AvatarUpload from '@/components/profile/AvatarUpload';
 
 export default async function SettingsPage() {
   const session = await auth();
+  
+  console.log('⚙️ Settings page - Session:', session ? {
+    user: {
+      id: session.user.id,
+      username: session.user.username,
+      techSlots: session.user.techSlots
+    }
+  } : 'No session');
 
   if (!session?.user) {
     redirect('/login');
@@ -31,7 +38,7 @@ export default async function SettingsPage() {
             <CardContent>
               <AvatarUpload 
                 userId={user.id} 
-                username={user.username} 
+                username={user.username || ''} 
               />
             </CardContent>
           </Card>
@@ -54,8 +61,10 @@ export default async function SettingsPage() {
                 <p className="text-sm md:text-base">{user.role}</p>
               </div>
               <div>
-                <p className="text-xs md:text-sm text-muted-foreground">Нация</p>
-                <p className="text-sm md:text-base">{user.nation}</p>
+                <p className="text-xs md:text-sm text-muted-foreground">TechSlots</p>
+                <p className="text-sm md:text-base">
+                  {user.techSlots ? `Количество: ${user.techSlots.length}` : 'Не найдены'}
+                </p>
               </div>
             </CardContent>
           </Card>
@@ -72,8 +81,7 @@ export default async function SettingsPage() {
             </CardHeader>
             <CardContent>
               <UpdateTech 
-                nation={user.nation} 
-                army={user.army} 
+                initialTechSlots={user.techSlots || []} 
                 id={user.id} 
               />
             </CardContent>
@@ -81,7 +89,7 @@ export default async function SettingsPage() {
         </div>
       </div>
       
-      <ToastContainer position="bottom-right" />
+      <ToastContainer position="bottom-center" />
     </div>
   );
 }

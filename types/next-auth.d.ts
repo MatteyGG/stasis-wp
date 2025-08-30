@@ -1,4 +1,5 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
+// next-auth.d.ts
 import NextAuth, { DefaultSession } from "next-auth";
 import "next-auth/jwt";
 
@@ -9,50 +10,59 @@ declare module "next-auth/jwt" {
     username: string;
     role: string;
     rank: string;
-    army: string;
-    nation: string;
-    image: string;
     created_at: Date;
     approved: boolean;
     gameID: string;
     tgref: string;
+    techSlots?: Array<{
+      type: string;
+      slotIndex: number;
+      nation: string | null;
+      unit: string | null;
+    }>;
   }
 }
 
 declare module "next-auth" {
-  /**
-   * Returned by `auth`, `useSession`, `getSession` and received as a prop on the `SessionProvider` React Context
-   */
   type ExtendedSession = Session;
 
   interface User {
-    id: string;
-    username: string;
-    email: string;
-    role: string;
-    rank: string;
-    army: string;
-    nation: string;
-    image: string;
-    created_at: Date;
-    approved: boolean;
-    gameID: string;
-    tgref: string;
+      id: string;
+      email?: string | null;
+      username?: string | null;
+      role?: string | null;
+      rank?: string | null;
+      created_at?: Date | null;
+      approved?: boolean | null;
+      gameID?: string | null;
+      tgref?: string | null;
+      techSlots?: Array<{
+        type: string;
+        slotIndex: number;
+        nation: string | null;
+        unit: string | null;
+      }>;
   }
 
+
   interface Session extends DefaultSession {
-    id: string;
-    username: string;
-    email: string;
-    role: string;
-    rank: string;
-    army: string;
-    nation: string;
-    image: string;
-    created_at: Date;
-    approved: boolean;
-    gameID: string;
-    tgref: string;
+    user: {
+      id: string;
+      username: string;
+      email: string;
+      role: string;
+      rank: string;
+      created_at: Date;
+      approved: boolean;
+      gameID: string;
+      tgref: string;
+      techSlots?: Array<{
+        type: string;
+        slotIndex: number;
+        nation: string | null;
+        unit: string | null;
+      }>;
+    };
   }
 }
 

@@ -30,10 +30,11 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { signOut } from 'next-auth/react';
+import { signOut } from "next-auth/react";
 
 interface HeaderProps {
   user?: {
+    id?: string | null;
     name?: string | null;
     email?: string | null;
     image?: string | null;
@@ -41,8 +42,11 @@ interface HeaderProps {
   };
 }
 
+
+
 export function Header({ user }: HeaderProps) {
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
+    const avatarImage = user ? `https://s3.timeweb.cloud/576b093c-bf65d329-1603-4121-b476-e46d7ce3cb2a/userProfile/${user.id}.png` : "/source/help/unit-placeholder";
 
   return (
     <>
@@ -192,7 +196,13 @@ export function Header({ user }: HeaderProps) {
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" className="rounded-full p-0 h-8 w-8">
                     <Avatar className="h-8 w-8">
-                      <AvatarImage src={user.image || "https://i.pravatar.cc/100?img=13"} />
+                      <Image
+                                      className="rounded-full object-cover border-2 border-gray-300"
+                                      src={avatarImage}
+                                      alt={user.name || 'User Avatar'}
+                                      width={128}
+                                      height={128}
+                                    />
                       <AvatarFallback>
                         {user.name?.charAt(0) || user.email?.charAt(0) || 'U'}
                       </AvatarFallback>

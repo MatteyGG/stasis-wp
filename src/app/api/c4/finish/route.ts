@@ -1,9 +1,9 @@
 import { lastDate } from "@/lib/getDate";
 import { prisma } from "@/lib/prisma";
 import { WarpathPlayer } from "@/lib/types";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
-export async function POST() {
+export async function POST(req: NextRequest) {
   const activeC4 = await prisma.c4.findFirst({
     where: { status: "active" },
     orderBy: { createdAt: "desc" },
@@ -102,6 +102,7 @@ export async function POST() {
       data: {
         status: "finished",
         endedAt: new Date(),
+        result: req.body.result || "Unknown",
         totalPlayers: playerCount,
         avgPowerGain: playerCount > 0 ? totalPowerGain / playerCount : 0,
         avgKillGain: playerCount > 0 ? totalKillGain / playerCount : 0,

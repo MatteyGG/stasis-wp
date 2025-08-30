@@ -1,7 +1,7 @@
 // components/settings/UpdateTech.tsx
 'use client';
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
@@ -25,15 +25,15 @@ const groundUnits = [
 ];
 
 const airUnits = [
-  { id: "fighter", name: "Истребитель",  },
-  { id: "bomber", name: "Бомбардировщик",  },
-  { id: "pointBomber", name: "Точечный бомбардировщик",  },
+  { id: "fighter", name: "Истребитель", image: "/source/air/fighter.webp" },
+  { id: "bomber", name: "Бомбардировщик", image: "/source/air/bomber.webp" },
+  { id: "pointBomber", name: "Точечный бомбардировщик", image: "/source/air/pointBomber.webp" },
 ];
 
 const navalUnits = [
-  { id: "naval-unit-1", name: "Эсминец", image: "/source/naval/unit1.webp" },
-  { id: "naval-unit-2", name: "Крейсер", image: "/source/naval/unit2.webp" },
-  { id: "naval-unit-3", name: "Линкор", image: "/source/naval/unit3.webp" },
+  { id: "destroyer", name: "Эсминец", image: "/source/naval/destroyer.webp" },
+  { id: "cruiser", name: "Крейсер", image: "/source/naval/cruiser.webp" },
+  { id: "battleship", name: "Линкор", image: "/source/naval/battleship.webp" },
 ];
 
 // Начальное состояние для слотов техники
@@ -44,17 +44,43 @@ const initialSlots = {
 };
 
 export default function UpdateTech({ 
-  nation, 
-  army, 
+  initialTechSlots,
   id 
 }: { 
-  nation: string; 
-  army: string; 
+  initialTechSlots: any[];
   id: string; 
 }) {
   const [selectedSlots, setSelectedSlots] = useState(initialSlots);
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+
+  // Загружаем начальные данные при монтировании компонента
+  useEffect(() => {
+    if (initialTechSlots && initialTechSlots.length > 0) {
+      const newSlots = { ...initialSlots };
+      
+      initialTechSlots.forEach(slot => {
+        if (slot.type === 'ground' && slot.slotIndex < 5) {
+          newSlots.ground[slot.slotIndex] = { 
+            nation: slot.nation, 
+            unit: slot.unit 
+          };
+        } else if (slot.type === 'air' && slot.slotIndex < 3) {
+          newSlots.air[slot.slotIndex] = { 
+            nation: slot.nation, 
+            unit: slot.unit 
+          };
+        } else if (slot.type === 'naval' && slot.slotIndex < 3) {
+          newSlots.naval[slot.slotIndex] = { 
+            nation: slot.nation, 
+            unit: slot.unit 
+          };
+        }
+      });
+      
+      setSelectedSlots(newSlots);
+    }
+  }, [initialTechSlots]);
 
   const handleNationSelect = (type: 'ground' | 'air' | 'naval', slotIndex: number, nationId: string) => {
     setSelectedSlots(prev => ({

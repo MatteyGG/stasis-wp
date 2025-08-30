@@ -3,9 +3,9 @@
 import { useRouter, usePathname } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
-import { Home, Bell, Users2, Phone, Key, Camera, Settings, ChevronRight } from 'lucide-react';
+import { Home, Bell, Users2, Phone, Key, ChevronRight } from 'lucide-react';
 import { useState, useEffect } from 'react';
-import { cn } from '@/lib/utils'; // Предполагается, что у вас есть утилита для условных классов
+import { cn } from '@/lib/utils';
 
 const sidebarItems = [
   { key: "home", label: "Главная", icon: Home },
@@ -13,9 +13,7 @@ const sidebarItems = [
   { key: "notifications", label: "Уведомления", icon: Bell },
   { key: "social", label: "Соц. сети", icon: Users2 },
   { key: "support", label: "Поддержка", icon: Phone },
-  { key: "photo", label: "Обновить фото", icon: Camera },
   { key: "password", label: "Сменить пароль", icon: Key },
-  { key: "tech", label: "Сменить технику", icon: Settings },
 ];
 
 export default function ProfileSidebar() {

@@ -46,14 +46,27 @@ model User {
   tgref         String?   @default("")
   role          String?   @default("user")
   rank          String?   @default("R1")
-  army          String?
-  nation        String?
   created_at    DateTime  @default(now())
   accounts      Account[]
   sessions      Session[]
   alerts        Alert[]
+  techSlots     UserTechSlot[]
+  player Player? @relation(fields: [gameID], references: [id])
 
   authenticators       Authenticator[]
+}
+
+model UserTechSlot {
+  id        String   @id @default(cuid())
+  userId    String
+  type      String   // 'ground', 'air', 'naval'
+  slotIndex Int      // 0-4 для ground, 0-2 для air/naval
+  nation    String?  // Может быть null
+  unit      String?  // Может быть null
+  
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@unique([userId, type, slotIndex])
 }
 
 model VerificationToken {
@@ -115,6 +128,7 @@ model C4 {
   startedAt    DateTime?
   endedAt      DateTime?
   createdAt    DateTime  @default(now())
+  result       String?   @default("In process")
   
   // Агрегированные показатели
   avgPowerGain Float?
@@ -153,14 +167,21 @@ model C4Statistic {
 model Player {
   id        String    @id @default(cuid())
   warpathId Int?      @unique
+  serverId  Int?      // ID сервера
   username  String
   ally      String?
   power     Int
   kill      Int
   die       Int
   kd        Float
+  resourceCollection BigInt?  // Сбор ресурсов
+  techPower Int?              // Сила технологий
+  airPower  Int?              // Сила воздушных сил
+  navyPower Int?              // Сила морских сил
+  groundPower Int?            // Сила наземных сил
   onSite    Boolean   @default(false)
 
+  user User?
   snapshots PlayerSnapshot[]
   c4Stats   C4Statistic[] // Обратная связь
 }
@@ -169,6 +190,7 @@ model Alert {
   userId    String
   type      String   @default("info")
   message   String
+  isRead    Boolean  @default(false)
   createdAt DateTime @default(now())
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
