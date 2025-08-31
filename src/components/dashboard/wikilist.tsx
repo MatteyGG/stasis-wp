@@ -1,6 +1,7 @@
-import { prisma } from "../../lib/prisma";
+import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import Published from "./published";
+import ArticleTags from "../wiki/ArticleTags";
 
 export default async function WikiList() {
   const wikis = await prisma.wiki.findMany({
@@ -8,33 +9,53 @@ export default async function WikiList() {
       createdAt: "desc",
     },
   });
+
   return (
-    <div className="container h-max min-h-64 overflow-y-scroll shadow-sm shadow-black mx-auto p-2 rounded-xl  backdrop-blur-3xl">
-      <ul className="flex flex-col gap-1 ">
-        {wikis.map((wiki, index) => (
-          <li
-            className="flex  bg-white rounded-md shadow-sm justify-between p-2"
-            key={index}
-          >
-            <div className="flex flex-col md:flex-row md:inline-flex items-baseline gap-1 md:gap-6">
-              <Link
-                href={`/wiki/${wiki.category}/${wiki.pageId}`}
-                className="text-sm text-left md:text-lg font-medium hover:text-blue-400"
-              >
-                {wiki.title}
-              </Link>
-              <span className="text-sm text-gray-500">{wiki.category} </span>
-              <span className="text-sm text-gray-500">{wiki.autor} </span>
-              <span className="text-sm text-gray-500">
-                {new Date(wiki.createdAt).toLocaleDateString()}
-              </span>
-            </div>
-            <div className="inline-flex items-center">
-              <Published published={wiki.published} pageid={wiki.pageId} />
-            </div>
-          </li>
-        ))}
-      </ul>
+    <div className="container mx-auto p-4 bg-white rounded-xl shadow-sm">
+      <div className="overflow-x-auto">
+        <table className="w-full">
+          <thead>
+            <tr className="border-b">
+              <th className="text-left p-3">Заголовок</th>
+              <th className="text-left p-3">Категория</th>
+              <th className="text-left p-3">Теги</th>
+              <th className="text-left p-3">Автор</th>
+              <th className="text-left p-3">Дата</th>
+              <th className="text-left p-3">Действия</th>
+            </tr>
+          </thead>
+          <tbody>
+            {wikis.map((wiki) => (
+              <tr key={wiki.pageId} className="border-b hover:bg-gray-50">
+                <td className="p-3">
+                  <Link
+                    href={`/wiki/${wiki.category}/${wiki.pageId}`}
+                    className="font-medium text-blue-600 hover:text-blue-800"
+                    target="_blank"
+                  >
+                    {wiki.title}
+                  </Link>
+                </td>
+                <td className="p-3">
+                  <span className="bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-0.5 rounded">
+                    {wiki.category}
+                  </span>
+                </td>
+                <td className="p-3">
+                  <ArticleTags tags={wiki.tags as string[]} />
+                </td>
+                <td className="p-3 text-sm text-gray-600">{wiki.autor || "Не указан"}</td>
+                <td className="p-3 text-sm text-gray-600">
+                  {new Date(wiki.createdAt).toLocaleDateString()}
+                </td>
+                <td className="p-3">
+                  <Published published={wiki.published} pageid={wiki.pageId} />
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }

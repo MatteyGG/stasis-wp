@@ -2,8 +2,9 @@
 
 import { useState } from "react";
 import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Eye, Edit, Trash2, EyeOff } from "lucide-react";
 
 interface PublishedProps {
   published: boolean;
@@ -12,73 +13,84 @@ interface PublishedProps {
 
 export default function Published({ published, pageid }: PublishedProps) {
   const [isPublished, setIsPublished] = useState(published);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handlePublish = async () => {
-    const response = await fetch(`/api/markdown/${pageid}`, {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ published: !isPublished }),
-    });
+    setIsLoading(true);
+    try {
+      const response = await fetch(`/api/markdown/${pageid}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ published: !isPublished }),
+      });
 
-    if (response.ok) {
-      setIsPublished(!isPublished);
-      toast.success(`Страница ${isPublished ? "не " : ""}опубликована`);
-    } else {
-      toast.error("Ошибка во время публикации страницы");
+      if (response.ok) {
+        setIsPublished(!isPublished);
+        toast.success(`Статья ${isPublished ? "снята с публикации" : "опубликована"}`);
+      } else {
+        throw new Error("Ошибка изменения статуса");
+      }
+    } catch (error) {
+      console.error("Publish error:", error);
+      toast.error("Ошибка во время изменения статуса статьи");
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const handleDelete = async () => {
-    const response = await fetch(`/api/markdown/${pageid}`, {
-      method: "DELETE",
-    });
+    if (!confirm("Вы уверены, что хотите удалить эту статью?")) return;
 
-    if (response.ok) {
-      toast.success("Страница удалена");
-    } else {
-      toast.error("Ошибка во время удаления страницы");
+    try {
+      const response = await fetch(`/api/markdown/${pageid}`, {
+        method: "DELETE",
+      });
+
+      if (response.ok) {
+        toast.success("Статья удалена");
+        // Обновляем страницу после удаления
+        window.location.reload();
+      } else {
+        throw new Error("Ошибка удаления");
+      }
+    } catch (error) {
+      console.error("Delete error:", error);
+      toast.error("Ошибка во время удаления статьи");
     }
   };
 
   return (
-    <div className="grid grid-cols-1 gap-1 md:flex md:flex-row space-x-1 items-baseline">
-      <Link
-        href={`/edit/?pageid=${pageid}`}
-        className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-xl"
-      >
-        Редактировать ↑
+    <div className="flex space-x-2">
+      <Link href={`/edit?pageid=${pageid}`}>
+        <Button variant="outline" size="sm">
+          <Edit className="h-4 w-4 mr-1" />
+          Редактировать
+        </Button>
       </Link>
-      <button
-        className={`bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1 rounded-xl ${
-          isPublished ? "opacity-50" : ""
-        }`}
+      
+      <Button
+        variant={isPublished ? "outline" : "default"}
+        size="sm"
         onClick={handlePublish}
+        disabled={isLoading}
       >
-        {isPublished ? "Скрыть" : "Опубликовать ->"}
-      </button>
-      <button
-        className="inline-flex items-center bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-xl"
+        {isPublished ? (
+          <EyeOff className="h-4 w-4 mr-1" />
+        ) : (
+          <Eye className="h-4 w-4 mr-1" />
+        )}
+        {isPublished ? "Скрыть" : "Опубликовать"}
+      </Button>
+      
+      <Button
+        variant="destructive"
+        size="sm"
         onClick={handleDelete}
       >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          className="h-6 w-6"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-          />
-        </svg>
-        <p className="ml-2 md:hidden">Удалить</p>
-      </button>
+        <Trash2 className="h-4 w-4" />
+      </Button>
     </div>
   );
 }
-

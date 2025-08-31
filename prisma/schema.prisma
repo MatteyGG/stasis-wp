@@ -47,6 +47,7 @@ model User {
   role          String?   @default("user")
   rank          String?   @default("R1")
   created_at    DateTime  @default(now())
+
   accounts      Account[]
   sessions      Session[]
   alerts        Alert[]
@@ -93,16 +94,36 @@ model Wikicategory {
 }
 
 model Wiki {
-  autor     String?
-  pageId    String   @id @unique @default(cuid())
+  id        String   @id @default(cuid())
+  pageId    String   @unique
   title     String?
-  scr       String   @default("placeholder.png")
-  alt       String?  @default("Prewiew image")
+  scr       String?
+  alt       String?
   category  String?
   short     String?
-  md        String
+  md        String?
   published Boolean  @default(false)
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  autor     String?
+  views     Int      @default(0)
+  likes     Int      @default(0)
+  tags      String[]
+
+  wikiViews WikiView[]
+}
+
+model WikiView {
+  id          String   @id @default(cuid())
+  wikiPageId  String
+  wiki        Wiki     @relation(fields: [wikiPageId], references: [pageId], onDelete: Cascade)
+  userId      String?  
+  username    String   @default("Аноним") 
+  viewedAt    DateTime @default(now())
+  
+  @@index([wikiPageId])
+  @@index([viewedAt])
+  @@index([userId])
 }
 
 model PlayerSnapshot {

@@ -1,11 +1,17 @@
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { prisma } from "@/lib/prisma";
 import { MDXRemote } from "next-mdx-remote/rsc";
-
-import Link from "next/link";
 import remarkGfm from "remark-gfm";
 import remarkToc from "remark-toc";
 import remarkFlexibleContainers from "remark-flexible-containers";
-import remarkvideo from "remark-video";
+import remarkVideo from "remark-video";
+import Breadcrumbs from "@/components/wiki/Breadcrumbs";
+import ArticleTags from "@/components/wiki/ArticleTags";
+import { ViewCounter } from "@/components/wiki/ViewCounter";
+import { RecentViewers } from "@/components/wiki/RecentViewers";
+import { auth } from '@/lib/auth';
+import Link from "next/link";
 
 const options = {
   mdxOptions: {
@@ -13,59 +19,130 @@ const options = {
       remarkGfm,
       remarkToc,
       remarkFlexibleContainers,
-      remarkvideo,
+      remarkVideo,
     ],
     rehypePlugins: [],
   },
 };
 
-
-export default async function Wiki_page({
-  params,
-}: {
-  params: {
-    category: string;
-    wikipageid: string;
-  };
-}) {
-  const wiki = await prisma.wiki.findUnique({
-    where: {
-      pageId: params.wikipageid,
-    },
+export default async function WikiPage({ params }: { params: { category: string; wikipageid: string } }) {
+  const session = await auth();
+  const article = await prisma.wiki.findUnique({
+    where: { pageId: params.wikipageid },
+    select: {
+      id: true,
+      pageId: true,
+      title: true,
+      category: true,
+      md: true,
+      tags: true,
+      autor: true,
+      views: true,
+      likes: true,
+      createdAt: true
+    }
   });
 
-  if (!wiki) {
+  if (!article) {
     return (
-      <>
-        <div className="flex items-center justify-center">
-          <div className="w-1/2 h-1 bg-orange-500"></div>
-          <div className="w-1/2 h-1 bg-black"></div>
-        </div>
-        <p className="text-center text-2xl text-primaly p-4 border-2 border-dashed border-primaly rounded-xl">
-          Страница не найдена
-        </p>
-      </>
+      <div className="flex flex-col items-center justify-center p-6">
+        <Card className="rounded-2xl max-w-md text-center">
+          <CardHeader>
+            <CardTitle>Страница не найдена</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-muted-foreground mb-4">
+              Запрошенная статья не существует или была удалена
+            </p>
+            <Link href="/wiki" className="text-blue-500 hover:underline">
+              Вернуться в Wiki
+            </Link>
+          </CardContent>
+        </Card>
+      </div>
     );
   }
 
+  // Увеличиваем счетчик просмотров
+  await prisma.wiki.update({
+    where: { pageId: article.pageId },
+    data: { views: { increment: 1 } }
+  });
+
+  // Записываем просмотр только для авторизованных пользователей
+  if (session?.user) {
+    // Проверяем, был ли недавний просмотр от этого пользователя (в течение 5 минут)
+    const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
+    
+    const recentView = await prisma.wikiView.findFirst({
+      where: { 
+        wikiPageId: article.pageId,
+        userId: session.user.id,
+        viewedAt: {
+          gte: fiveMinutesAgo
+        }
+      }
+    });
+
+    // Если не было просмотра в последние 5 минут, создаем новую запись
+    if (!recentView) {
+      await prisma.wikiView.create({
+        data: {
+          wikiPageId: article.pageId,
+          userId: session.user.id,
+          username: session.user.username || "Пользователь",
+          viewedAt: new Date()
+        }
+      });
+    }
+  }
+
+  // Получаем последних просмотревших (только авторизованных пользователей)
+  const recentViewers = await prisma.wikiView.findMany({
+    where: { 
+      wikiPageId: article.pageId,
+      userId: { not: null } // Только авторизованные пользователи
+    },
+    orderBy: { viewedAt: 'desc' },
+    take: 5,
+    select: {
+      id: true,
+      username: true,
+      viewedAt: true,
+    }
+  });
+
   return (
-    <>
-      <div className="wiki container bg-white border-none border-primaly shadow-2xl shadow-black  mx-auto flex flex-wrap p-4 rounded-xl">
-        <h1 className="text-2xl text-left text-primaly w-full my-6">
-          <div className="breadcrumb flat">
-            <Link href="/wiki">
-              <b>Wiki</b>
-            </Link>
-            <Link href={`../${wiki.category}`}>
-              {decodeURIComponent(params.category)}
-            </Link>
-            <a className="active" href="#">
-              <b>{wiki.title}</b>
-            </a>
+    <div className="flex flex-col p-0 md:p-6 max-w-4xl mx-auto">
+      <Breadcrumbs category={article.category || ''} title={article.title || ''} />
+
+      <Card className="rounded-2xl">
+        <CardHeader>
+          <ArticleTags tags={article.tags || []} className="mb-4" />
+          <CardTitle className="text-2xl">{article.title}</CardTitle>
+          <div className="flex items-center gap-4 text-sm text-muted-foreground">
+            <ViewCounter views={article.views + 1} /> {/* +1 потому что мы уже увеличили счетчик */}
+            {article.autor && <span>Автор: {article.autor}</span>}
           </div>
-        </h1>
-          <MDXRemote source={wiki.md} options={options} />
-      </div>
-    </>
+        </CardHeader>
+        <CardContent>
+          <div className="prose max-w-none">
+            <MDXRemote source={article.md || ''} options={options} />
+          </div>
+          
+          {/* Блок с последними просмотревшими (только авторизованные) */}
+          <RecentViewers viewers={recentViewers} />
+          
+          <div className="flex items-center justify-between mt-8 pt-4 border-t">
+            <div className="text-sm text-muted-foreground">
+              Опубликовано: {new Date(article.createdAt).toLocaleDateString('ru-RU')}
+            </div>
+            <div className="text-sm text-muted-foreground">
+              Лайков: {article.likes}
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
   );
 }

@@ -1,42 +1,46 @@
-import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { NextRequest } from "next/server";
 
-export async function POST(req: NextRequest) {
-  const body = await req.json();
-  const { pageId, title, short, markdown, category, image, imageAlt } = body;
-
+export async function POST(request: NextRequest) {
   try {
-    let response;
+    const body = await request.json();
+    const { title, short, markdown, category, image, imageAlt, pageId, tags } = body;
+
+    // Если pageId указан, обновляем существующую статью
     if (pageId) {
-      response = await prisma.wiki.update({
-        where: { pageId: pageId },
+      const updatedArticle = await prisma.wiki.update({
+        where: { pageId },
         data: {
-          title: title,
-          short: short,
+          title,
+          short,
           md: markdown,
+          category,
           scr: image,
           alt: imageAlt,
-          category: category,
+          tags: tags || [],
         },
       });
-    } else {
-      response = await prisma.wiki.create({
-        data: {
-          title: title,
-          short: short,
-          md: markdown,
-          scr: image,
-          alt: imageAlt,
-          category: category,
-        },
-      });
+
+      return Response.json(updatedArticle);
     }
-    return NextResponse.json({ response });
+
+    // Создаем новую статью
+    const newArticle = await prisma.wiki.create({
+      data: {
+        title,
+        short,
+        md: markdown,
+        category,
+        scr: image,
+        alt: imageAlt,
+        pageId: Math.random().toString(36).substring(2, 10), // Генерируем случайный pageId
+        tags: tags || [],
+      },
+    });
+
+    return Response.json(newArticle);
   } catch (error) {
-    console.error(error);
-    return NextResponse.json({ error });
-  } finally {
-    await prisma.$disconnect();
+    console.error("Error saving article:", error);
+    return Response.json({ error: "Failed to save article" }, { status: 500 });
   }
 }
-

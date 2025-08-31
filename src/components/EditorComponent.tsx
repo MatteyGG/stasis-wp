@@ -1,21 +1,18 @@
 "use client";
-// InitializedMDXEditor.tsx
 import { FC } from "react";
-import { markdownShortcutPlugin, MDXEditor, MDXEditorMethods } from "@mdxeditor/editor";
-
-import {
+import { 
+  MDXEditor, 
+  MDXEditorMethods,
   headingsPlugin,
   quotePlugin,
   listsPlugin,
-  diffSourcePlugin,
   linkDialogPlugin,
   linkPlugin,
-  frontmatterPlugin,
   imagePlugin,
-  sandpackPlugin,
+  markdownShortcutPlugin,
   directivesPlugin,
   AdmonitionDirectiveDescriptor,
-  toolbarPlugin, //Toolbar plugins
+  toolbarPlugin,
   BoldItalicUnderlineToggles,
   InsertTable,
   BlockTypeSelect,
@@ -25,21 +22,25 @@ import {
   InsertImage,
   InsertAdmonition,
   UndoRedo,
+  CodeToggle,
+  CodeMirrorEditor,
+  diffSourcePlugin,
+  DiffSourceToggleWrapper,
 } from "@mdxeditor/editor";
+import '@mdxeditor/editor/style.css';
 
 interface EditorProps {
   markdown: string;
   editorRef?: React.MutableRefObject<MDXEditorMethods | null>;
 }
 
-
 const Editor: FC<EditorProps> = ({ markdown, editorRef }) => {
   return (
     <MDXEditor
       ref={editorRef}
       markdown={markdown}
+      contentEditableClassName="prose prose-lg max-w-none font-sans"
       plugins={[
-        // Add plugins here
         headingsPlugin(),
         linkPlugin(),
         linkDialogPlugin(),
@@ -47,26 +48,31 @@ const Editor: FC<EditorProps> = ({ markdown, editorRef }) => {
         listsPlugin(),
         thematicBreakPlugin(),
         tablePlugin(),
-        diffSourcePlugin(),
-        frontmatterPlugin(),
-        imagePlugin(),
-        sandpackPlugin(),
+        imagePlugin({
+          imageUploadHandler: () => Promise.resolve('https://picsum.photos/200/300'),
+          imageAutocompleteSuggestions: [
+            'https://picsum.photos/200/300',
+            'https://picsum.photos/200',
+            'https://picsum.photos/300/200'
+          ]
+        }),
         markdownShortcutPlugin(),
         directivesPlugin({
           directiveDescriptors: [AdmonitionDirectiveDescriptor],
         }),
+        diffSourcePlugin({ viewMode: 'rich-text' }),
         toolbarPlugin({
           toolbarContents: () => (
-            <>
+            <DiffSourceToggleWrapper>
               <UndoRedo />
-              <BlockTypeSelect />
               <BoldItalicUnderlineToggles />
+              <BlockTypeSelect />
+              <CodeToggle />
               <CreateLink />
-              <InsertTable />
               <InsertImage />
+              <InsertTable />
               <InsertAdmonition />
-              {/*<InsertSandpack /> */} {/* TODO: Add Sandpack plugin */}
-            </>
+            </DiffSourceToggleWrapper>
           ),
         }),
       ]}

@@ -1,3 +1,6 @@
+// src/components/dashboard/editor.tsx
+//Редактор статей в админке
+
 "use client";
 
 import { MDXEditorMethods } from "@mdxeditor/editor";
