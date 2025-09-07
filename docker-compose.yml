@@ -9,7 +9,7 @@ services:
       context: .
       dockerfile: Dockerfile
     environment:
-      DATABASE_URL: postgres://postgres:postgres@db:5432/mydatabase
+#      DATABASE_URL: postgres://postgres:postgres@db:5432/mydatabase
       NODE_ENV: .env
     ports:
       - "3000:3000"

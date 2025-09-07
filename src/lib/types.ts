@@ -65,13 +65,33 @@ export interface Player {
 // Тип для игрока с Warpath API
 export interface WarpathPlayer {
   warpathId: number;
+  id: number;
   pid: number;
   nick: string;
   gnick: string;
+  wid: number;
   lv: number;
+  power: string;
+  caiji: number;
   maxpower: number;
   sumkill: number;
   die: number;
   kd: number;
-  resourceCollection: bigint;
+  resourceCollection: number;
+  powers: {
+    camp: number;
+    tech: number;
+    equip: number;
+    total: number;
+    officer: number;
+    army_air: number;
+    army_navy: number;
+    army_ground: number;
+    tactic_card: number;
+    mine_vehicle: number;
+    super_computer: number;
+    user_city_building: number;
+  };
+  kills: number[];
+  createdAt: string;
 }

@@ -15,6 +15,7 @@ import { Bell, Loader2, CheckCircle } from 'lucide-react';
 import Link from 'next/link';
 import { getUnreadNotifications, markAlertAsRead, markAllAlertsAsRead } from '@/app/actions/notifications';
 import { toast } from 'react-toastify';
+import { Alert } from '@prisma/client';
 
 interface NotificationDropdownProps {
   userId: string;
@@ -22,7 +23,7 @@ interface NotificationDropdownProps {
 
 export default function NotificationDropdown({ userId }: NotificationDropdownProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [notifications, setNotifications] = useState<any[]>([]);
+  const [notifications, setNotifications] = useState<Alert[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
   // Загрузка уведомлений при открытии dropdown

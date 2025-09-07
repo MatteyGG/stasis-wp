@@ -2,21 +2,34 @@
 
 import { MDXEditorMethods } from "@mdxeditor/editor";
 import dynamic from "next/dynamic";
-import { Suspense, useEffect, useState, FormEvent, useRef } from "react";
+import { Suspense, useEffect, useState, FormEvent, useRef, useCallback } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { X, Plus, Save, Eye, Loader2 } from "lucide-react";
 import { toast } from "react-toastify";
-import { auth } from "@/lib/auth";
 
 const EditorComp = dynamic(() => import("@/components/EditorComponent"), {
   ssr: false,
-  loading: () => <div className="h-96 w-full bg-gray-100 animate-pulse rounded-lg"></div>,
+  loading: () => (
+    <div className="h-96 w-full bg-gray-100 animate-pulse rounded-lg"></div>
+  ),
 });
 
 export default function Editor() {
@@ -32,23 +45,15 @@ export default function Editor() {
   const [markdown, setMarkdown] = useState("");
   const [tags, setTags] = useState<string[]>([]);
   const [newTag, setNewTag] = useState("");
-  const [categories, setCategories] = useState<{ id: number; name: string }[]>([]);
+  const [categories, setCategories] = useState<{ id: number; name: string }[]>(
+    []
+  );
   const [isLoading, setIsLoading] = useState(false);
   const [isPublished, setIsPublished] = useState(false);
 
   const ref = useRef<MDXEditorMethods>(null);
 
-  useEffect(() => {
-    if (pageid) {
-      fetchArticleData();
-    } else {
-      setMarkdown("# Начните **писать**");
-    }
-    
-    fetchCategories();
-  }, [pageid]);
-
-  const fetchArticleData = async () => {
+  const fetchArticleData = useCallback(async () => {
     try {
       const response = await fetch(`/api/markdown/${pageid}`);
       if (response.ok) {
@@ -60,7 +65,7 @@ export default function Editor() {
         setImageAlt(data.alt || "");
         setMarkdown(data.md || "");
         setIsPublished(data.published || false);
-        
+
         if (data.tags) {
           setTags(Array.isArray(data.tags) ? data.tags : JSON.parse(data.tags));
         }
@@ -69,9 +74,9 @@ export default function Editor() {
       console.error("Error fetching article:", error);
       toast.error("Ошибка загрузки статьи");
     }
-  };
+  }, [pageid]); // Добавили зависимости
 
-  const fetchCategories = async () => {
+  const fetchCategories = useCallback(async () => {
     try {
       const response = await fetch("/api/category");
       const data = await response.json();
@@ -79,7 +84,17 @@ export default function Editor() {
     } catch (error) {
       console.error("Error fetching categories:", error);
     }
-  };
+  }, []);
+
+    useEffect(() => {
+    if (pageid) {
+      fetchArticleData();
+    } else {
+      setMarkdown("# Начните **писать**");
+    }
+    
+    fetchCategories();
+  }, [pageid, fetchArticleData, fetchCategories]);
 
   const handleAddTag = () => {
     if (newTag.trim() && !tags.includes(newTag.trim())) {
@@ -89,11 +104,11 @@ export default function Editor() {
   };
 
   const handleRemoveTag = (tagToRemove: string) => {
-    setTags(tags.filter(tag => tag !== tagToRemove));
+    setTags(tags.filter((tag) => tag !== tagToRemove));
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
+    if (e.key === "Enter") {
       e.preventDefault();
       handleAddTag();
     }
@@ -124,7 +139,7 @@ export default function Editor() {
       if (response.ok) {
         toast.success("Статья сохранена успешно!");
         const data = await response.json();
-        
+
         if (!pageid) {
           // Если это новая статья, перенаправляем на её страницу редактирования
           router.push(`/edit?pageid=${data.pageId}`);
@@ -142,7 +157,7 @@ export default function Editor() {
 
   const handlePreview = () => {
     if (category && pageid) {
-      window.open(`/wiki/${category}/${pageid}`, '_blank');
+      window.open(`/wiki/${category}/${pageid}`, "_blank");
     } else {
       toast.info("Сохраните статью сначала для предпросмотра");
     }
@@ -155,7 +170,11 @@ export default function Editor() {
           {pageid ? "Редактирование статьи" : "Создание новой статьи"}
         </h1>
         <div className="flex gap-2">
-          <Button variant="outline" onClick={handlePreview} disabled={!category || !pageid}>
+          <Button
+            variant="outline"
+            onClick={handlePreview}
+            disabled={!category || !pageid}
+          >
             <Eye className="mr-2 h-4 w-4" />
             Предпросмотр
           </Button>
@@ -249,10 +268,14 @@ export default function Editor() {
                     <Plus className="h-4 w-4" />
                   </Button>
                 </div>
-                
+
                 <div className="flex flex-wrap gap-2 mt-2">
                   {tags.map((tag) => (
-                    <Badge key={tag} variant="secondary" className="flex items-center gap-1">
+                    <Badge
+                      key={tag}
+                      variant="secondary"
+                      className="flex items-center gap-1"
+                    >
                       {tag}
                       <button
                         type="button"
@@ -298,10 +321,16 @@ export default function Editor() {
           <Card className="h-full">
             <CardHeader>
               <CardTitle>Содержание статьи</CardTitle>
-              <CardDescription>Используйте панель инструментов для форматирования</CardDescription>
+              <CardDescription>
+                Используйте панель инструментов для форматирования
+              </CardDescription>
             </CardHeader>
             <CardContent>
-              <Suspense fallback={<div className="h-96 bg-gray-100 animate-pulse rounded-lg"></div>}>
+              <Suspense
+                fallback={
+                  <div className="h-96 bg-gray-100 animate-pulse rounded-lg"></div>
+                }
+              >
                 <EditorComp markdown={markdown} editorRef={ref} />
               </Suspense>
             </CardContent>

@@ -1,10 +1,10 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar } from "@/components/ui/avatar";
 import Image from "next/image";
 
 interface Viewer {
     id: string;
     username: string;
-    userId: string;
+    userId: string | null;
     viewedAt: Date;
     user?: {
         gameID?: string;

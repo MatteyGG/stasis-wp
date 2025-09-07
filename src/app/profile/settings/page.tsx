@@ -81,6 +81,7 @@ export default async function SettingsPage() {
             </CardHeader>
             <CardContent>
               <UpdateTech 
+              
                 initialTechSlots={user.techSlots || []} 
                 id={user.id} 
               />

@@ -2,6 +2,7 @@
 
 import { lastDate } from "@/lib/getDate";
 import { prisma } from "@/lib/prisma";
+import { WarpathPlayer } from "@/lib/types";
 import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
@@ -19,8 +20,8 @@ export async function POST(req: Request) {
     // Фильтрация игроков нужного альянса
     const targetAlliance = "ST";
     const stPlayers = data.Data
-      .filter((p: any) => p.gnick === targetAlliance)
-      .map((p: any) => ({
+      .filter((p: WarpathPlayer) => p.gnick === targetAlliance)
+      .map((p: WarpathPlayer) => ({
         warpathId: p.pid,
         username: p.nick,
         ally: p.gnick,
@@ -85,9 +86,9 @@ export async function POST(req: Request) {
     });
 
     return NextResponse.json({ ...newC4, playersCount: stPlayers.length });
-  } catch (error: any) {
+  } catch (error: unknown) {
     return NextResponse.json(
-      { error: "Failed to start C4: " + error.message },
+      { error: "Failed to start C4: " + (error as Error).message },
       { status: 500 }
     );
   }

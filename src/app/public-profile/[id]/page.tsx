@@ -16,8 +16,6 @@ export default async function PublicProfilePage({
       id: true,
       username: true,
       rank: true,
-      nation: true,
-      army: true,
       tgref: true,
       created_at: true,
       approved: true,
@@ -39,14 +37,6 @@ export default async function PublicProfilePage({
         <div>
           <h2 className="text-lg font-semibold">Ранг</h2>
           <p>{user.rank}</p>
-        </div>
-        <div>
-          <h2 className="text-lg font-semibold">Армия</h2>
-          <p>{user.army}</p>
-        </div>
-        <div>
-          <h2 className="text-lg font-semibold">Нация</h2>
-          <p>{user.nation}</p>
         </div>
         {/* Только публичная информация, без email и других приватных данных */}
       </div>

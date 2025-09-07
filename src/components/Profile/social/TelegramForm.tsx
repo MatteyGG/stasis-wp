@@ -37,7 +37,7 @@ function extractTelegramUsername(input: string): string | null {
         }
       }
     } catch (e) {
-      // Если не удалось распарсить как URL, продолжаем обработку
+      console.error('Invalid Telegram link:', cleanInput + ' ' + e)
     }
   }
   

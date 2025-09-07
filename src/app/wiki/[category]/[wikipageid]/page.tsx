@@ -1,5 +1,4 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { prisma } from "@/lib/prisma";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import remarkGfm from "remark-gfm";
@@ -101,12 +100,12 @@ export default async function WikiPage({ params }: { params: { category: string;
   const recentViewers = await prisma.wikiView.findMany({
     where: { 
       wikiPageId: article.pageId,
-      userId: { not: null } // Только авторизованные пользователи
     },
     orderBy: { viewedAt: 'desc' },
     take: 5,
     select: {
       id: true,
+      userId: true,
       username: true,
       viewedAt: true,
     }

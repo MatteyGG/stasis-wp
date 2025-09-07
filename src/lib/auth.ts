@@ -9,6 +9,7 @@ import { PrismaAdapter } from "@auth/prisma-adapter";
 import { prisma } from "./prisma";
 import type { Adapter } from "next-auth/adapters";
 import { compare } from "bcrypt";
+import { User } from "@prisma/client";
 
 export type {
   Account,
@@ -110,7 +111,7 @@ const authConfig: NextAuthConfig = {
     async jwt({ token, user, account }) {
       if (account?.provider === "credentials") {
         token.credentials = true;
-        token.userId = (user as any).id;
+        token.userId = (user as User).id;
       }
       return token;
     },

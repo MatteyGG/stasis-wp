@@ -44,7 +44,7 @@ export default function RegistrationPage() {
           setPlayerData(data);
           toast.success("Игрок найден!");
         } catch (error) {
-          toast.error("Ошибка при поиске игрока");
+          toast.error("Ошибка при поиске игрока" + error);
           setPlayerData([]);
         } finally {
           setIsCheckingPlayer(false);
@@ -96,7 +96,7 @@ export default function RegistrationPage() {
         toast.error(result.message || "Ошибка регистрации");
       }
     } catch (error) {
-      toast.error("Ошибка сети");
+      toast.error("Ошибка сети " + error);
     } finally {
       setLoading(false);
     }

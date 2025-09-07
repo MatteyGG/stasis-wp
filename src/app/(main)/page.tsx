@@ -9,17 +9,7 @@ import TelegramChat from "@/components/telegramChat";
 import C4Card from "@/components/c4/c4Card";
 
 import { unstable_cache } from 'next/cache';
-import Link from 'next/link';
 
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel"
-import Image from "next/image";
-import { MVPcard } from "@/components/MVPcard";
 import { formatLargeNumber } from "@/lib/formatLargeNumber";
 import { Card } from "@/components/ui/card";
 import MvpCarousel from "@/components/mvpCards/MvpCarousel";
@@ -145,7 +135,10 @@ export default async function Home() {
   console.log("Fetching current C4...");
   const currentC4Promise = fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/c4/current`)
     .then((res) => res.json())
-    .catch((error) => null);
+    .catch((error) => {
+      console.error('Error fetching current C4:', error);
+      return null;
+    });
   const currentC4 = await currentC4Promise;
   console.log(currentC4);
   const { mvps, c4Id, c4Map } = await getCachedMVPData();

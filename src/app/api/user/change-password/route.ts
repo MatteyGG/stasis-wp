@@ -1,10 +1,9 @@
+import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { hash, compare } from "bcrypt-ts";
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/lib/auth";
 
 export async function POST(req: Request) {
-  const session = await getServerSession(authOptions);
+  const session = await auth();
 
   if (!session) {
     return Response.json({ error: "Unauthorized" }, { status: 401 });
@@ -15,7 +14,7 @@ export async function POST(req: Request) {
 
   try {
     // Если userId указан (для админа), проверяем права
-    let targetUserId = userId || session.user.id;
+    const targetUserId = userId || session.user.id;
     
     if (userId && session.user.role !== "admin") {
       return Response.json({ error: "Forbidden" }, { status: 403 });

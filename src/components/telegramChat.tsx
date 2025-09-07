@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 
 interface TelegramCommentsProps {
   discussion: string;
@@ -19,10 +19,11 @@ const TelegramComments = ({
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (!containerRef.current) return;
+    const currentContainer = containerRef.current; // Сохраняем ссылку в переменную
+    if (!currentContainer) return;
 
     // Очищаем контейнер
-    containerRef.current.innerHTML = '';
+    currentContainer.innerHTML = '';
 
     // Создаем элемент скрипта
     const script = document.createElement('script');
@@ -35,11 +36,12 @@ const TelegramComments = ({
       script.setAttribute('data-color', color);
     }
 
-    containerRef.current.appendChild(script);
+    currentContainer.appendChild(script);
 
     return () => {
-      if (containerRef.current && script.parentNode) {
-        script.parentNode.removeChild(script);
+      // Используем сохраненную ссылку на контейнер
+      if (currentContainer.contains(script)) {
+        currentContainer.removeChild(script);
       }
     };
   }, [discussion, commentsLimit, color]);
@@ -68,4 +70,3 @@ const TelegramComments = ({
 };
 
 export default TelegramComments;
-

@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, UserTechSlot } from "@prisma/client";
 // app/api/userUpdate/route.ts
 export const POST = async (req: Request) => {
   const prisma = new PrismaClient();
@@ -14,21 +14,21 @@ export const POST = async (req: Request) => {
 
     // Создаем массив всех слотов
     const allSlots = [
-      ...groundUnits.map((slot: any, index: number) => ({
+      ...groundUnits.map((slot: UserTechSlot, index: number) => ({
         userId: id,
         type: 'ground',
         slotIndex: index,
         nation: slot.nation,
         unit: slot.unit
       })),
-      ...airUnits.map((slot: any, index: number) => ({
+      ...airUnits.map((slot: UserTechSlot, index: number) => ({
         userId: id,
         type: 'air',
         slotIndex: index,
         nation: slot.nation,
         unit: slot.unit
       })),
-      ...navalUnits.map((slot: any, index: number) => ({
+      ...navalUnits.map((slot: UserTechSlot, index: number) => ({
         userId: id,
         type: 'naval',
         slotIndex: index,

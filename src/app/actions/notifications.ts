@@ -97,7 +97,9 @@ export async function getUnreadNotifications() {
         id: true,
         type: true,
         message: true,
-        createdAt: true
+        createdAt: true,
+        userId: true,
+        isRead: true,
       }
     })
     console.log(alerts)

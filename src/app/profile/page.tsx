@@ -2,10 +2,9 @@ import { auth } from '@/lib/auth';
 import { redirect } from 'next/navigation';
 import ShareProfileButton from '@/components/profile/ShareProfileButton';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from '@/components/ui/badge';
 import { Label } from '@/components/ui/label';
-import { Progress } from '@/components/ui/progress';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 
 import "react-toastify/dist/ReactToastify.css";
@@ -13,7 +12,6 @@ import { Button } from '@/components/ui/button';
 import NotificationButtons from '@/components/profile/NotificationButtons';
 import PromocodeItem from '@/components/promocodes';
 import Link from 'next/link';
-import ImageWithFallback from '@/components/ImageWithFallback';
 import Image from 'next/image';
 import { prisma } from '@/lib/prisma';
 
@@ -27,7 +25,7 @@ interface C4Data {
 
 interface c4HistoryData {
   c4: {
-    id: any;
+    id: string;
     map: string;
     startedAt: Date | null;
     endedAt: Date | null;
@@ -199,7 +197,15 @@ export default async function ProfilePage() {
                 width={128}
                 height={128}
               />
-              <AvatarFallback>WP</AvatarFallback>
+              <AvatarFallback>
+                <Image
+                className="rounded-full object-cover border-2 border-gray-300"
+                src={fallbackAvatar}
+                alt={fullUser.username || 'User Avatar'}
+                width={128}
+                height={128}
+              />
+              </AvatarFallback>
             </Avatar>
             <div>
               <CardTitle className="text-lg md:text-xl leading-tight">{fullUser.username}</CardTitle>

@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { UserTechSlot } from "@prisma/client";
 
 const nations = [
   { id: "Vanguard", name: "Vanguard", image: "/source/nation/Vanguard.webp" },
@@ -36,8 +37,18 @@ const navalUnits = [
   { id: "battleship", name: "Линкор", image: "/source/naval/battleship.webp" },
 ];
 
+// Тип для слотов техники
+type TechSlot = {
+  nation: string | null;
+  unit: string | null;
+};
+
+type InitialTechSlot = Omit<UserTechSlot, 'id' | 'userId'> & {
+  id?: string;
+  userId?: string;
+};
 // Начальное состояние для слотов техники
-const initialSlots = {
+const initialSlots: { ground: TechSlot[]; air: TechSlot[]; naval: TechSlot[] } = {
   ground: Array(5).fill({ nation: null, unit: null }),
   air: Array(3).fill({ nation: null, unit: null }),
   naval: Array(3).fill({ nation: null, unit: null }),
@@ -47,7 +58,7 @@ export default function UpdateTech({
   initialTechSlots,
   id 
 }: { 
-  initialTechSlots: any[];
+  initialTechSlots: InitialTechSlot[];
   id: string; 
 }) {
   const [selectedSlots, setSelectedSlots] = useState(initialSlots);
@@ -145,7 +156,7 @@ export default function UpdateTech({
     }
   };
 
-  const renderSlot = (type: 'ground' | 'air' | 'naval', slotIndex: number, slot: any) => {
+  const renderSlot = (type: 'ground' | 'air' | 'naval', slotIndex: number, slot: TechSlot) => {
     const units = type === 'ground' ? groundUnits : type === 'air' ? airUnits : navalUnits;
     
     return (

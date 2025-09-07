@@ -22,9 +22,9 @@ export async function POST(req: Request) {
       success: true,
       updatedSnapshots: player.snapshots.length
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     return NextResponse.json(
-      { error: "Failed to bind snapshots: " + error.message },
+      { error: "Failed to start C4: " + (error as Error).message },
       { status: 500 }
     );
   }

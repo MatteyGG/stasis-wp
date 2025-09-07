@@ -1,7 +1,8 @@
 // src/lib/mvpUtils.ts
+import { C4, C4Statistic } from "@prisma/client";
 import { formatLargeNumber } from "./formatLargeNumber";
 
-export function calculateMvpData(c4: any) {
+export function calculateMvpData(c4: C4&{statistics: C4Statistic[]}) {
   // Проверяем, что c4 существует и statistics - это массив
   if (!c4 || !Array.isArray(c4.statistics)) {
     return []; // Возвращаем пустой массив, если данных нет
@@ -29,8 +30,8 @@ export function calculateMvpData(c4: any) {
 
   const topResource = [...statistics]
     .sort((a, b) => {
-      const aResource = a.player?.resourceCollection || 0;
-      const bResource = b.player?.resourceCollection || 0;
+      const aResource = a.resourceCollectionGain || 0;
+      const bResource = b.resourceCollectionGain || 0;
       return Number(bResource) - Number(aResource);
     })[0];
 
@@ -68,7 +69,7 @@ export function calculateMvpData(c4: any) {
       category: 'resource',
       title: 'Главный фермер',
       image: '/collect.png',
-      value: formatLargeNumber(topResource?.player?.resourceCollection || BigInt(0))
+      value: formatLargeNumber(topResource?.resourceCollectionGain || BigInt(0))
     },
   ];
 

@@ -1,6 +1,5 @@
 import { prisma } from "@/lib/prisma";
 import Image from "next/image";
-import AlertMake from "../alert/makeAlert";
 
 const options: Intl.DateTimeFormatOptions = {
   year: "numeric",
@@ -59,23 +58,7 @@ export default async function Manage_users() {
                 </div>
               </div>
             </div>
-            <div className="flex justify-between p-4 pt-1">
-              <div className="inline-flex">
-                <Image
-                  src={"/source/nation/" + user.nation + ".webp"}
-                  width={48}
-                  height={48}
-                  alt=""
-                />
-                <Image
-                  src={"/source/army/" + user.army + ".webp"}
-                  width={48}
-                  height={48}
-                  alt=""
-                />
-              </div>
-              <AlertMake userId={user.id.toString()} />
-            </div>
+            
           </li>
         );
       })}

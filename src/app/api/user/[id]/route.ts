@@ -17,13 +17,11 @@ export async function GET(
       select: {
         id: true,
         username: true,
-        army: true,
-        nation: true,
         rank: true,
         tgref: true,
         created_at: true,
         approved: true,
-        // Добавьте другие поля, которые нужны для публичного профиля
+        
       },
     });
     

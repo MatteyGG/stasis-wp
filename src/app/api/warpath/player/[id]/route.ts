@@ -1,3 +1,4 @@
+import { WarpathPlayer } from "@/lib/types";
 import { NextResponse } from "next/server";
 import { NextRequest } from "next/server";
 
@@ -11,7 +12,7 @@ export async function GET(req: NextRequest) {
     const data = await response.json();
     
     if (data.Code === 0 && data.Data && data.Data.length > 0) {
-      const player = data.Data.map((player: any) => ({
+      const player = data.Data.map((player: WarpathPlayer) => ({
         warpathId: player.pid,
         serverId: player.wid,
         ally: player.gnick,

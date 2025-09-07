@@ -3,6 +3,7 @@
 import { lastDate } from "@/lib/getDate";
 import { prisma } from "@/lib/prisma";
 import { WarpathPlayer } from "@/lib/types";
+import { Player } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
@@ -28,43 +29,49 @@ export async function POST(req: NextRequest) {
 
     // Фильтрация игроков нужного альянса
     const targetAlliance = "ST";
-    const stPlayers = data.Data
-      .filter((p: any) => p.gnick === targetAlliance)
-      .map((p: any) => ({
-        warpathId: p.pid,
-        username: p.nick,
-        ally: p.gnick,
-        power: p.maxpower,
-        kill: p.sumkill,
-        die: p.die,
-        kd: parseFloat((p.sumkill / (p.die || 1)).toFixed(2)),
-        resourceCollection: BigInt(p.caiji || 0),
-      }));
+    const stPlayers = data.Data.filter(
+      (p: WarpathPlayer) => p.gnick === targetAlliance
+    ).map((p: WarpathPlayer) => ({
+      warpathId: p.pid,
+      username: p.nick,
+      ally: p.gnick,
+      power: p.maxpower,
+      kill: p.sumkill,
+      die: p.die,
+      kd: parseFloat((p.sumkill / (p.die || 1)).toFixed(2)),
+      resourceCollection: BigInt(p.caiji || 0),
+    }));
 
     // Создаем финальные снапшоты
-    const snapshots = await Promise.all(stPlayers.map(async (player: { warpathId: any; username: any; power: any; kill: any; die: any; kd: any; resourceCollection: any; }) => {
-      const existingPlayer = await prisma.player.findUnique({
-        where: { warpathId: player.warpathId }
-      });
-
-      return prisma.playerSnapshot.create({
-        data: {
-          warpathId: player.warpathId,
-          playerId: existingPlayer?.id || null,
-          username: player.username,
-          c4Id: activeC4.id,
-          power: player.power,
-          kill: player.kill,
-          die: player.die,
-          kd: player.kd,
-          resourceCollection: player.resourceCollection,
+    const snapshots = await Promise.all(
+      stPlayers.map(async (player: Player) => {
+        const existingPlayer = await prisma.player.findUnique({
+          where: { warpathId: player!.warpathId ?? undefined, },
+        });
+    
+        if (player!.warpathId !== null) {
+          return prisma.playerSnapshot.create({
+            data: {
+              warpathId: player!.warpathId,
+              playerId: existingPlayer?.id || null,
+              username: player.username,
+              c4Id: activeC4.id,
+              power: player.power,
+              kill: player.kill,
+              die: player.die,
+              kd: player.kd,
+              resourceCollection: player.resourceCollection,
+            },
+          });
+        } else {
+          throw new Error(`WarpathId is null for player ${player.username}`);
         }
-      });
-    }));
+      })
+    );
 
     // Получаем начальную статистику
     const statistics = await prisma.c4Statistic.findMany({
-      where: { c4Id: activeC4.id }
+      where: { c4Id: activeC4.id },
     });
 
     // Рассчитываем прирост показателей
@@ -76,15 +83,18 @@ export async function POST(req: NextRequest) {
     let playerCount = 0;
 
     for (const stat of statistics) {
-      const finalPlayer = stPlayers.find((p: WarpathPlayer) => p.warpathId === stat.warpathId);
+      const finalPlayer = stPlayers.find(
+        (p: WarpathPlayer) => p.warpathId === stat.warpathId
+      );
 
       if (finalPlayer) {
         const powerGain = finalPlayer.power - stat.startPower;
         const killGain = finalPlayer.kill - stat.startKill;
         const dieGain = finalPlayer.die - stat.startDie;
         const kdGain = finalPlayer.kd - stat.startKd;
-        const resourceGain = finalPlayer.resourceCollection - (stat.startResourceCollection || BigInt(0));
-
+        const resourceGain =
+          finalPlayer.resourceCollection -
+          (stat.startResourceCollection || BigInt(0));
 
         totalPowerGain += powerGain;
         totalKillGain += killGain;
@@ -101,8 +111,8 @@ export async function POST(req: NextRequest) {
             killGain,
             dieGain,
             kdGain,
-            resourceCollectionGain: resourceGain
-          }
+            resourceCollectionGain: resourceGain,
+          },
         });
       }
     }
@@ -119,19 +129,23 @@ export async function POST(req: NextRequest) {
         avgKillGain: playerCount > 0 ? totalKillGain / playerCount : 0,
         avgDieGain: playerCount > 0 ? totalDieGain / playerCount : 0,
         avgKdGain: playerCount > 0 ? totalKdGain / playerCount : 0,
-        avgResourceGain: playerCount > 0 ? Number(totalResourceGain) / playerCount : 0,
+        avgResourceGain:
+          playerCount > 0 ? Number(totalResourceGain) / playerCount : 0,
       },
     });
 
     // Очищаем временные снапшоты
     await prisma.playerSnapshot.deleteMany({
-      where: { c4Id: activeC4.id }
+      where: { c4Id: activeC4.id },
     });
 
-    return NextResponse.json({ ...finishedC4, snapshotsCount: snapshots.length });
-  } catch (error: any) {
+    return NextResponse.json({
+      ...finishedC4,
+      snapshotsCount: snapshots.length,
+    });
+  } catch (error: unknown) {
     return NextResponse.json(
-      { error: "Failed to finish C4: " + error.message },
+      { error: "Failed to start C4: " + (error as Error).message },
       { status: 500 }
     );
   }

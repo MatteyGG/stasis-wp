@@ -23,7 +23,6 @@ import {
   InsertAdmonition,
   UndoRedo,
   CodeToggle,
-  CodeMirrorEditor,
   diffSourcePlugin,
   DiffSourceToggleWrapper,
 } from "@mdxeditor/editor";

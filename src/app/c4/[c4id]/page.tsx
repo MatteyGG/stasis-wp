@@ -3,14 +3,14 @@
 import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel";
-import { MVPcard } from "@/components/MVPcard";
-import Image from "next/image";
 import { calculateMvpData } from "@/lib/mvpUtils";
 import MvpCarousel from "@/components/mvpCards/MvpCarousel";
 
-
-export default async function C4StatsPage({ params }: { params: { c4id: string } }) {
+export default async function C4StatsPage({
+  params,
+}: {
+  params: { c4id: string };
+}) {
   console.log(params.c4id);
 
   // Получаем данные C4 и статистику
@@ -21,27 +21,31 @@ export default async function C4StatsPage({ params }: { params: { c4id: string }
         include: {
           player: true,
         },
-        orderBy: [
-          { powerGain: "desc" },
-          { killGain: "desc" }
-        ]
-      }
-    }
+        orderBy: [{ powerGain: "desc" }, { killGain: "desc" }],
+      },
+    },
   });
-  
 
   if (!c4 || c4.statistics.length === 0) {
     notFound();
   }
-const statistics = Array.isArray(c4.statistics) ? c4.statistics : [];
-const mvpsData = calculateMvpData({ ...c4, statistics });
+  const statistics = Array.isArray(c4.statistics) ? c4.statistics : [];
+  const mvpsData = calculateMvpData({ ...c4, statistics });
   // Остальной код остается без изменений...
   // Форматируем даты
-  const startedAt = new Date(c4.startedAt).toLocaleString('ru-RU');
-  const endedAt = c4.endedAt ? new Date(c4.endedAt).toLocaleString('ru-RU') : 'Не завершено';
-  const duration = c4.endedAt
-    ? `${((new Date(c4.endedAt).getTime() - new Date(c4.startedAt).getTime()) / 3600000).toFixed(1)} часов`
-    : 'В процессе';
+  const startedAt = c4.startedAt
+    ? new Date(c4.startedAt).toLocaleString("ru-RU")
+    : "Не начато";
+  const endedAt = c4.endedAt
+    ? new Date(c4.endedAt).toLocaleString("ru-RU")
+    : "Не завершено";
+  const duration =
+    c4.endedAt && c4.startedAt
+      ? `${(
+          (new Date(c4.endedAt).getTime() - new Date(c4.startedAt).getTime()) /
+          3600000
+        ).toFixed(1)} часов`
+      : "В процессе";
 
   // Карты для отображения
   const maps = {
@@ -73,11 +77,14 @@ const mvpsData = calculateMvpData({ ...c4, statistics });
           <h1 className="text-2xl font-bold">
             Статистика завоевания: {maps[c4.map as keyof typeof maps] || c4.map}
           </h1>
-          <span className={`px-3 py-1 rounded text-sm font-medium ${c4.status === 'active'
-            ? 'bg-green-100 text-green-800'
-            : 'bg-gray-100 text-gray-800'
-            }`}>
-            {c4.status === 'active' ? 'Активно' : 'Завершено'}
+          <span
+            className={`px-3 py-1 rounded text-sm font-medium ${
+              c4.status === "active"
+                ? "bg-green-100 text-green-800"
+                : "bg-gray-100 text-gray-800"
+            }`}
+          >
+            {c4.status === "active" ? "Активно" : "Завершено"}
           </span>
         </div>
 
@@ -97,21 +104,25 @@ const mvpsData = calculateMvpData({ ...c4, statistics });
           </div>
           <div className="bg-gray-50 p-4 rounded">
             <p className="text-gray-600 text-sm">Участников</p>
-            <p className="font-medium">{c4.totalPlayers || c4.statistics.length}</p>
+            <p className="font-medium">
+              {c4.totalPlayers || c4.statistics.length}
+            </p>
           </div>
         </div>
-        
-
 
         {/* Агрегированная статистика */}
-        {c4.status === 'finished' && (
+        {c4.status === "finished" && (
           <div className="bg-blue-50 p-4 rounded border border-blue-200">
-            <h2 className="text-lg font-semibold mb-3 text-blue-800">Общая статистика</h2>
+            <h2 className="text-lg font-semibold mb-3 text-blue-800">
+              Общая статистика
+            </h2>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <div>
                 <p className="text-blue-600 text-sm">Средний прирост силы</p>
                 <p className="font-medium text-blue-800">
-                  {c4.avgPowerGain ? Math.round(c4.avgPowerGain).toLocaleString() : 0}
+                  {c4.avgPowerGain
+                    ? Math.round(c4.avgPowerGain).toLocaleString()
+                    : 0}
                 </p>
               </div>
               <div>
@@ -135,12 +146,19 @@ const mvpsData = calculateMvpData({ ...c4, statistics });
             </div>
           </div>
         )}
-        <MvpCarousel mvps={mvpsData} c4Id={c4.id} c4Map={c4.map} showLink={false}/>
+        <MvpCarousel
+          mvps={mvpsData}
+          c4Id={c4.id}
+          c4Map={c4.map}
+          showLink={false}
+        />
       </div>
 
       {/* Таблица статистики игроков */}
       <div className="bg-white rounded-lg shadow overflow-hidden">
-        <h2 className="text-xl font-semibold p-6 border-b">Статистика игроков</h2>
+        <h2 className="text-xl font-semibold p-6 border-b">
+          Статистика игроков
+        </h2>
 
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
@@ -171,7 +189,10 @@ const mvpsData = calculateMvpData({ ...c4, statistics });
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
               {c4.statistics.map((stat, index) => (
-                <tr key={stat.id} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
+                <tr
+                  key={stat.id}
+                  className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}
+                >
                   {/* Альянс или ID */}
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center">
@@ -185,7 +206,9 @@ const mvpsData = calculateMvpData({ ...c4, statistics });
 
                   {/* Имя пользователя */}
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {stat.player?.username || stat.username || `Игрок ${stat.warpathId}`}
+                    {stat.player?.username ||
+                      stat.username ||
+                      `Игрок ${stat.warpathId}`}
                   </td>
 
                   {/* Начальная сила */}
@@ -195,57 +218,70 @@ const mvpsData = calculateMvpData({ ...c4, statistics });
 
                   {/* Прирост силы */}
                   <td className="px-6 py-4 whitespace-nowrap text-sm">
-                    <span className={`font-medium ${(stat.powerGain || 0) > 0
-                      ? 'text-green-600'
-                      : (stat.powerGain || 0) < 0
-                        ? 'text-red-600'
-                        : 'text-gray-600'
-                      }`}>
+                    <span
+                      className={`font-medium ${
+                        (stat.powerGain || 0) > 0
+                          ? "text-green-600"
+                          : (stat.powerGain || 0) < 0
+                          ? "text-red-600"
+                          : "text-gray-600"
+                      }`}
+                    >
                       {stat.powerGain !== null && stat.powerGain !== undefined
-                        ? (stat.powerGain > 0 ? '+' : '') + stat.powerGain.toLocaleString()
-                        : '0'}
+                        ? (stat.powerGain > 0 ? "+" : "") +
+                          stat.powerGain.toLocaleString()
+                        : "0"}
                     </span>
                   </td>
 
                   {/* Прирост убийств */}
                   <td className="px-6 py-4 whitespace-nowrap text-sm">
-                    <span className={`font-medium ${(stat.killGain || 0) > 0
-                      ? 'text-green-600'
-                      : (stat.killGain || 0) < 0
-                        ? 'text-red-600'
-                        : 'text-gray-600'
-                      }`}>
+                    <span
+                      className={`font-medium ${
+                        (stat.killGain || 0) > 0
+                          ? "text-green-600"
+                          : (stat.killGain || 0) < 0
+                          ? "text-red-600"
+                          : "text-gray-600"
+                      }`}
+                    >
                       {stat.killGain !== null && stat.killGain !== undefined
-                        ? (stat.killGain > 0 ? '+' : '') + stat.killGain
-                        : '0'}
+                        ? (stat.killGain > 0 ? "+" : "") + stat.killGain
+                        : "0"}
                     </span>
                   </td>
 
                   {/* Прирост смертей */}
                   <td className="px-6 py-4 whitespace-nowrap text-sm">
-                    <span className={`font-medium ${(stat.dieGain || 0) > 0
-                      ? 'text-red-600'
-                      : (stat.dieGain || 0) < 0
-                        ? 'text-green-600'
-                        : 'text-gray-600'
-                      }`}>
+                    <span
+                      className={`font-medium ${
+                        (stat.dieGain || 0) > 0
+                          ? "text-red-600"
+                          : (stat.dieGain || 0) < 0
+                          ? "text-green-600"
+                          : "text-gray-600"
+                      }`}
+                    >
                       {stat.dieGain !== null && stat.dieGain !== undefined
-                        ? (stat.dieGain > 0 ? '+' : '') + stat.dieGain
-                        : '0'}
+                        ? (stat.dieGain > 0 ? "+" : "") + stat.dieGain
+                        : "0"}
                     </span>
                   </td>
 
                   {/* Прирост K/D */}
                   <td className="px-6 py-4 whitespace-nowrap text-sm">
-                    <span className={`font-medium ${(stat.kdGain || 0) > 0
-                      ? 'text-green-600'
-                      : (stat.kdGain || 0) < 0
-                        ? 'text-red-600'
-                        : 'text-gray-600'
-                      }`}>
+                    <span
+                      className={`font-medium ${
+                        (stat.kdGain || 0) > 0
+                          ? "text-green-600"
+                          : (stat.kdGain || 0) < 0
+                          ? "text-red-600"
+                          : "text-gray-600"
+                      }`}
+                    >
                       {stat.kdGain !== null && stat.kdGain !== undefined
-                        ? (stat.kdGain > 0 ? '+' : '') + stat.kdGain.toFixed(2)
-                        : '0.00'}
+                        ? (stat.kdGain > 0 ? "+" : "") + stat.kdGain.toFixed(2)
+                        : "0.00"}
                     </span>
                   </td>
                 </tr>

@@ -10,7 +10,7 @@ import { Search } from "lucide-react";
 interface WikiSearchProps {
   articles: {
     pageId: string;
-    title: string;
+    title: string | null;
     category: string | null;
     short: string | null;
     tags: string[];
@@ -24,9 +24,9 @@ export default function WikiSearch({ articles }: WikiSearchProps) {
     if (!searchQuery) return [];
     
     return articles.filter(article =>
-      article.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      article.short.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      article.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      article.title && article.title.toLowerCase().includes(searchQuery.toLowerCase())||
+      article.short && article.short.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      article.category && article.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
       (article.tags && article.tags.some((tag: string) => 
         tag.toLowerCase().includes(searchQuery.toLowerCase())
       ))

@@ -68,8 +68,9 @@ export default function ChangePasswordPage() {
 
     if (result.success) {
       // Уведомляем браузер об изменении пароля
-      if (typeof window !== 'undefined' && (window as any).PasswordCredential) {
+      if (typeof window !== 'undefined' && 'PasswordCredential' in window) {
         try {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           const cred = new (window as any).PasswordCredential({
             id: 'password-updated',
             name: 'Password Updated',
@@ -77,7 +78,7 @@ export default function ChangePasswordPage() {
           });
           navigator.credentials.store(cred);
         } catch (error) {
-          console.log('Browser credential API not supported');
+          console.log('Browser credential API not supported: ' + error);
         }
       }
       

@@ -29,7 +29,7 @@ export default function NotificationButtons({ userId }: NotificationButtonsProps
     })
     
     const data = await response.json()
-    // Обработайте ответ если нужно
+    console.log(data)
   }
 
   return (

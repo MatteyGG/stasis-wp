@@ -7,13 +7,11 @@ import 'react-toastify/dist/ReactToastify.css'
 
 import type { Metadata } from "next";
 import "@/app/globals.css";
-import { Inter } from "next/font/google";
 import "@mdxeditor/editor/style.css";
 
 import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
 
-const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "STASIS",
