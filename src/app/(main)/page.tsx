@@ -13,6 +13,7 @@ import { unstable_cache } from 'next/cache';
 import { formatLargeNumber } from "@/lib/formatLargeNumber";
 import { Card } from "@/components/ui/card";
 import MvpCarousel from "@/components/mvpCards/MvpCarousel";
+import { getCurrentC4 } from "@/lib/currentC4";
 
 
 // Функция для получения данных MVP с кэшированием
@@ -133,14 +134,7 @@ export default async function Home() {
   );
 
   console.log("Fetching current C4...");
-  const currentC4Promise = fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/c4/current`)
-    .then((res) => res.json())
-    .catch((error) => {
-      console.error('Error fetching current C4:', error);
-      return null;
-    });
-  const currentC4 = await currentC4Promise;
-  console.log(currentC4);
+  const currentC4 = await getCurrentC4();
   const { mvps, c4Id, c4Map } = await getCachedMVPData();
 
 

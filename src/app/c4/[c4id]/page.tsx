@@ -6,11 +6,12 @@ import Link from "next/link";
 import { calculateMvpData } from "@/lib/mvpUtils";
 import MvpCarousel from "@/components/mvpCards/MvpCarousel";
 
-export default async function C4StatsPage({
-  params,
-}: {
-  params: { c4id: string };
-}) {
+export default async function C4StatsPage(
+  props: {
+    params: Promise<{ c4id: string }>;
+  }
+) {
+  const params = await props.params;
   console.log(params.c4id);
 
   // Получаем данные C4 и статистику

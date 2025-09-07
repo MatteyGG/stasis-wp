@@ -1,3 +1,5 @@
+// src/app/edit/page.tsx
+
 "use client";
 
 import { MDXEditorMethods } from "@mdxeditor/editor";
@@ -32,7 +34,8 @@ const EditorComp = dynamic(() => import("@/components/EditorComponent"), {
   ),
 });
 
-export default function Editor() {
+// Выносим основной контент в отдельный компонент, который использует useSearchParams
+function EditPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const pageid = searchParams.get("pageid");
@@ -74,7 +77,7 @@ export default function Editor() {
       console.error("Error fetching article:", error);
       toast.error("Ошибка загрузки статьи");
     }
-  }, [pageid]); // Добавили зависимости
+  }, [pageid]);
 
   const fetchCategories = useCallback(async () => {
     try {
@@ -86,7 +89,7 @@ export default function Editor() {
     }
   }, []);
 
-    useEffect(() => {
+  useEffect(() => {
     if (pageid) {
       fetchArticleData();
     } else {
@@ -338,5 +341,21 @@ export default function Editor() {
         </div>
       </div>
     </div>
+  );
+}
+
+// Основной компонент страницы, который оборачивает контент в Suspense
+export default function Editor() {
+  return (
+    <Suspense fallback={
+      <div className="container mx-auto py-6 px-4 max-w-6xl">
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-3xl font-bold">Загрузка редактора...</h1>
+        </div>
+        <div className="h-96 bg-gray-100 animate-pulse rounded-lg"></div>
+      </div>
+    }>
+      <EditPageContent />
+    </Suspense>
   );
 }

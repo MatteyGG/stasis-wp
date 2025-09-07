@@ -3,6 +3,7 @@ const nextConfig = {
   // Recommended: this will reduce output
   // Docker image size by 80%+
   output: "standalone",
+  transpilePackages: ['next-mdx-remote'],
   // Optional: bring your own cache handler
   // cacheHandler: path.resolve('./cache-handler.mjs'),
   // cacheMaxMemorySize: 0, // Disable default in-memory caching

@@ -6,7 +6,8 @@ import Image from "next/image";
 import Breadcrumbs from "@/components/wiki/Breadcrumbs";
 import ArticleTags from "@/components/wiki/ArticleTags";
 
-export default async function WikiCategory({ params }: { params: { category: string } }) {
+export default async function WikiCategory(props: { params: Promise<{ category: string }> }) {
+  const params = await props.params;
   const decodedCategory = decodeURIComponent(params.category);
   const articles = await prisma.wiki.findMany({
     where: { 

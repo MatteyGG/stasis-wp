@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { prisma } from "@/lib/prisma";
-import { MDXRemote } from "next-mdx-remote/rsc";
+import { MDXRemote } from 'next-mdx-remote/rsc';
 import remarkGfm from "remark-gfm";
 import remarkToc from "remark-toc";
 import remarkFlexibleContainers from "remark-flexible-containers";
@@ -24,7 +24,8 @@ const options = {
   },
 };
 
-export default async function WikiPage({ params }: { params: { category: string; wikipageid: string } }) {
+export default async function WikiPage(props: { params: Promise<{ category: string; wikipageid: string }> }) {
+  const params = await props.params;
   const session = await auth();
   const article = await prisma.wiki.findUnique({
     where: { pageId: params.wikipageid },

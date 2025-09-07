@@ -1,0 +1,44 @@
+# Build stage
+FROM node:22-alpine AS build
+
+WORKDIR /src
+
+# Копируем только файлы зависимостей сначала
+COPY package.json package-lock.json* ./
+
+# Устанавливаем системные зависимости в один слой
+RUN apk add --no-cache openssl3 git && \
+    openssl version
+
+# Устанавливаем ВСЕ зависимости (включая dev) для сборки
+RUN npm install
+
+# Копируем остальные файлы
+COPY . .
+
+# Генерируем Prisma клиент
+RUN npx prisma generate
+
+# Сборка проекта
+RUN npm run build
+
+# Production stage
+FROM node:22-alpine AS production
+
+WORKDIR /app
+
+# Копируем package.json и package-lock.json для установки production зависимостей
+COPY --from=build /src/package.json ./package.json
+COPY --from=build /src/package-lock.json ./package-lock.json
+
+# Устанавливаем только production зависимости
+RUN npm install --only=production
+
+# Копируем собранное приложение и другие необходимые файлы
+COPY --from=build /src/.next ./.next
+COPY --from=build /src/next.config.mjs ./
+COPY --from=build /src/public ./public
+COPY --from=build /src/prisma ./prisma
+
+EXPOSE 3000
+CMD ["npm", "start"]

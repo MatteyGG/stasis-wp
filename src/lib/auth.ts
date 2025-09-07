@@ -8,7 +8,7 @@ import { v4 as uuid } from "uuid";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { prisma } from "./prisma";
 import type { Adapter } from "next-auth/adapters";
-import { compare } from "bcrypt";
+import { compare } from "bcrypt-ts";
 import { User } from "@prisma/client";
 
 export type {
