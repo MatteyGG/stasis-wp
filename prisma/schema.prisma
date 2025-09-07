@@ -48,25 +48,25 @@ model User {
   rank          String?   @default("R1")
   created_at    DateTime  @default(now())
 
-  accounts      Account[]
-  sessions      Session[]
-  alerts        Alert[]
-  techSlots     UserTechSlot[]
-  player Player? @relation(fields: [gameID], references: [id])
+  accounts  Account[]
+  sessions  Session[]
+  alerts    Alert[]
+  techSlots UserTechSlot[]
+  player    Player?        @relation(fields: [gameID], references: [id])
 
-  authenticators       Authenticator[]
+  authenticators Authenticator[]
 }
 
 model UserTechSlot {
-  id        String   @id @default(cuid())
+  id        String  @id @default(cuid())
   userId    String
-  type      String   // 'ground', 'air', 'naval'
-  slotIndex Int      // 0-4 для ground, 0-2 для air/naval
-  nation    String?  // Может быть null
-  unit      String?  // Может быть null
-  
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
+  type      String // 'ground', 'air', 'naval'
+  slotIndex Int // 0-4 для ground, 0-2 для air/naval
+  nation    String? // Может быть null
+  unit      String? // Может быть null
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   @@unique([userId, type, slotIndex])
 }
 
@@ -114,98 +114,104 @@ model Wiki {
 }
 
 model WikiView {
-  id          String   @id @default(cuid())
-  wikiPageId  String
-  wiki        Wiki     @relation(fields: [wikiPageId], references: [pageId], onDelete: Cascade)
-  userId      String?  
-  username    String   @default("Аноним") 
-  viewedAt    DateTime @default(now())
-  
+  id         String   @id @default(cuid())
+  wikiPageId String
+  wiki       Wiki     @relation(fields: [wikiPageId], references: [pageId], onDelete: Cascade)
+  userId     String?
+  username   String   @default("Аноним")
+  viewedAt   DateTime @default(now())
+
   @@index([wikiPageId])
   @@index([viewedAt])
   @@index([userId])
 }
 
 model PlayerSnapshot {
-  id         String   @id @default(cuid())
-  warpathId  Int
-  username   String   @default("NoNick")
-  playerId   String?
-  c4Id       String
-  power      Int
-  kill       Int
-  die        Int
-  kd         Float
-  snapshotAt DateTime @default(now())
+  id                 String   @id @default(cuid())
+  warpathId          Int
+  username           String   @default("NoNick")
+  playerId           String?
+  c4Id               String
+  power              Int
+  kill               Int
+  die                Int
+  kd                 Float
+  resourceCollection BigInt?
+  snapshotAt         DateTime @default(now())
 
   player Player? @relation(fields: [playerId], references: [id])
   c4     C4      @relation(fields: [c4Id], references: [id])
 }
 
 model C4 {
-  id           String    @id @default(cuid())
-  map          String
-  status       String    @default("active")
-  startedAt    DateTime?
-  endedAt      DateTime?
-  createdAt    DateTime  @default(now())
-  result       String?   @default("In process")
-  
+  id        String    @id @default(cuid())
+  map       String
+  status    String    @default("active")
+  startedAt DateTime?
+  endedAt   DateTime?
+  createdAt DateTime  @default(now())
+  result    String?   @default("In process")
+
   // Агрегированные показатели
-  avgPowerGain Float?
-  avgKillGain  Float?
-  avgDieGain   Float?
-  avgKdGain    Float?
+  avgPowerGain    Float?
+  avgKillGain     Float?
+  avgDieGain      Float?
+  avgKdGain       Float?
+  avgResourceGain Float?
+
   totalPlayers Int?
-  
-  statistics   C4Statistic[] 
-  snapshots    PlayerSnapshot[] // Обратная связь
-  
+
+  statistics C4Statistic[]
+  snapshots  PlayerSnapshot[]
+
   @@index([startedAt])
 }
 
 model C4Statistic {
-  id          String   @id @default(cuid())
-  c4Id        String
-  playerId    String?
-  warpathId   Int
-  username    String  @default("NoNick")
-  
-  startPower  Int
-  startKill   Int
-  startDie    Int
-  startKd     Float
-  
-  powerGain   Int?
-  killGain    Int?
-  dieGain     Int?
-  kdGain      Float?
-  
-  c4          C4       @relation(fields: [c4Id], references: [id])
-  player      Player?   @relation(fields: [playerId], references: [id])
+  id        String  @id @default(cuid())
+  c4Id      String
+  playerId  String?
+  warpathId Int
+  username  String  @default("NoNick")
+
+  startPower              Int
+  startKill               Int
+  startDie                Int
+  startKd                 Float
+  startResourceCollection BigInt?
+
+  powerGain              Int?
+  killGain               Int?
+  dieGain                Int?
+  kdGain                 Float?
+  resourceCollectionGain BigInt?
+
+  c4     C4      @relation(fields: [c4Id], references: [id])
+  player Player? @relation(fields: [playerId], references: [id])
 }
 
 model Player {
-  id        String    @id @default(cuid())
-  warpathId Int?      @unique
-  serverId  Int?      // ID сервера
-  username  String
-  ally      String?
-  power     Int
-  kill      Int
-  die       Int
-  kd        Float
-  resourceCollection BigInt?  // Сбор ресурсов
-  techPower Int?              // Сила технологий
-  airPower  Int?              // Сила воздушных сил
-  navyPower Int?              // Сила морских сил
-  groundPower Int?            // Сила наземных сил
-  onSite    Boolean   @default(false)
+  id                 String  @id @default(cuid())
+  warpathId          Int?    @unique
+  serverId           Int? // ID сервера
+  username           String
+  ally               String?
+  power              Int
+  kill               Int
+  die                Int
+  kd                 Float
+  resourceCollection BigInt? // Сбор ресурсов
+  techPower          Int? // Сила технологий
+  airPower           Int? // Сила воздушных сил
+  navyPower          Int? // Сила морских сил
+  groundPower        Int? // Сила наземных сил
+  onSite             Boolean @default(false)
 
-  user User?
+  user      User?
   snapshots PlayerSnapshot[]
   c4Stats   C4Statistic[] // Обратная связь
 }
+
 model Alert {
   id        Int      @id @default(autoincrement())
   userId    String
@@ -231,7 +237,6 @@ model Guild {
   updatedAt DateTime
 }
 
-
 // Optional for WebAuthn support
 model Authenticator {
   credentialID         String  @unique
@@ -242,8 +247,8 @@ model Authenticator {
   credentialDeviceType String
   credentialBackedUp   Boolean
   transports           String?
- 
+
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
- 
+
   @@id([userId, credentialID])
 }

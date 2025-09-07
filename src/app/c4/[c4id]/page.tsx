@@ -1,9 +1,13 @@
+// src/app/c4/[c4id]/page.tsx
+
 import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel";
 import { MVPcard } from "@/components/MVPcard";
 import Image from "next/image";
+import { calculateMvpData } from "@/lib/mvpUtils";
+import MvpCarousel from "@/components/mvpCards/MvpCarousel";
 
 
 export default async function C4StatsPage({ params }: { params: { c4id: string } }) {
@@ -24,11 +28,13 @@ export default async function C4StatsPage({ params }: { params: { c4id: string }
       }
     }
   });
+  
 
-  if (!c4) {
+  if (!c4 || c4.statistics.length === 0) {
     notFound();
   }
-
+const statistics = Array.isArray(c4.statistics) ? c4.statistics : [];
+const mvpsData = calculateMvpData({ ...c4, statistics });
   // Остальной код остается без изменений...
   // Форматируем даты
   const startedAt = new Date(c4.startedAt).toLocaleString('ru-RU');
@@ -129,35 +135,7 @@ export default async function C4StatsPage({ params }: { params: { c4id: string }
             </div>
           </div>
         )}
-                <Carousel className="mt-2 w-full">
-          <CarouselContent className="-ml-2 md:-ml-4">
-            <CarouselItem className="pl-2 md:pl-4 basis-1/2 md:basis-1/5">
-              <MVPcard nickname="Mafon" description="Главный фермер">
-                <Image src="/test.jpg" alt="1" width={240} height={400} quality={100} />
-              </MVPcard>
-            </CarouselItem>
-            <CarouselItem className="pl-2 md:pl-4 basis-1/2 md:basis-1/5">
-              <MVPcard nickname="Mafon" description="Главный фермер">
-                <Image src="/test.jpg" alt="1" width={240} height={400} quality={100} />
-              </MVPcard>
-            </CarouselItem>
-            <CarouselItem className="pl-2 md:pl-4 basis-1/2 md:basis-1/5">
-              <MVPcard nickname="Mafon" description="Главный фермер">
-                <Image src="/test.jpg" alt="1" width={240} height={400} quality={100} />
-              </MVPcard>
-            </CarouselItem>
-            <CarouselItem className="pl-2 md:pl-4 basis-1/2 md:basis-1/5">
-              <MVPcard nickname="Mafon" description="Главный фермер">
-                <Image src="/test.jpg" alt="1" width={240} height={400} quality={100} />
-              </MVPcard>
-            </CarouselItem>
-            <CarouselItem className="pl-2 md:pl-4 basis-1/2 md:basis-1/5">
-              <MVPcard nickname="Mafon" description="Главный фермер">
-                <Image src="/test.jpg" alt="1" width={240} height={400} quality={100} />
-              </MVPcard>
-            </CarouselItem>
-          </CarouselContent>
-        </Carousel>
+        <MvpCarousel mvps={mvpsData} c4Id={c4.id} c4Map={c4.map} showLink={false}/>
       </div>
 
       {/* Таблица статистики игроков */}

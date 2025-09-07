@@ -1,9 +1,13 @@
+// app/api/c4/finish/route.ts
+
 import { lastDate } from "@/lib/getDate";
 import { prisma } from "@/lib/prisma";
 import { WarpathPlayer } from "@/lib/types";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
+  const { result } = await req.json();
+
   const activeC4 = await prisma.c4.findFirst({
     where: { status: "active" },
     orderBy: { createdAt: "desc" },
@@ -16,12 +20,12 @@ export async function POST(req: NextRequest) {
   try {
     const date = await lastDate();
     const url = `https://yx.dmzgame.com/intl_warpath/rank_pid?day=${date}&wid=130&ccid=0&rank=power&is_benfu=1&is_quanfu=0&page=1&perPage=3000`;
-    
+
     const response = await fetch(url);
     if (!response.ok) throw new Error("Warpath API error");
-    
+
     const data = await response.json();
-    
+
     // Фильтрация игроков нужного альянса
     const targetAlliance = "ST";
     const stPlayers = data.Data
@@ -34,10 +38,11 @@ export async function POST(req: NextRequest) {
         kill: p.sumkill,
         die: p.die,
         kd: parseFloat((p.sumkill / (p.die || 1)).toFixed(2)),
+        resourceCollection: BigInt(p.caiji || 0),
       }));
 
     // Создаем финальные снапшоты
-    const snapshots = await Promise.all(stPlayers.map(async (player) => {
+    const snapshots = await Promise.all(stPlayers.map(async (player: { warpathId: any; username: any; power: any; kill: any; die: any; kd: any; resourceCollection: any; }) => {
       const existingPlayer = await prisma.player.findUnique({
         where: { warpathId: player.warpathId }
       });
@@ -52,6 +57,7 @@ export async function POST(req: NextRequest) {
           kill: player.kill,
           die: player.die,
           kd: player.kd,
+          resourceCollection: player.resourceCollection,
         }
       });
     }));
@@ -66,21 +72,25 @@ export async function POST(req: NextRequest) {
     let totalKillGain = 0;
     let totalDieGain = 0;
     let totalKdGain = 0;
+    let totalResourceGain = BigInt(0);
     let playerCount = 0;
 
     for (const stat of statistics) {
       const finalPlayer = stPlayers.find((p: WarpathPlayer) => p.warpathId === stat.warpathId);
-      
+
       if (finalPlayer) {
         const powerGain = finalPlayer.power - stat.startPower;
         const killGain = finalPlayer.kill - stat.startKill;
         const dieGain = finalPlayer.die - stat.startDie;
         const kdGain = finalPlayer.kd - stat.startKd;
-        
+        const resourceGain = finalPlayer.resourceCollection - (stat.startResourceCollection || BigInt(0));
+
+
         totalPowerGain += powerGain;
         totalKillGain += killGain;
         totalDieGain += dieGain;
         totalKdGain += kdGain;
+        totalResourceGain += resourceGain;
         playerCount++;
 
         // Обновляем статистику
@@ -90,7 +100,8 @@ export async function POST(req: NextRequest) {
             powerGain,
             killGain,
             dieGain,
-            kdGain
+            kdGain,
+            resourceCollectionGain: resourceGain
           }
         });
       }
@@ -102,12 +113,13 @@ export async function POST(req: NextRequest) {
       data: {
         status: "finished",
         endedAt: new Date(),
-        result: req.body.result || "Unknown",
+        result: result === "win" ? "win" : "lose",
         totalPlayers: playerCount,
         avgPowerGain: playerCount > 0 ? totalPowerGain / playerCount : 0,
         avgKillGain: playerCount > 0 ? totalKillGain / playerCount : 0,
         avgDieGain: playerCount > 0 ? totalDieGain / playerCount : 0,
         avgKdGain: playerCount > 0 ? totalKdGain / playerCount : 0,
+        avgResourceGain: playerCount > 0 ? Number(totalResourceGain) / playerCount : 0,
       },
     });
 

@@ -29,7 +29,7 @@ const tabContents = [
 
 export default async function Dashboard() {
   const session = await auth();
-  if (!session || !session.user?.role.includes("admin")) {
+  if (!session || !session.user?.role?.includes("admin")) {
     return <div>Access denied</div>;
   }
 

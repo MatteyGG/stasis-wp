@@ -8,6 +8,7 @@ export interface C4 {
   id: string;
   map: string;
   status: C4Status;
+  result: string;
   startedAt: Date;
   endedAt?: Date;
   createdAt: Date;
@@ -63,6 +64,7 @@ export interface Player {
 
 // Тип для игрока с Warpath API
 export interface WarpathPlayer {
+  warpathId: number;
   pid: number;
   nick: string;
   gnick: string;
@@ -70,4 +72,6 @@ export interface WarpathPlayer {
   maxpower: number;
   sumkill: number;
   die: number;
+  kd: number;
+  resourceCollection: bigint;
 }

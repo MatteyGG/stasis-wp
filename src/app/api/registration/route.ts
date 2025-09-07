@@ -1,3 +1,5 @@
+// app/api/registration/route.ts
+
 import { prisma } from "@/lib/prisma";
 import { hash } from "bcrypt-ts";
 import { NextRequest } from "next/server";

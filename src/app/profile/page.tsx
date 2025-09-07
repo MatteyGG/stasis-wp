@@ -25,7 +25,7 @@ interface C4Data {
   result: 'Выигран' | 'Проигран' | 'В процессе';
 }
 
-interface BattleHistoryData {
+interface c4HistoryData {
   c4: {
     id: any;
     map: string;
@@ -87,7 +87,7 @@ export default async function ProfilePage() {
   );
 
   let playerStats = null;
-  let battleHistoryData: BattleHistoryData[] = [];
+  let c4HistoryData: c4HistoryData[] = [];
 
   if (fullUser.player) {
     playerStats = {
@@ -102,7 +102,7 @@ export default async function ProfilePage() {
       groundPower: fullUser.player.groundPower,
     };
 
-    battleHistoryData = fullUser.player.c4Stats as BattleHistoryData[];
+    c4HistoryData = fullUser.player.c4Stats as c4HistoryData[];
   }
 
   // Функция для форматирования больших чисел
@@ -157,7 +157,7 @@ export default async function ProfilePage() {
   }
 
   // Преобразуем данные для истории сражений
-  const battleHistory: C4Data[] = battleHistoryData.map((stat) => {
+  const c4History: C4Data[] = c4HistoryData.map((stat) => {
     const startDate = stat.c4.startedAt ? new Date(stat.c4.startedAt).toLocaleDateString('ru-RU') : 'Неизвестно';
     const endDate = stat.c4.endedAt ? new Date(stat.c4.endedAt).toLocaleDateString('ru-RU') : 'Неизвестно';
 
@@ -434,7 +434,7 @@ export default async function ProfilePage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {battleHistory.map((c4, i) => {
+                {c4History.map((c4, i) => {
                   const [startDate, endDate] = c4.date.split(' - ');
                   const isInProgress = c4.result === 'В процессе';
 
@@ -448,7 +448,7 @@ export default async function ProfilePage() {
                           </div>
                         ) : (
                           <Link
-                            href={`/event/${c4.id}`}
+                            href={`/c4/${c4.id}`}
                             className="flex flex-col"
                           >
                             <span>{startDate}</span>
@@ -460,7 +460,7 @@ export default async function ProfilePage() {
                         {isInProgress ? (
                           c4.map
                         ) : (
-                          <Link href={`/battle/${c4.id}`}>
+                          <Link href={`/c4/${c4.id}`}>
                             {c4.map}
                           </Link>
                         )}
@@ -469,7 +469,7 @@ export default async function ProfilePage() {
                         {isInProgress ? (
                           c4.kills
                         ) : (
-                          <Link href={`/battle/${c4.id}`}>
+                          <Link href={`/c4/${c4.id}`}>
                             {c4.kills}
                           </Link>
                         )}
@@ -480,7 +480,7 @@ export default async function ProfilePage() {
                             {c4.result}
                           </Badge>
                         ) : (
-                          <Link href={`/battle/${c4.id}`}>
+                          <Link href={`/c4/${c4.id}`}>
                             <Badge className="rounded-xl" variant={c4.result === "Выигран" ? "default" : "secondary"}>
                               {c4.result}
                             </Badge>
@@ -496,7 +496,7 @@ export default async function ProfilePage() {
 
           {/* Мобильная версия (карточки) */}
           <div className="md:hidden space-y-4">
-            {battleHistory.map((c4, i) => {
+            {c4History.map((c4, i) => {
               const [startDate, endDate] = c4.date.split(' - ');
               const isInProgress = c4.result === 'В процессе';
 
@@ -514,7 +514,7 @@ export default async function ProfilePage() {
                     <div>
                       <div className="font-medium text-muted-foreground">Карта</div>
                       {isInProgress ? c4.map : (
-                        <Link href={`/battle/${c4.id}`}>
+                        <Link href={`/c4/${c4.id}`}>
                           {c4.map}
                         </Link>
                       )}
@@ -523,7 +523,7 @@ export default async function ProfilePage() {
                     <div>
                       <div className="font-medium text-muted-foreground">Убийства</div>
                       {isInProgress ? c4.kills : (
-                        <Link href={`/battle/${c4.id}`}>
+                        <Link href={`/c4/${c4.id}`}>
                           {c4.kills}
                         </Link>
                       )}
@@ -544,7 +544,7 @@ export default async function ProfilePage() {
 
                     {!isInProgress && (
                       <div className="col-span-2 text-right">
-                        <Link href={`/battle/${c4.id}`}>
+                        <Link href={`/c4/${c4.id}`}>
                           <Button variant="outline" className="rounded-xl">Подробнее</Button>
                         </Link>
                       </div>

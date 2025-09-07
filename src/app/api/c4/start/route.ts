@@ -1,3 +1,5 @@
+// app/api/c4/start/route.ts
+
 import { lastDate } from "@/lib/getDate";
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
@@ -26,6 +28,7 @@ export async function POST(req: Request) {
         kill: p.sumkill,
         die: p.die,
         kd: parseFloat((p.sumkill / (p.die || 1)).toFixed(2)),
+        resourceCollection: BigInt(p.caiji || 0),
       }));
 
     // Создаем новое событие C4
@@ -58,6 +61,7 @@ export async function POST(req: Request) {
           kill: player.kill,
           die: player.die,
           kd: player.kd,
+          resourceCollection: player.resourceCollection,
         }
       });
 
@@ -70,6 +74,7 @@ export async function POST(req: Request) {
         startKill: player.kill,
         startDie: player.die,
         startKd: player.kd,
+        startResourceCollection: player.resourceCollection,
         playerId: existingPlayer?.id || null
       });
     }

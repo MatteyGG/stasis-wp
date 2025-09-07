@@ -34,8 +34,8 @@ export default function C4Card({ status, players, map }: C4CardProps) {
         
         <div className="bg-black bg-opacity-50 p-3 rounded-md">
           <div className="flex-col gap-1">
-            <p className="players text-sm md:text-base text-white mb-1">
-              Игроки: <span className="font-semibold">{players}</span>
+            <p className=" text-sm md:text-base text-white mb-1">
+              Игроки: <span className="font-semibold text-white">{players}</span>
             </p>
             <p className="map text-sm md:text-base text-white">
               Карта: <span className="font-semibold">{maps[map as keyof typeof maps]}</span>

@@ -24,16 +24,18 @@ const C4ManagerDashboard: React.FC = () => {
   const [mapSelection, setMapSelection] = useState("cairo");
   const [dateOfData, setDateofData] = useState<string>("");
   const [bindStatus, setBindStatus] = useState<string | null>(null);
-  const [unboundSnapshots, setUnboundSnapshots] = useState<PlayerSnapshot[]>([]);
+  const [unboundSnapshots, setUnboundSnapshots] = useState<PlayerSnapshot[]>(
+    []
+  );
 
-useEffect(() => {
-  const init = async () => {
-    await fetchC4();
-    setDateofData(await lastDate());
-    fetchUnboundSnapshots();
-  };
-  init();
-}, []);
+  useEffect(() => {
+    const init = async () => {
+      await fetchC4();
+      setDateofData(await lastDate());
+      fetchUnboundSnapshots();
+    };
+    init();
+  }, []);
 
   async function fetchUnboundSnapshots() {
     try {
@@ -68,12 +70,12 @@ useEffect(() => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ map: mapSelection }),
       });
-      
+
       if (!res.ok) {
         const errorData = await res.json();
         throw new Error(errorData.error || "Failed to start C4");
       }
-      
+
       const data = await res.json();
       setC4({ ...data, status: "active" });
       await fetchUnboundSnapshots();
@@ -85,18 +87,22 @@ useEffect(() => {
     }
   }
 
-  async function finishC4() {
+  async function finishC4(result: string) {
     setIsLoading(true);
     try {
-      const res = await fetch("/api/c4/finish", { 
-        method: "POST" 
+      const res = await fetch("/api/c4/finish", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ result }),
       });
-      
+
       if (!res.ok) {
         const errorData = await res.json();
         throw new Error(errorData.error || "Failed to finish C4");
       }
-      
+
       await fetchC4();
       await fetchUnboundSnapshots();
     } catch (error) {
@@ -110,19 +116,19 @@ useEffect(() => {
   async function bindPlayers() {
     setIsLoading(true);
     setBindStatus("Начата привязка снапшотов...");
-    
+
     try {
       const res = await fetch("/api/snapshots/bind", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ c4Id: c4?.id })
+        body: JSON.stringify({ c4Id: c4?.id }),
       });
-      
+
       if (!res.ok) {
         const errorData = await res.json();
         throw new Error(errorData.error || "Failed to bind players");
       }
-      
+
       const result = await res.json();
       setBindStatus(`Успешно привязано: ${result.updatedCount} снапшотов`);
       await fetchUnboundSnapshots();
@@ -142,18 +148,20 @@ useEffect(() => {
   return (
     <div className="flex flex-col px-5 w-full gap-6 max-w-3xl mx-auto py-8">
       <h1 className="text-2xl font-bold text-center mb-6">Управление C4</h1>
-      
+
       {/* Статус привязки */}
       {bindStatus && (
-        <div className={`p-3 rounded-md text-center ${
-          bindStatus.includes("Успешно") 
-            ? "bg-green-100 text-green-800" 
-            : "bg-red-100 text-red-800"
-        }`}>
+        <div
+          className={`p-3 rounded-md text-center ${
+            bindStatus.includes("Успешно")
+              ? "bg-green-100 text-green-800"
+              : "bg-red-100 text-red-800"
+          }`}
+        >
           {bindStatus}
         </div>
       )}
-      
+
       {/* Непривязанные снапшоты */}
       {unboundSnapshots.length > 0 && (
         <div className="bg-yellow-50 p-4 rounded-md border border-yellow-200">
@@ -180,9 +188,9 @@ useEffect(() => {
       ) : null}
 
       {c4?.status === "active" && (
-        <C4Active 
-          c4={c4} 
-          finishC4={finishC4} 
+        <C4Active
+          c4={c4}
+          finishC4={finishC4}
           bindPlayers={bindPlayers}
           isLoading={isLoading}
         />
@@ -219,7 +227,13 @@ const C4StartForm: React.FC<C4StartFormProps> = ({
   <div className="bg-white rounded-lg shadow p-6">
     <h2 className="text-xl font-semibold mb-4">C4 не активно</h2>
     <p className="text-gray-600 mb-4">
-      Последнее обновление данных: {dateOfData && dateOfData.length === 8 ? `${dateOfData.slice(6, 8)}.${dateOfData.slice(4, 6)}.${dateOfData.slice(0, 4)}` : "Нет ответа от сервера"}
+      Последнее обновление данных:{" "}
+      {dateOfData && dateOfData.length === 8
+        ? `${dateOfData.slice(6, 8)}.${dateOfData.slice(
+            4,
+            6
+          )}.${dateOfData.slice(0, 4)}`
+        : "Нет ответа от сервера"}
     </p>
 
     <div className="mb-4">
@@ -248,83 +262,165 @@ const C4StartForm: React.FC<C4StartFormProps> = ({
 
 interface C4ActiveProps {
   c4: C4;
-  finishC4: () => Promise<void>;
+  finishC4: (result: string) => Promise<void>;
   bindPlayers: () => Promise<void>;
   isLoading: boolean;
 }
 
-const C4Active: React.FC<C4ActiveProps> = ({ 
-  c4, 
-  finishC4, 
+const C4Active: React.FC<C4ActiveProps> = ({
+  c4,
+  finishC4,
   bindPlayers,
-  isLoading 
-}) => (
-  <div className="bg-white rounded-lg shadow p-6">
-    <div className="flex items-center justify-between mb-4">
-      <h2 className="text-xl font-semibold">
-        Активное завоевание: {maps[c4.map as keyof typeof maps] || c4.map}
-      </h2>
-      <span className="bg-green-100 text-green-800 px-2 py-1 rounded text-sm font-medium">
-        Активно
-      </span>
-    </div>
+  isLoading,
+}) => {
+  const [result, setResult] = useState<string>("win");
 
-    <div className="grid grid-cols-2 gap-4 mb-6">
-      <div>
-        <p className="text-gray-600">Начато:</p>
-        <p className="font-medium">
-          {new Date(c4.startedAt).toLocaleString('ru-RU')}
-        </p>
+  return (
+    <div className="bg-white rounded-lg shadow p-6">
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-xl font-semibold">
+          Активное завоевание: {maps[c4.map as keyof typeof maps] || c4.map}
+        </h2>
+        <span className="bg-green-100 text-green-800 px-2 py-1 rounded text-sm font-medium">
+          Активно
+        </span>
       </div>
-      <div>
-        <p className="text-gray-600">Длительность:</p>
-        <p className="font-medium">
-          {Math.floor(
-            (Date.now() - new Date(c4.startedAt).getTime()) / 3600000
-          )} часов
-        </p>
-      </div>
-    </div>
 
-    <div className="grid grid-cols-2 gap-3">
-      <button
-        className={`bg-gray-500 hover:bg-gray-600 text-white py-2 rounded transition ${
-          isLoading ? 'opacity-70 cursor-not-allowed' : ''
-        }`}
-        onClick={bindPlayers}
-        disabled={isLoading}
-      >
-        {isLoading ? 'Привязка...' : 'Привязать игроков'}
-      </button>
-      
-      <button
-        className={`bg-red-500 hover:bg-red-600 text-white py-2 rounded transition ${
-          isLoading ? 'opacity-70 cursor-not-allowed' : ''
-        }`}
-        onClick={finishC4}
-        disabled={isLoading}
-      >
-        {isLoading ? 'Завершение...' : 'Завершить завоевание'}
-      </button>
+      <div className="grid grid-cols-2 gap-4 mb-6">
+        <div>
+          <p className="text-gray-600">Начато:</p>
+          <p className="font-medium">
+            {new Date(c4.startedAt).toLocaleString("ru-RU")}
+          </p>
+        </div>
+        <div>
+          <p className="text-gray-600">Длительность:</p>
+          <p className="font-medium">
+            {Math.floor(
+              (Date.now() - new Date(c4.startedAt).getTime()) / 3600000
+            )}{" "}
+            часов
+          </p>
+        </div>
+      </div>
+      <div className="mb-4">
+        <p className="text-gray-600 mb-2">Результат завоевания:</p>
+        <div className="flex w-full justify-center items-center p-1 rounded-lg">
+          <label
+            className={`flex items-center cursor-pointer px-4 py-2 rounded-md transition-all ${
+              result === "win" ? "bg-white shadow-sm" : "hover:bg-gray-50"
+            }`}
+          >
+            <input
+              type="radio"
+              name="c4-result"
+              value="win"
+              checked={result === "win"}
+              onChange={() => setResult("win")}
+              className="sr-only"
+            />
+            <span
+              className={`mr-2 h-4 w-4 rounded-full border flex items-center justify-center ${
+                result === "win" ? "border-green-500" : "border-gray-400"
+              }`}
+            >
+              {result === "win" && (
+                <span className="h-2 w-2 rounded-full bg-green-500"></span>
+              )}
+            </span>
+            <span
+              className={`font-medium ${
+                result === "win" ? "text-green-700" : "text-gray-600"
+              }`}
+            >
+              Победа
+            </span>
+          </label>
+
+          <label
+            className={`flex items-center cursor-pointer px-4 py-2 rounded-md transition-all ${
+              result === "loss" ? "bg-white shadow-sm" : "hover:bg-gray-50"
+            }`}
+          >
+            <input
+              type="radio"
+              name="c4-result"
+              value="loss"
+              checked={result === "loss"}
+              onChange={() => setResult("loss")}
+              className="sr-only"
+            />
+            <span
+              className={`mr-2 h-4 w-4 rounded-full border flex items-center justify-center ${
+                result === "loss" ? "border-red-500" : "border-gray-400"
+              }`}
+            >
+              {result === "loss" && (
+                <span className="h-2 w-2 rounded-full bg-red-500"></span>
+              )}
+            </span>
+            <span
+              className={`font-medium ${
+                result === "loss" ? "text-red-700" : "text-gray-600"
+              }`}
+            >
+              Поражение
+            </span>
+          </label>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-2 gap-3">
+        <button
+          className={`bg-gray-500 hover:bg-gray-600 text-white py-2 rounded transition ${
+            isLoading ? "opacity-70 cursor-not-allowed" : ""
+          }`}
+          onClick={bindPlayers}
+          disabled={isLoading}
+        >
+          {isLoading ? "Привязка..." : "Привязать игроков"}
+        </button>
+
+        <button
+          className={`${
+            result === "win"
+              ? "bg-green-500 hover:bg-green-600"
+              : "bg-red-500 hover:bg-red-600"
+          } text-white py-2 rounded transition ${
+            isLoading ? "opacity-70 cursor-not-allowed" : ""
+          }`}
+          onClick={() => finishC4(result)}
+          disabled={isLoading}
+        >
+          {isLoading ? "Завершение..." : "Завершить завоевание"}
+        </button>
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 interface C4FinishedProps {
   c4: C4;
 }
 
 const C4Finished: React.FC<C4FinishedProps> = ({ c4 }) => {
-  const durationHours = c4.endedAt 
-    ? ((new Date(c4.endedAt).getTime() - new Date(c4.startedAt).getTime()) / 3600000)
+  const durationHours = c4.endedAt
+    ? (new Date(c4.endedAt).getTime() - new Date(c4.startedAt).getTime()) /
+      3600000
     : 0;
-    
+
   return (
     <div className="bg-white rounded-lg shadow p-6">
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-xl font-semibold">
-          Завершённое завоевание: {maps[c4.map as keyof typeof maps] || c4.map}
-        </h2>
+      <div className="flex items-center gap-2">
+        <span
+          className={`px-3 py-1 rounded-full text-sm font-medium ${
+            c4.result === "win"
+              ? "bg-green-100 text-green-800"
+              : "bg-red-100 text-red-800"
+          }`}
+        >
+          {c4.result === "win" ? "Победа" : "Поражение"}
+        </span>
         <span className="bg-gray-100 text-gray-800 px-2 py-1 rounded text-sm font-medium">
           Завершено
         </span>
@@ -334,13 +430,13 @@ const C4Finished: React.FC<C4FinishedProps> = ({ c4 }) => {
         <div>
           <p className="text-gray-600">Начато:</p>
           <p className="font-medium">
-            {new Date(c4.startedAt).toLocaleString('ru-RU')}
+            {new Date(c4.startedAt).toLocaleString("ru-RU")}
           </p>
         </div>
         <div>
           <p className="text-gray-600">Завершено:</p>
           <p className="font-medium">
-            {c4.endedAt ? new Date(c4.endedAt).toLocaleString('ru-RU') : "N/A"}
+            {c4.endedAt ? new Date(c4.endedAt).toLocaleString("ru-RU") : "N/A"}
           </p>
         </div>
       </div>
@@ -350,8 +446,14 @@ const C4Finished: React.FC<C4FinishedProps> = ({ c4 }) => {
         <ul className="space-y-2">
           <li>• Участников: {c4.totalPlayers || 0}</li>
           <li>• Продолжительность: {durationHours.toFixed(1)} часов</li>
-          {c4.avgPowerGain && <li>• Средний прирост силы: {c4.avgPowerGain.toLocaleString()}</li>}
-          {c4.avgKillGain && <li>• Средний прирост убийств: {c4.avgKillGain.toLocaleString()}</li>}
+          {c4.avgPowerGain && (
+            <li>• Средний прирост силы: {c4.avgPowerGain.toLocaleString()}</li>
+          )}
+          {c4.avgKillGain && (
+            <li>
+              • Средний прирост убийств: {c4.avgKillGain.toLocaleString()}
+            </li>
+          )}
         </ul>
       </div>
     </div>
