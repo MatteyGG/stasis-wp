@@ -3,25 +3,13 @@
 import React, { useEffect, useState } from "react";
 import { C4Status, C4, PlayerSnapshot } from "@/lib/types";
 import { lastDate } from "@/lib/getDate";
+import { defaultMapValue, maps } from '@/constants/maps';
 
-const maps = {
-  cairo: "Каир",
-  newyork: "Нью-Йорк",
-  moscow: "Москва",
-  sea: "Эгейское море",
-  vancouver: "Ванкувер",
-  berlin: "Берлин",
-  paris: "Париж",
-  london: "Лондон",
-  rome: "Рим",
-  chicago: "Чикаго",
-  sanfrancisco: "Сан-Франциско",
-};
 
 const C4ManagerDashboard: React.FC = () => {
   const [c4, setC4] = useState<C4 | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [mapSelection, setMapSelection] = useState("cairo");
+  const [mapSelection, setMapSelection] = useState(defaultMapValue);
   const [dateOfData, setDateofData] = useState<string>("");
   const [bindStatus, setBindStatus] = useState<string | null>(null);
   const [unboundSnapshots, setUnboundSnapshots] = useState<PlayerSnapshot[]>(

@@ -2,6 +2,7 @@
 import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel";
 import { MVPcard } from "@/components/MVPcard";
 import Link from "next/link";
+import { getMapValue } from "@/constants/maps";
 
 interface MvpData {
   player?: {
@@ -19,20 +20,6 @@ interface MvpCarouselProps {
   c4Map?: string | null;
   showLink?: boolean;
 }
-
-const maps = {
-  cairo: "Каир",
-  newyork: "Нью-Йорк",
-  moscow: "Москва",
-  sea: "Эгейское море",
-  vancouver: "Ванкувер",
-  berlin: "Берлин",
-  paris: "Париж",
-  london: "Лондон",
-  rome: "Рим",
-  chicago: "Чикаго",
-  sanfrancisco: "Сан-Франциско",
-};
 
 export default function MvpCarousel({ 
   mvps, 
@@ -64,7 +51,7 @@ export default function MvpCarousel({
             href={`/c4/${c4Id}`}
             className="text-blue-400 hover:text-blue-300 text-sm"
           >
-            Статистика за {c4Map ? maps[c4Map as keyof typeof maps] || c4Map : "этот C4"}
+            Статистика за {getMapValue(c4Map || '')}
           </Link>
         </div>
       )}

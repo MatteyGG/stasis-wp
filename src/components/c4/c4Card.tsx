@@ -1,3 +1,4 @@
+import { getMapValue } from "@/constants/maps";
 import React from "react";
 
 interface C4CardProps {
@@ -5,19 +6,6 @@ interface C4CardProps {
   players: string;
   map: string;
 }
-const maps = {
-  cairo: "Каир",
-  newyork: "Нью-Йорк",
-  moscow: "Москва",
-  sea: "Эгейское море",
-  vancouver: "Ванкувер",
-  berlin: "Берлин",
-  paris: "Париж",
-  london: "Лондон",
-  rome: "Рим",
-  chicago: "Чикаго",
-  sanfrancisco: "Сан-Франциско",
-};
 
 export default function C4Card({ status, players, map }: C4CardProps) {
   return (
@@ -38,7 +26,7 @@ export default function C4Card({ status, players, map }: C4CardProps) {
               Игроки: <span className="font-semibold text-white">{players}</span>
             </p>
             <p className="map text-sm md:text-base text-white">
-              Карта: <span className="font-semibold">{maps[map as keyof typeof maps]}</span>
+              Карта: <span className="font-semibold">{getMapValue(map)}</span>
             </p>
           </div>
 

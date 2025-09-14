@@ -1,0 +1,409 @@
+stasis-wp
+├── prisma
+│   ├── migrations
+│   │   ├── 20241116174445_init
+│   │   │   └── migration.sql
+│   │   ├── 20241211134426_init
+│   │   │   └── migration.sql
+│   │   ├── 20241211154717_init
+│   │   │   └── migration.sql
+│   │   ├── 20241225204101_init
+│   │   │   └── migration.sql
+│   │   ├── 20241225224716_init
+│   │   │   └── migration.sql
+│   │   ├── 20250110171837_init
+│   │   │   └── migration.sql
+│   │   ├── 20250111175711_init
+│   │   │   └── migration.sql
+│   │   ├── 20250111180612_init
+│   │   │   └── migration.sql
+│   │   ├── 20250111181618_init
+│   │   │   └── migration.sql
+│   │   ├── 20250116141445_init
+│   │   │   └── migration.sql
+│   │   ├── 20250211183527_init
+│   │   │   └── migration.sql
+│   │   ├── 20250323162843_add
+│   │   │   └── migration.sql
+│   │   ├── 20250816161235_add
+│   │   │   └── migration.sql
+│   │   ├── 20250817125608_add
+│   │   │   └── migration.sql
+│   │   ├── 20250817133650_add
+│   │   │   └── migration.sql
+│   │   ├── 20250818121111_add
+│   │   │   └── migration.sql
+│   │   ├── 20250818174041_add
+│   │   │   └── migration.sql
+│   │   ├── 20250819110450_add
+│   │   │   └── migration.sql
+│   │   ├── 20250829150617_new
+│   │   │   └── migration.sql
+│   │   ├── 20250830124858_add
+│   │   │   └── migration.sql
+│   │   ├── 20250830163738_add
+│   │   │   └── migration.sql
+│   │   ├── 20250830164035_link
+│   │   │   └── migration.sql
+│   │   ├── 20250830173703_added
+│   │   │   └── migration.sql
+│   │   ├── 20250830173743_added
+│   │   │   └── migration.sql
+│   │   ├── 20250830233054_modify
+│   │   │   └── migration.sql
+│   │   ├── 20250831000453_added
+│   │   │   └── migration.sql
+│   │   ├── 20250831002044_modify
+│   │   │   └── migration.sql
+│   │   ├── 20250904125800_added_resource_to_c4
+│   │   │   └── migration.sql
+│   │   └── migration_lock.toml
+│   ├── generated.sql
+│   └── schema.prisma
+├── public
+│   ├── audio
+│   │   └── polet.mp3
+│   ├── gallery
+│   │   ├── no photo.png
+│   │   └── stasis_personal_logo_matteygg.png
+│   ├── images
+│   │   ├── gallery
+│   │   └── wiki
+│   │       └── wiki_id_image.png
+│   ├── source
+│   │   ├── air
+│   │   │   └── Icon-fighter.webp
+│   │   ├── army
+│   │   │   ├── Icon-HTank.webp
+│   │   │   ├── Icon-LTank.webp
+│   │   │   ├── Icon-MTank.webp
+│   │   │   ├── Icon-SH.webp
+│   │   │   ├── Icon-howitzer.webp
+│   │   │   ├── Icon-infantry.webp
+│   │   │   ├── Icon-launcher.webp
+│   │   │   └── Icon-tank-hunter.webp
+│   │   ├── c4
+│   │   │   ├── cairo.jpg
+│   │   │   ├── sea.png
+│   │   │   └── vancouver.png
+│   │   ├── help
+│   │   │   ├── ID.png
+│   │   │   ├── army.png
+│   │   │   ├── profile.png
+│   │   │   └── unit-placeholder.png
+│   │   ├── icon
+│   │   │   ├── Rank_Medaille0.png
+│   │   │   ├── Rank_Medaille01.png
+│   │   │   ├── Rank_Medaille02.png
+│   │   │   ├── Rank_Medaille03.png
+│   │   │   ├── Stasis.png
+│   │   │   ├── Stasis_logo.png
+│   │   │   ├── alert_ico.png
+│   │   │   ├── allyLeader.png
+│   │   │   ├── allyPower.png
+│   │   │   ├── allyicon.png
+│   │   │   ├── allyinfo.png
+│   │   │   ├── copy.png
+│   │   │   ├── error.png
+│   │   │   ├── flag.png
+│   │   │   ├── gallery_ico.png
+│   │   │   ├── home.png
+│   │   │   ├── info.png
+│   │   │   ├── kills.png
+│   │   │   ├── mail.png
+│   │   │   ├── mute.png
+│   │   │   ├── send_ico.png
+│   │   │   ├── success.png
+│   │   │   ├── telegram.png
+│   │   │   ├── users_approve.png
+│   │   │   ├── vk.png
+│   │   │   ├── warning.png
+│   │   │   ├── wiki.png
+│   │   │   └── wiki_ico.png
+│   │   ├── nation
+│   │   │   ├── Liberty.webp
+│   │   │   ├── Martyrs.webp
+│   │   │   └── Vanguard.webp
+│   │   ├── STASIS_prew.png
+│   │   ├── diplomat_bg.png
+│   │   ├── false.svg
+│   │   ├── istockphoto-458297017-612x612.png
+│   │   ├── placeholder.jpg
+│   │   └── true.svg
+│   ├── tmp
+│   │   └── Vanguard.webp
+│   ├── uploads
+│   │   ├── Icon-HTank.webp
+│   │   ├── Icon-LTank.webp
+│   │   ├── Icon-MTank.webp
+│   │   ├── Icon-SH.webp
+│   │   ├── Icon-howitzer.webp
+│   │   ├── Icon-infantry.webp
+│   │   ├── Icon-launcher.webp
+│   │   ├── Icon-tank-hunter.webp
+│   │   ├── Liberty.webp
+│   │   ├── Martys.webp
+│   │   ├── Vanguard.webp
+│   │   ├── istockphoto-458297017-612x612.png
+│   │   └── placeholder.jpg
+│   ├── userProfile
+│   │   ├── userProfile_cm3u6wfmy0000k9fm7a6j0p1b.png
+│   │   ├── userProfile_cm5sjc6ay0000d1fum5qmxojl.png
+│   │   └── userProfile_cm5tj727a0001111ddrxz9h3e.png
+│   ├── userScreen
+│   │   ├── userScreen_cm3u6wfmy0000k9fm7a6j0p1b.jpg
+│   │   ├── userScreen_cm3u6wfmy0000k9fm7a6j0p1b.png
+│   │   ├── userScreen_cm5sjc6ay0000d1fum5qmxojl.png
+│   │   ├── userScreen_cm5tj727a0001111ddrxz9h3e.png
+│   │   ├── userScreencm3u6wfmy0000k9fm7a6j0p1b.png
+│   │   └── Снимок_экрана_2024-11-20_154948.png
+│   ├── KD.png
+│   ├── UI_April2024_BattlePass_BannerV_L.png
+│   ├── aircraft.webp
+│   ├── collect.png
+│   ├── die.png
+│   ├── kill.png
+│   ├── noimage.png
+│   ├── placeholder.jpg
+│   ├── placeholder.png
+│   ├── power.png
+│   ├── test.jpg
+│   └── white-min.jpg
+├── src
+│   ├── app
+│   │   ├── (main)
+│   │   │   ├── layout.tsx
+│   │   │   └── page.tsx
+│   │   ├── about
+│   │   │   ├── layout.tsx
+│   │   │   └── page.tsx
+│   │   ├── actions
+│   │   │   ├── notifications.ts
+│   │   │   ├── telegram.ts
+│   │   │   └── user-actions.ts
+│   │   ├── api
+│   │   │   ├── alerts
+│   │   │   │   ├── [userId]
+│   │   │   │   │   └── route.ts
+│   │   │   │   ├── ingame
+│   │   │   │   │   └── route.ts
+│   │   │   │   └── route.ts
+│   │   │   ├── auth
+│   │   │   ├── c4
+│   │   │   │   ├── current
+│   │   │   │   │   └── route.ts
+│   │   │   │   ├── finish
+│   │   │   │   │   └── route.ts
+│   │   │   │   └── start
+│   │   │   │       └── route.ts
+│   │   │   ├── cardGallery
+│   │   │   │   └── route.ts
+│   │   │   ├── category
+│   │   │   │   ├── [id]
+│   │   │   │   │   └── route.ts
+│   │   │   │   └── route.ts
+│   │   │   ├── listAlerts
+│   │   │   │   └── route.ts
+│   │   │   ├── markdown
+│   │   │   │   ├── [pageid]
+│   │   │   │   │   └── route.ts
+│   │   │   │   └── route.ts
+│   │   │   ├── player
+│   │   │   │   └── bind
+│   │   │   │       └── route.ts
+│   │   │   ├── promocode
+│   │   │   │   ├── [id]
+│   │   │   │   │   └── route.ts
+│   │   │   │   └── route.ts
+│   │   │   ├── registration
+│   │   │   │   └── route.ts
+│   │   │   ├── singin
+│   │   │   │   └── route.ts
+│   │   │   ├── upload
+│   │   │   │   └── route.ts
+│   │   │   ├── user
+│   │   │   │   ├── [id]
+│   │   │   │   │   └── route.ts
+│   │   │   │   ├── change-password
+│   │   │   │   │   └── route.ts
+│   │   │   │   └── tgref
+│   │   │   │       └── route.ts
+│   │   │   ├── userUpdate
+│   │   │   │   └── route.ts
+│   │   │   ├── user_list
+│   │   │   │   └── route.ts
+│   │   │   └── warpath
+│   │   │       ├── allyinfo
+│   │   │       │   └── route.ts
+│   │   │       ├── player
+│   │   │       │   └── [id]
+│   │   │       │       └── route.ts
+│   │   │       └── route.ts
+│   │   ├── c4
+│   │   │   └── [c4id]
+│   │   │       ├── layout.tsx
+│   │   │       └── page.tsx
+│   │   ├── dashboard
+│   │   │   ├── layout.tsx
+│   │   │   └── page.tsx
+│   │   ├── edit
+│   │   │   ├── layout.tsx
+│   │   │   └── page.tsx
+│   │   ├── fonts
+│   │   │   ├── GeistMonoVF.woff
+│   │   │   └── GeistVF.woff
+│   │   ├── profile
+│   │   │   ├── notifications
+│   │   │   │   └── page.tsx
+│   │   │   ├── password
+│   │   │   │   └── page.tsx
+│   │   │   ├── settings
+│   │   │   │   └── page.tsx
+│   │   │   ├── social
+│   │   │   │   └── page.tsx
+│   │   │   ├── support
+│   │   │   │   └── page.tsx
+│   │   │   ├── layout.tsx
+│   │   │   └── page.tsx
+│   │   ├── public-profile
+│   │   │   ├── [id]
+│   │   │   │   └── page.tsx
+│   │   │   └── layout.tsx
+│   │   ├── registration
+│   │   │   ├── layout.tsx
+│   │   │   └── page.tsx
+│   │   ├── singin
+│   │   │   ├── layout.tsx
+│   │   │   └── page.tsx
+│   │   ├── statistic
+│   │   │   ├── layout.tsx
+│   │   │   └── page.tsx
+│   │   ├── wiki
+│   │   │   ├── [category]
+│   │   │   │   ├── [wikipageid]
+│   │   │   │   │   └── page.tsx
+│   │   │   │   └── page.tsx
+│   │   │   ├── layout.tsx
+│   │   │   └── page.tsx
+│   │   ├── favicon.ico
+│   │   └── globals.css
+│   ├── components
+│   │   ├── alert
+│   │   │   ├── mainalert.tsx
+│   │   │   └── makeAlert.tsx
+│   │   ├── auth
+│   │   │   ├── signin-button.tsx
+│   │   │   └── signoutButton.tsx
+│   │   ├── base
+│   │   │   ├── audio.tsx
+│   │   │   ├── dropdownButton.tsx
+│   │   │   └── helper.tsx
+│   │   ├── c4
+│   │   │   ├── c4Card.tsx
+│   │   │   └── c4container.tsx
+│   │   ├── dashboard
+│   │   │   ├── category.tsx
+│   │   │   ├── editor.tsx
+│   │   │   ├── gallery.tsx
+│   │   │   ├── leaderboardPlayers.tsx
+│   │   │   ├── main.tsx
+│   │   │   ├── manage.tsx
+│   │   │   ├── manage_c4.tsx
+│   │   │   ├── promocode.tsx
+│   │   │   ├── published.tsx
+│   │   │   ├── userslist.tsx
+│   │   │   └── wikilist.tsx
+│   │   ├── edit
+│   │   ├── mvpCards
+│   │   │   └── MvpCarousel.tsx
+│   │   ├── navbar
+│   │   │   ├── MobileMenu.tsx
+│   │   │   ├── NavBar.tsx
+│   │   │   ├── NotificationDropdown.tsx
+│   │   │   ├── SearchBar.tsx
+│   │   │   ├── UserMenu.tsx
+│   │   │   └── index.ts
+│   │   ├── profile
+│   │   │   ├── notifications
+│   │   │   │   ├── NotificationActions.tsx
+│   │   │   │   └── NotificationItem.tsx
+│   │   │   ├── social
+│   │   │   │   └── TelegramForm.tsx
+│   │   │   ├── AvatarUpload.tsx
+│   │   │   ├── NotificationButtons.tsx
+│   │   │   ├── ProfileSidebar.tsx
+│   │   │   ├── PublicProfile.tsx
+│   │   │   ├── ShareProfileButton.tsx
+│   │   │   ├── UpdateTech.tsx
+│   │   │   ├── alerts.tsx
+│   │   │   ├── profile.tsx
+│   │   │   ├── resetPassword.tsx
+│   │   │   └── updatePhoto.tsx
+│   │   ├── statistic
+│   │   │   └── leaderboard.tsx
+│   │   ├── ui
+│   │   │   ├── avatar.tsx
+│   │   │   ├── badge.tsx
+│   │   │   ├── button.tsx
+│   │   │   ├── card.tsx
+│   │   │   ├── carousel.tsx
+│   │   │   ├── dropdown-menu.tsx
+│   │   │   ├── input.tsx
+│   │   │   ├── label.tsx
+│   │   │   ├── progress.tsx
+│   │   │   ├── select.tsx
+│   │   │   ├── separator.tsx
+│   │   │   ├── sheet.tsx
+│   │   │   ├── switch.tsx
+│   │   │   ├── table.tsx
+│   │   │   ├── tabs.tsx
+│   │   │   └── textarea.tsx
+│   │   ├── wiki
+│   │   │   ├── ArticleTags.tsx
+│   │   │   ├── Breadcrumbs.tsx
+│   │   │   ├── RecentViewers.tsx
+│   │   │   ├── ViewCounter.tsx
+│   │   │   └── WikiSearch.tsx
+│   │   ├── C4StatsTable.tsx
+│   │   ├── EditorComponent.tsx
+│   │   ├── ImageWithFallback.tsx
+│   │   ├── MVPcard.tsx
+│   │   ├── allyWid.tsx
+│   │   ├── editor.js
+│   │   ├── footer.tsx
+│   │   ├── mdx.tsx
+│   │   ├── members.tsx
+│   │   ├── namesession.tsx
+│   │   ├── navbar.tsx
+│   │   ├── promocodes.tsx
+│   │   ├── signoutButton.tsx
+│   │   ├── swiper-bundle.css
+│   │   ├── tabs.tsx
+│   │   ├── telegramChat.tsx
+│   │   ├── upload.tsx
+│   │   ├── userImageUpload.tsx
+│   │   └── wikicard.tsx
+│   └── lib
+│       ├── auth.ts
+│       ├── currentC4.ts
+│       ├── formatLargeNumber.ts
+│       ├── getDate.ts
+│       ├── mvpUtils.ts
+│       ├── prisma.ts
+│       ├── types.ts
+│       └── utils.ts
+├── types
+├── Dockerfile
+├── Dockerfile.bak
+├── README.md
+├── components.json
+├── docker-compose.yml
+├── initial_schema.sql
+├── next-env.d.ts
+├── next.config.mjs
+├── package-lock.json
+├── package.json
+├── postcss.config.mjs
+├── project_tree.txt
+├── tailwind.config.ts
+└── tsconfig.json

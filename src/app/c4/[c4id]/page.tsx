@@ -5,12 +5,11 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { calculateMvpData } from "@/lib/mvpUtils";
 import MvpCarousel from "@/components/mvpCards/MvpCarousel";
+import { getMapValue } from "@/constants/maps";
 
-export default async function C4StatsPage(
-  props: {
-    params: Promise<{ c4id: string }>;
-  }
-) {
+export default async function C4StatsPage(props: {
+  params: Promise<{ c4id: string }>;
+}) {
   const params = await props.params;
   console.log(params.c4id);
 
@@ -48,21 +47,6 @@ export default async function C4StatsPage(
         ).toFixed(1)} часов`
       : "В процессе";
 
-  // Карты для отображения
-  const maps = {
-    cairo: "Каир",
-    newyork: "Нью-Йорк",
-    moscow: "Москва",
-    sea: "Эгейское море",
-    vancouver: "Ванкувер",
-    berlin: "Берлин",
-    paris: "Париж",
-    london: "Лондон",
-    rome: "Рим",
-    chicago: "Чикаго",
-    sanfrancisco: "Сан-Франциско",
-  };
-
   return (
     <div className="container mx-auto px-4 py-8 max-w-6xl">
       {/* Хлебные крошки */}
@@ -76,7 +60,7 @@ export default async function C4StatsPage(
       <div className="bg-white rounded-lg shadow p-6 mb-6">
         <div className="flex items-center justify-between mb-4">
           <h1 className="text-2xl font-bold">
-            Статистика завоевания: {maps[c4.map as keyof typeof maps] || c4.map}
+            Статистика завоевания: {getMapValue(c4.map)}
           </h1>
           <span
             className={`px-3 py-1 rounded text-sm font-medium ${

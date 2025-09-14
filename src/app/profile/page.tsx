@@ -14,6 +14,7 @@ import PromocodeItem from '@/components/promocodes';
 import Link from 'next/link';
 import Image from 'next/image';
 import { prisma } from '@/lib/prisma';
+import { getMapValue } from '@/constants/maps';
 
 interface C4Data {
   id: string;
@@ -136,24 +137,6 @@ export default async function ProfilePage() {
     };
   }
 
-  function getRussianMapName(mapCode: string): string {
-    const maps: { [key: string]: string } = {
-      cairo: "Каир",
-      newyork: "Нью-Йорк",
-      moscow: "Москва",
-      sea: "Эгейское море",
-      vancouver: "Ванкувер",
-      berlin: "Берлин",
-      paris: "Париж",
-      london: "Лондон",
-      rome: "Рим",
-      chicago: "Чикаго",
-      sanfrancisco: "Сан-Франциско",
-    };
-
-    return maps[mapCode] || mapCode;
-  }
-
   // Преобразуем данные для истории сражений
   const c4History: C4Data[] = c4HistoryData.map((stat) => {
     const startDate = stat.c4.startedAt ? new Date(stat.c4.startedAt).toLocaleDateString('ru-RU') : 'Неизвестно';
@@ -170,7 +153,7 @@ export default async function ProfilePage() {
     return {
       id: stat.c4.id,
       date: `${startDate} - ${endDate}`,
-      map: getRussianMapName(stat.c4.map || 'Неизвестно'),
+      map: getMapValue(stat.c4.map),
       kills: stat.killGain || 0,
       result: result
     };
