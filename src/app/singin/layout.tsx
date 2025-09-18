@@ -18,17 +18,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={inter.className}>
-        <video
-          className="absolute overflow-clip-border top-0 left-0 hidden md:block"
-          autoPlay={true}
-          loop={true}
-          muted={true}
-          src="https://oss-resource.farlightgames.com/p/SDK/200000/0/100000/2023-03-21/cb9b4854a5ba84837fe4c82c46a58c4e.mp4"
-        />
-        {children}
-      </body>
-    </html>
+    <>
+      <video
+        className="absolute overflow-clip-border top-0 left-0 hidden md:block"
+        autoPlay={true}
+        loop={true}
+        muted={true}
+        src="https://oss-resource.farlightgames.com/p/SDK/200000/0/100000/2023-03-21/cb9b4854a5ba84837fe4c82c46a58c4e.mp4"
+      />
+      {children}
+    </>
   );
 }

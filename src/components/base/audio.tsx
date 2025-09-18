@@ -19,7 +19,7 @@ export const Audio: React.FC<AudioProps> = ({ src }) => {
 
   return (
     <div className="absolute right-2 bottom-0 items-center">
-      <audio ref={audioRef} muted autoPlay loop src={src} />
+      <audio ref={audioRef} muted autoPlay loop src={src} suppressHydrationWarning={true}/>
       <div
         className=" inline-flex gap-2 text-gray-600 hover:text-gray-900 cursor-pointer "
         onClick={toggleMute}

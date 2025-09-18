@@ -9,8 +9,6 @@ import type { Metadata } from "next";
 import "@/app/globals.css";
 import "@mdxeditor/editor/style.css";
 
-
-
 export const metadata: Metadata = {
   title: "STASIS",
   description: "Wiki and encyclopedia of STASIS",
@@ -28,14 +26,12 @@ export default async function ProfileLayout({
   }
 
   return (
-    <html lang="en">
-      <body>
-        <div className="flex min-h-screen">
-          <ProfileSidebar />
-          <main className="flex-1 p-6">{children}</main>
-        </div>
-        <ToastContainer />
-      </body>
-    </html>
+    <>
+      <div className="flex min-h-screen">
+        <ProfileSidebar />
+        <main className="flex-1 p-6">{children}</main>
+      </div>
+      <ToastContainer />
+    </>
   );
 }

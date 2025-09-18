@@ -191,8 +191,8 @@ model C4Statistic {
 }
 
 model Player {
-  id                 String  @id @default(cuid())
-  warpathId          Int?    @unique
+  id                 String    @id @default(cuid())
+  warpathId          Int?      @unique
   serverId           Int? // ID сервера
   username           String
   ally               String?
@@ -205,7 +205,8 @@ model Player {
   airPower           Int? // Сила воздушных сил
   navyPower          Int? // Сила морских сил
   groundPower        Int? // Сила наземных сил
-  onSite             Boolean @default(false)
+  lastUpdated        DateTime?
+  onSite             Boolean   @default(false)
 
   user      User?
   snapshots PlayerSnapshot[]
