@@ -4,7 +4,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = "postgresql://mattey:jTqSHSE8TUGkhXEpcH@stasis-wp.ru:5432/stasiswp"
+  url      = env("DATABASE_URL")
 }
 
 model Account {

@@ -35,7 +35,6 @@ export const MVPcard = ({ nickname, title, value, category, imageUrl }: MVPcardP
                     alt={nickname}
                     className="object-cover z-0"
                     fill
-                    quality={100}
                 />
                 <div className="absolute inset-0 bg-black bg-opacity-20"></div>
                 <div className="relative z-10 p-4 text-white">

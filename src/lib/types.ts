@@ -64,6 +64,7 @@ export interface Player {
 
 // Тип для игрока с Warpath API
 export interface WarpathPlayer {
+  ally: string;
   warpathId: number;
   id: number;
   pid: number;

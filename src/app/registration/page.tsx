@@ -8,6 +8,7 @@ import MakeHelper from "../../components/base/helper";
 import { Audio } from "../../components/base/audio";
 import { CheckCircle, XCircle, AlertCircle, Eye, EyeOff } from "lucide-react";
 import "react-toastify/dist/ReactToastify.css";
+import { WarpathPlayer } from "@/lib/types";
 
 
 
@@ -30,7 +31,7 @@ export default function RegistrationPage() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [gameID, setGameID] = useState("");
-  const [playerData, setPlayerData] = useState<Player[]>([]);
+  const [playerData, setPlayerData] = useState<WarpathPlayer[]>([]);
   const [loading, setLoading] = useState(false);
   const [isCheckingPlayer, setIsCheckingPlayer] = useState(false);
   const [debounceTimer, setDebounceTimer] = useState<NodeJS.Timeout | null>(null);
