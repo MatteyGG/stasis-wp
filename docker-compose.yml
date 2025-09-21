@@ -1,16 +1,9 @@
 version: '3.8'
 
 services:
-  # Database service (e.g., PostgreSQL)
-
-  # Prisma service (Next.js application)
   app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    environment:
-#      DATABASE_URL: postgres://postgres:postgres@db:5432/mydatabase
-      NODE_ENV: .env
+    image: ghcr.io/matteygg/stasis-web:latest
+    env_file: .env
     ports:
       - "3000:3000"
     networks:

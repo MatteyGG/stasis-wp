@@ -4,5 +4,6 @@ node_modules
 Dockerfile
 .dockerignore
 .env
+.env.*
 npm-debug.log*
 README.md
