@@ -60,28 +60,28 @@ const getCachedMVPData = unstable_cache(
           player: topKill,
           category: 'kill',
           title: 'Ультра убийца',
-          image: '/kill.png',
+          image: '/mvps/kill.png',
           value: topKill?.killGain || 0
         },
         {
           player: topPower,
           category: 'power',
           title: 'Растишка',
-          image: '/power.png',
+          image: '/mvps/power.png',
           value: topPower?.powerGain || 0
         },
         {
           player: topKD,
           category: 'kd',
           title: 'Элитный солдат',
-          image: '/kd.png',
+          image: '/mvps/kd.png',
           value: topKD?.kdGain || 0
         },
         {
           player: topDie,
           category: 'die',
           title: 'Жертвенная овечка',
-          image: '/die.png',
+          image: '/mvps/die.png',
           value: topDie?.dieGain || 0
         },
 
@@ -89,7 +89,7 @@ const getCachedMVPData = unstable_cache(
           player: topResource, 
           category: 'resource',
           title: 'Главный фермер',
-          image: '/collect.png',
+          image: '/mvps/collect.png',
           value: formatLargeNumber(topResource?.player?.resourceCollection || BigInt(0))
         },
       ];
