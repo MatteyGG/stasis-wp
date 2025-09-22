@@ -239,7 +239,7 @@ export default async function PublicProfilePage({
             </div>
           </CardContent>
         </Card>
-        
+
         {/* Карточка с основной статистикой */}
         {playerStats && (
           <Card className="rounded-2xl">

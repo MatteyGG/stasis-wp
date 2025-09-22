@@ -10,7 +10,7 @@ interface NotificationButtonsProps {
 
 export default function NotificationButtons({ userId }: NotificationButtonsProps) {
   const TgInGameNotify = async (type: string) => {
-    const cooldownTime = 1800000 // 30 minutes
+    const cooldownTime = 300000 // 5 minutes
     const lastNotification = localStorage.getItem(`inGameNotify-${userId}`)
     
     if (lastNotification && Date.now() - Number(lastNotification) < cooldownTime) {

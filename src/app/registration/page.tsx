@@ -325,23 +325,23 @@ export default function RegistrationPage() {
                   </div>
                   
                   <div className="text-sm space-y-1">
-                    <div className={`flex items-center ${passwordStrength.requirements.hasMinLength ? 'text-green-600' : 'text-gray-500'}`}>
+                    <div className={`flex items-center ${passwordStrength.requirements.hasMinLength ? 'text-green-600' : 'text-red-500'}`}>
                       {passwordStrength.requirements.hasMinLength ? <CheckCircle className="mr-1 h-4 w-4" /> : <AlertCircle className="mr-1 h-4 w-4" />}
                       Не менее 8 символов
                     </div>
-                    <div className={`flex items-center ${passwordStrength.requirements.hasUpperCase ? 'text-green-600' : 'text-gray-500'}`}>
+                    <div className={`flex items-center ${passwordStrength.requirements.hasUpperCase ? 'text-green-600' : 'text-red-500'}`}>
                       {passwordStrength.requirements.hasUpperCase ? <CheckCircle className="mr-1 h-4 w-4" /> : <AlertCircle className="mr-1 h-4 w-4" />}
                       Заглавные буквы (A-Z)
                     </div>
-                    <div className={`flex items-center ${passwordStrength.requirements.hasLowerCase ? 'text-green-600' : 'text-gray-500'}`}>
+                    <div className={`flex items-center ${passwordStrength.requirements.hasLowerCase ? 'text-green-600' : 'text-red-500'}`}>
                       {passwordStrength.requirements.hasLowerCase ? <CheckCircle className="mr-1 h-4 w-4" /> : <AlertCircle className="mr-1 h-4 w-4" />}
                       Строчные буквы (a-z)
                     </div>
-                    <div className={`flex items-center ${passwordStrength.requirements.hasNumber ? 'text-green-600' : 'text-gray-500'}`}>
+                    <div className={`flex items-center ${passwordStrength.requirements.hasNumber ? 'text-green-600' : 'text-red-500'}`}>
                       {passwordStrength.requirements.hasNumber ? <CheckCircle className="mr-1 h-4 w-4" /> : <AlertCircle className="mr-1 h-4 w-4" />}
                       Цифры (0-9)
                     </div>
-                    <div className={`flex items-center ${passwordStrength.requirements.hasSpecialChar ? 'text-green-600' : 'text-gray-500'}`}>
+                    <div className={`flex items-center ${passwordStrength.requirements.hasSpecialChar ? 'text-green-600' : 'text-red-500'}`}>
                       {passwordStrength.requirements.hasSpecialChar ? <CheckCircle className="mr-1 h-4 w-4" /> : <AlertCircle className="mr-1 h-4 w-4" />}
                       Спецсимволы (!@#$% и т.д.)
                     </div>

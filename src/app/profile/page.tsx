@@ -176,7 +176,7 @@ export default async function ProfilePage() {
   });
 
   const avatarImage = `https://s3.timeweb.cloud/576b093c-bf65d329-1603-4121-b476-e46d7ce3cb2a/userProfile/${fullUser.id}.png`;
-  const fallbackAvatar = "/source/help/profile.png";
+  const fallbackAvatar = "/que-placeholder.png";
 
   return (
     <div className="flex flex-col p-0 md:p-6 max-w-full overflow-x-hidden">
@@ -192,7 +192,7 @@ export default async function ProfilePage() {
               <Image
                 className="rounded-full object-cover border-2 border-gray-300"
                 src={avatarImage}
-                alt={fullUser.username || "User Avatar"}
+                alt={fullUser.username || "Avatar"}
                 width={128}
                 height={128}
               />
@@ -200,7 +200,7 @@ export default async function ProfilePage() {
                 <Image
                   className="rounded-full object-cover border-2 border-gray-300"
                   src={fallbackAvatar}
-                  alt={fullUser.username || "User Avatar"}
+                  alt={fullUser.username || "Avatar"}
                   width={128}
                   height={128}
                 />

@@ -61,7 +61,7 @@ export default async function SettingsPage() {
                 <p className="text-sm md:text-base">{user.role}</p>
               </div>
               <div>
-                <p className="text-xs md:text-sm text-muted-foreground">TechSlots</p>
+                <p className="text-xs md:text-sm text-muted-foreground">Количество техники</p>
                 <p className="text-sm md:text-base">
                   {user.techSlots ? `Количество: ${user.techSlots.length}` : 'Не найдены'}
                 </p>

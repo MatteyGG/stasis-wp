@@ -31,7 +31,6 @@ export default async function C4StatsPage(props: {
   }
   const statistics = Array.isArray(c4.statistics) ? c4.statistics : [];
   const mvpsData = calculateMvpData({ ...c4, statistics });
-  // Остальной код остается без изменений...
   // Форматируем даты
   const startedAt = c4.startedAt
     ? new Date(c4.startedAt).toLocaleString("ru-RU")
@@ -51,8 +50,9 @@ export default async function C4StatsPage(props: {
     <div className="container mx-auto px-4 py-8 max-w-6xl">
       {/* Хлебные крошки */}
       <nav className="mb-6">
-        <Link href="/manage-c4" className="text-blue-500 hover:text-blue-700">
-          ← Назад к управлению C4
+        {/* TODO: Возрат к статистике по с4 */}
+        <Link href="/" className="text-blue-500 hover:text-blue-700">
+          ← Назад
         </Link>
       </nav>
 
@@ -94,7 +94,7 @@ export default async function C4StatsPage(props: {
             </p>
           </div>
         </div>
-
+             
         {/* Агрегированная статистика */}
         {c4.status === "finished" && (
           <div className="bg-blue-50 p-4 rounded border border-blue-200">

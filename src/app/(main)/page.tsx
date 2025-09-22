@@ -155,7 +155,7 @@ export default async function Home() {
 
           {/* Блок с уведомлениями */}
           <Card className="md:col-span-1 rounded-2xl">
-            <TelegramChat discussion="stasis_guest/4"
+            <TelegramChat discussion="stasis_guest/8"
               commentsLimit={4}
               color="#FFFFF"
             />
