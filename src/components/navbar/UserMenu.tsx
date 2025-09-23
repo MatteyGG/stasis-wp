@@ -14,6 +14,7 @@ import { User, Settings, LogOut } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { signOut } from "next-auth/react";
+import UserAvatar from '../UserAvatar';
 
 interface UserMenuProps {
   user?: {
@@ -26,8 +27,6 @@ interface UserMenuProps {
 }
 
 export default function UserMenu({ user }: UserMenuProps) {
-  const avatarImage = user ? `https://s3.timeweb.cloud/576b093c-bf65d329-1603-4121-b476-e46d7ce3cb2a/userProfile/${user.id}.png` : "/source/help/unit-placeholder";
-
   if (!user) {
     return (
       <div className="md:flex gap-2">
@@ -45,18 +44,7 @@ export default function UserMenu({ user }: UserMenuProps) {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="rounded-full p-0 h-8 w-8">
-          <Avatar className="h-8 w-8">
-            <Image
-              className="rounded-full object-cover border-2 border-gray-300"
-              src={avatarImage}
-              alt={user.name || 'User Avatar'}
-              width={128}
-              height={128}
-            />
-            <AvatarFallback>
-              {user.name?.charAt(0) || user.email?.charAt(0) || 'U'}
-            </AvatarFallback>
-          </Avatar>
+          <UserAvatar userId={user.id || ''} username={user.name} />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="rounded-2xl w-56">

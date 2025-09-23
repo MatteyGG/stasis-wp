@@ -36,9 +36,9 @@ export default async function SettingsPage() {
               <CardTitle className="text-base md:text-lg">Аватар профиля</CardTitle>
             </CardHeader>
             <CardContent>
-              <AvatarUpload 
-                userId={user.id} 
-                username={user.username || ''} 
+              <AvatarUpload
+                userId={user.id}
+                username={user.username}
               />
             </CardContent>
           </Card>

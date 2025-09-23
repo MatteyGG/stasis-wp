@@ -8,7 +8,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
 import {
@@ -29,6 +28,7 @@ import Image from "next/image";
 import { prisma } from "@/lib/prisma";
 import { getMapValue } from "@/constants/maps";
 import UpdatePlayerButton from "@/components/profile/UpdatePlayerDataButton";
+import UserAvatar from "@/components/UserAvatar";
 
 interface C4Data {
   id: string;
@@ -175,8 +175,6 @@ export default async function ProfilePage() {
     };
   });
 
-  const avatarImage = `https://s3.timeweb.cloud/576b093c-bf65d329-1603-4121-b476-e46d7ce3cb2a/userProfile/${fullUser.id}.png`;
-  const fallbackAvatar = "/que-placeholder.png";
 
   return (
     <div className="flex flex-col p-0 md:p-6 max-w-full overflow-x-hidden">
@@ -188,24 +186,7 @@ export default async function ProfilePage() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card className="rounded-2xl">
           <CardHeader className="flex-row items-center gap-4">
-            <Avatar className="mt-2 h-10 w-10 md:h-12 md:w-12">
-              <Image
-                className="rounded-full object-cover border-2 border-gray-300"
-                src={avatarImage}
-                alt={fullUser.username || "Avatar"}
-                width={128}
-                height={128}
-              />
-              <AvatarFallback>
-                <Image
-                  className="rounded-full object-cover border-2 border-gray-300"
-                  src={fallbackAvatar}
-                  alt={fullUser.username || "Avatar"}
-                  width={128}
-                  height={128}
-                />
-              </AvatarFallback>
-            </Avatar>
+            <UserAvatar userId={fullUser.id} username={fullUser.username} size="md" />
             <div>
               <CardTitle className="text-lg md:text-xl leading-tight">
                 {fullUser.username}
@@ -383,7 +364,6 @@ export default async function ProfilePage() {
                   {formatLargeNumber(playerStats.techPower)}
                 </div>
               </div>
-              
             </div>
 
             {/* Визуализация сил - один прогресс-бар с тремя сегментами */}

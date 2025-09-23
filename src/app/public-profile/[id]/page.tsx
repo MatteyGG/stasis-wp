@@ -9,6 +9,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { prisma } from '@/lib/prisma';
 import { getMapValue } from '@/constants/maps';
+import { Label } from '@radix-ui/react-dropdown-menu';
 
 interface C4Data {
   id: string;
@@ -297,8 +298,108 @@ export default async function PublicProfilePage({
             </CardContent>
           </Card>
         )}
+        
       </div>
+      {playerStats && (
+        <Card className="mt-4 rounded-2xl">
+          <CardHeader>
+            <CardTitle className="text-base">Распределение сил</CardTitle>
+          </CardHeader>
+          <CardContent>
 
+            {/* Визуализация сил - один прогресс-бар с тремя сегментами */}
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <div className="flex justify-between text-sm mb-2">
+                  
+                  <span className="font-medium">
+                    {formatLargeNumber(playerStats.groundPower)} /{" "}
+                    {formatLargeNumber(playerStats.airPower)} /{" "}
+                    {formatLargeNumber(playerStats.navyPower)}
+                  </span>
+                </div>
+
+                <div className="relative w-full h-6 bg-gray-200 rounded-full overflow-hidden">
+                  {(() => {
+                    const percentages = calculateForcePercentages(
+                      playerStats.groundPower || 0,
+                      playerStats.airPower || 0,
+                      playerStats.navyPower || 0
+                    );
+
+                    return (
+                      <>
+                        {/* Наземные силы - зеленый */}
+                        <div
+                          className="absolute left-0 top-0 h-full bg-green-500"
+                          style={{ width: `${percentages.ground}%` }}
+                        />
+
+                        {/* ВВС - синий */}
+                        <div
+                          className="absolute top-0 h-full bg-blue-500"
+                          style={{
+                            left: `${percentages.ground}%`,
+                            width: `${percentages.air}%`,
+                          }}
+                        />
+
+                        {/* ВМС - голубой */}
+                        <div
+                          className="absolute top-0 h-full bg-cyan-500"
+                          style={{
+                            left: `${percentages.ground + percentages.air}%`,
+                            width: `${percentages.navy}%`,
+                          }}
+                        />
+                      </>
+                    );
+                  })()}
+                </div>
+
+                <div className="flex justify-between text-xs text-muted-foreground">
+                  <div className="flex items-center">
+                    <div className="w-3 h-3 bg-green-500 rounded mr-1"></div>
+                    Земля:{" "}
+                    {
+                      calculateForcePercentages(
+                        playerStats.groundPower || 0,
+                        playerStats.airPower || 0,
+                        playerStats.navyPower || 0
+                      ).ground
+                    }
+                    %
+                  </div>
+                  <div className="flex items-center">
+                    <div className="w-3 h-3 bg-blue-500 rounded mr-1"></div>
+                    Воздух:{" "}
+                    {
+                      calculateForcePercentages(
+                        playerStats.groundPower || 0,
+                        playerStats.airPower || 0,
+                        playerStats.navyPower || 0
+                      ).air
+                    }
+                    %
+                  </div>
+                  <div className="flex items-center">
+                    <div className="w-3 h-3 bg-cyan-500 rounded mr-1"></div>
+                    Вода:{" "}
+                    {
+                      calculateForcePercentages(
+                        playerStats.groundPower || 0,
+                        playerStats.airPower || 0,
+                        playerStats.navyPower || 0
+                      ).navy
+                    }
+                    %
+                  </div>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        )}
       {/* таблица C4 */}
       <Card className="mt-4 rounded-2xl w-full">
         <CardHeader>
