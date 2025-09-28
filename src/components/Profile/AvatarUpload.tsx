@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 interface AvatarUploadProps {
   userId: string;
   username?: string | null;
-  onAvatarUpdate?: () => void;
+  onAvatarUpdate?: (version: string) => void;
 }
 
 export default function AvatarUpload({ 
@@ -18,10 +18,10 @@ export default function AvatarUpload({
   onAvatarUpdate 
 }: AvatarUploadProps) {
   const [isUploading, setIsUploading] = useState(false);
+  const [avatarVersion, setAvatarVersion] = useState(Date.now().toString());
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleButtonClick = () => {
-    // Программно кликаем по скрытому input
     fileInputRef.current?.click();
   };
 
@@ -58,12 +58,21 @@ export default function AvatarUpload({
         throw new Error(`Ошибка загрузки: ${response.status}`);
       }
 
+      const result = await response.json();
+      
+      // Генерируем новую версию для избежания кэширования
+      const newVersion = Date.now().toString();
+      setAvatarVersion(newVersion);
+      
       toast.success("Аватар успешно обновлен!");
       
       if (onAvatarUpdate) {
-        onAvatarUpdate();
+        onAvatarUpdate(newVersion);
       } else {
-        setTimeout(() => window.location.reload(), 1000);
+        // Используем версию для принудительного обновления
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
       }
       
     } catch (error) {
@@ -81,7 +90,12 @@ export default function AvatarUpload({
   return (
     <div className="flex flex-col items-center space-y-3 md:space-y-4">
       <div className="relative">
-        <UserAvatar userId={userId} username={username} size="xxl" />
+        <UserAvatar 
+          userId={userId} 
+          username={username} 
+          size="xxl" 
+          version={avatarVersion}
+        />
       </div>
       
       <div className="w-full max-w-xs">
@@ -103,6 +117,9 @@ export default function AvatarUpload({
         </Button>
         <p className="text-xs text-muted-foreground mt-1 md:mt-2 text-center">
           JPG, PNG или GIF. Максимум 5MB.
+        </p>
+        <p className="text-xs text-muted-foreground mt-1 md:mt-2 text-center">
+          Аватар будет обновлен в течение 5-10 минут.
         </p>
       </div>
     </div>

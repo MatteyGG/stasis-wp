@@ -1,7 +1,7 @@
 // components/UserAvatar.tsx
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
 
@@ -10,15 +10,18 @@ interface UserAvatarProps {
   username?: string | null;
   size?: 'sm' | 'md' | 'lg' | 'xl' | 'xxl';
   className?: string;
+  version?: string;
 }
 
 export default function UserAvatar({ 
   userId,
   username, 
   size = 'md', 
-  className 
+  className,
+  version
 }: UserAvatarProps) {
   const [error, setError] = useState(false);
+  const [avatarVersion, setAvatarVersion] = useState('');
 
   const sizeMap = {
     sm: { width: 32, height: 32 },
@@ -28,12 +31,18 @@ export default function UserAvatar({
     xxl: { width: 128, height: 128 }
   };
 
+  // Инициализация только на клиенте
+  useEffect(() => {
+    setAvatarVersion(version || Date.now().toString());
+  }, [version]);
+
   const { width, height } = sizeMap[size];
-  const avatarUrl = `https://s3.timeweb.cloud/576b093c-bf65d329-1603-4121-b476-e46d7ce3cb2a/userProfile/${userId}.png`;
+  
+  const avatarUrl = `https://s3.timeweb.cloud/576b093c-bf65d329-1603-4121-b476-e46d7ce3cb2a/userProfile/${userId}.png?v=${avatarVersion}`;
   const fallbackSrc = "/que-placeholder.png";
 
-  if (error) {
-    // показываем fallback
+  // Показываем fallback пока не инициализировали версию или при ошибке
+  if (error || !avatarVersion) {
     return (
       <Image
         src={fallbackSrc}

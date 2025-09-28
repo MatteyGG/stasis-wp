@@ -51,6 +51,7 @@
     "remark-gfm": "^4.0.1",
     "remark-toc": "^9.0.0",
     "remark-video": "github:MatteyGG/remark-youtube-and-vk",
+    "sharp": "^0.34.4",
     "tailwind-merge": "^3.3.1",
     "tailwindcss-animate": "^1.0.7"
   },

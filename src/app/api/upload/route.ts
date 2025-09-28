@@ -1,18 +1,13 @@
 // app/api/upload/route.ts
 import { NextResponse } from "next/server";
-import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+import { 
+  S3Client, 
+  PutObjectCommand, 
+  ListObjectVersionsCommand,
+  DeleteObjectCommand 
+} from "@aws-sdk/client-s3";
 import { auth } from "@/lib/auth";
-
-// Проверяем переменные окружения
-const s3Endpoint = process.env.S3_ENDPOINT;
-const s3AccessKey = process.env.S3_ACCESS_KEY;
-const s3SecretKey = process.env.S3_SECRET_KEY;
-const s3Bucket = process.env.S3_BUCKET;
-const s3Region = process.env.S3_REGION;
-
-if (!s3Endpoint || !s3AccessKey || !s3SecretKey || !s3Bucket || !s3Region) {
-  console.error("Missing S3 environment variables");
-}
+import sharp from "sharp";
 
 const s3Client = new S3Client({
   endpoint: process.env.S3_ENDPOINT!,
@@ -22,6 +17,80 @@ const s3Client = new S3Client({
   },
   region: process.env.S3_REGION!,
 });
+
+// Функция для удаления старых версий
+async function cleanupOldVersions(bucket: string, key: string, maxVersions: number = 3) {
+  try {
+    const listCommand = new ListObjectVersionsCommand({
+      Bucket: bucket,
+      Prefix: key,
+    });
+    
+    const versionsData = await s3Client.send(listCommand);
+    
+    if (!versionsData.Versions || versionsData.Versions.length <= maxVersions) {
+      return;
+    }
+
+    const sortedVersions = versionsData.Versions
+      .filter(version => version.Key === key)
+      .sort((a, b) => 
+        new Date(b.LastModified!).getTime() - new Date(a.LastModified!).getTime()
+      );
+
+    const versionsToDelete = sortedVersions.slice(maxVersions);
+    
+    for (const version of versionsToDelete) {
+      const deleteCommand = new DeleteObjectCommand({
+        Bucket: bucket,
+        Key: key,
+        VersionId: version.VersionId,
+      });
+      await s3Client.send(deleteCommand);
+      console.log(`Deleted old version: ${version.VersionId}`);
+    }
+    
+    console.log(`Cleaned up ${versionsToDelete.length} old versions for ${key}`);
+  } catch (error) {
+    console.error("Error cleaning up old versions:", error);
+  }
+}
+
+// Функция для удаления файлов других форматов
+async function cleanupOtherFormats(bucket: string, userId: string, endPath: string) {
+  const formats = ['.jpg', '.jpeg', '.gif'];
+  
+  for (const format of formats) {
+    const key = `${endPath}/${userId}${format}`;
+    try {
+      // Удаляем все версии этого файла
+      const listCommand = new ListObjectVersionsCommand({
+        Bucket: bucket,
+        Prefix: key,
+      });
+      
+      const versionsData = await s3Client.send(listCommand);
+      
+      if (versionsData.Versions) {
+        for (const version of versionsData.Versions) {
+          if (version.Key === key) {
+            await s3Client.send(new DeleteObjectCommand({
+              Bucket: bucket,
+              Key: key,
+              VersionId: version.VersionId,
+            }));
+          }
+        }
+        console.log(`Cleaned up other format: ${key}`);
+      }
+    } catch (error) {
+      // Файл может не существовать - это нормально
+      if ((error as any).name !== 'NoSuchKey') {
+        console.error(`Error cleaning up ${key}:`, error);
+      }
+    }
+  }
+}
 
 export async function POST(req: Request) {
   try {
@@ -41,8 +110,8 @@ export async function POST(req: Request) {
     
     const userId = session.user.id;
 
-    // 4. Валидация файла на сервере
-    const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/gif'];
+    // 3. Валидация файла на сервере
+    const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
     const MAX_SIZE = 5 * 1024 * 1024;
 
     if (!file) {
@@ -57,29 +126,71 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "File too large" }, { status: 400 });
     }
 
-    // 5. Безопасное имя файла
-    const fileExtension = file.name.split('.').pop()?.toLowerCase() || 'png';
-    const safeExtension = ['jpg', 'jpeg', 'png', 'gif'].includes(fileExtension) 
-      ? fileExtension : 'png';
-    
-    const key = `${endPath}/${userId}.${safeExtension}`;
-
-    // 6. Загрузка в S3
+    // 4. Конвертация в PNG с оптимизацией
     const buffer = await file.arrayBuffer();
     
+    let optimizedImage: Buffer;
+    
+    try {
+      // Создаем sharp instance и оптимизируем изображение
+      const sharpInstance = sharp(Buffer.from(buffer));
+      
+      // Получаем метаданные для принятия решений об оптимизации
+      const metadata = await sharpInstance.metadata();
+      
+      // Оптимизация для аватаров
+      optimizedImage = await sharpInstance
+        .resize(512, 512, {  // Ресайз до максимального размера
+          fit: 'cover',
+          position: 'center',
+          withoutEnlargement: true  // Не увеличиваем маленькие изображения
+        })
+        .png({
+          quality: 80,          // Качество 80% - хороший баланс
+          compressionLevel: 6,  // Уровень сжатия
+          palette: true,        // Использовать палитру для уменьшения размера
+        })
+        .toBuffer();
+        
+      console.log(`Image optimized: ${metadata.width}x${metadata.height} -> 512x512, ${file.size} -> ${optimizedImage.length} bytes`);
+      
+    } catch (sharpError) {
+      console.error("Sharp processing error:", sharpError);
+      // Если sharp не смог обработать, используем оригинал
+      optimizedImage = Buffer.from(buffer);
+    }
+
+    // 5. Всегда используем PNG расширение
+    const key = `${endPath}/${userId}.png`;
+
+    // 6. Настройка Cache-Control
+    let cacheControl = "public, max-age=300";
+    if (endPath === "gallery") {
+      cacheControl = "public, max-age=3600";
+    }
+
+    // 7. Загрузка в S3
     await s3Client.send(new PutObjectCommand({
       Bucket: process.env.S3_BUCKET!,
       Key: key,
-      Body: Buffer.from(buffer),
-      ContentType: file.type,
+      Body: optimizedImage,
+      ContentType: 'image/png', // Всегда image/png
       ACL: "public-read",
+      CacheControl: cacheControl,
     }));
+
+    // 8. Очистка старых версий PNG (оставляем только 3 последние)
+    await cleanupOldVersions(process.env.S3_BUCKET!, key, 3);
+
+    // 9. Очистка файлов других форматов для этого пользователя
+    await cleanupOtherFormats(process.env.S3_BUCKET!, userId, endPath);
 
     return NextResponse.json({ 
       success: true, 
-      message: "File uploaded successfully",
-      // Простое решение для инвалидации кэша - timestamp
-      timestamp: Date.now()
+      message: "File uploaded and converted to PNG successfully",
+      timestamp: Date.now(),
+      format: 'png',
+      size: optimizedImage.length
     });
 
   } catch (error) {
