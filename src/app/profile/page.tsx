@@ -186,7 +186,7 @@ export default async function ProfilePage() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card className="rounded-2xl">
           <CardHeader className="flex-row items-center gap-4">
-            <UserAvatar userId={fullUser.id} username={fullUser.username} size="md" />
+            <UserAvatar userId={fullUser.id} username={fullUser.username} version={fullUser.avatarVersion} size="md" />
             <div>
               <CardTitle className="text-lg md:text-xl leading-tight">
                 {fullUser.username}

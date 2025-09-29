@@ -1,7 +1,6 @@
 // components/navbar/UserMenu.tsx
 'use client';
 
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -12,7 +11,6 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { User, Settings, LogOut } from 'lucide-react';
 import Link from 'next/link';
-import Image from 'next/image';
 import { signOut } from "next-auth/react";
 import UserAvatar from '../UserAvatar';
 
@@ -21,7 +19,7 @@ interface UserMenuProps {
     id?: string | null;
     name?: string | null;
     email?: string | null;
-    image?: string | null;
+    avatarVersion?: string | null;
     role?: string | null;
   };
 }
@@ -44,7 +42,7 @@ export default function UserMenu({ user }: UserMenuProps) {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="rounded-full p-0 h-8 w-8">
-          <UserAvatar userId={user.id || ''} username={user.name} />
+          <UserAvatar userId={user.id || ''} username={user.name} version={user.avatarVersion} />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="rounded-2xl w-56">

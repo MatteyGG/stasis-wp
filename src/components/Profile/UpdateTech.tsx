@@ -21,6 +21,7 @@ const GROUND_UNITS = [
   { id: "infantry", name: "Пехота", image: "/source/army/Icon-infantry.webp" },
   { id: "LTank", name: "Легкий танк", image: "/source/army/Icon-LTank.webp" },
   { id: "MTank", name: "Средний танк", image: "/source/army/Icon-MTank.webp" },
+  { id: "MBTank", name: "Основной боевой танк", image: "/source/army/Icon-MBTank.webp" },
   { id: "arty", name: "Артиллерия", image: "/source/army/Icon-arty.webp" },
   { id: "tank-hunter", name: "Истребитель танков", image: "/source/army/Icon-tank-hunter.webp" },
   { id: "HTank", name: "Тяжелый танк", image: "/source/army/Icon-HTank.webp" },

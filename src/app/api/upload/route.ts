@@ -8,6 +8,9 @@ import {
 } from "@aws-sdk/client-s3";
 import { auth } from "@/lib/auth";
 import sharp from "sharp";
+import { createHash } from "crypto";
+import { prisma } from "@/lib/prisma";
+import { revalidatePath } from "next/cache";
 
 const s3Client = new S3Client({
   endpoint: process.env.S3_ENDPOINT!,
@@ -85,7 +88,7 @@ async function cleanupOtherFormats(bucket: string, userId: string, endPath: stri
       }
     } catch (error) {
       // Файл может не существовать - это нормально
-      if ((error as any).name !== 'NoSuchKey') {
+      if ((error as Error).name !== 'NoSuchKey') {
         console.error(`Error cleaning up ${key}:`, error);
       }
     }
@@ -160,6 +163,18 @@ export async function POST(req: Request) {
       optimizedImage = Buffer.from(buffer);
     }
 
+    // 4. Генерация хеша
+    const fileHash = createHash('md5').update(optimizedImage).digest('hex').substring(0, 8);
+
+    const avatarVersion = `${fileHash}`;
+
+    await prisma.user.update({
+      where: { id: userId },
+      data: { avatarVersion },
+    });
+
+    revalidatePath('/', 'layout');
+
     // 5. Всегда используем PNG расширение
     const key = `${endPath}/${userId}.png`;
 
@@ -187,8 +202,8 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ 
       success: true, 
-      message: "File uploaded and converted to PNG successfully",
-      timestamp: Date.now(),
+      message: "File uploaded successfully",
+      fileHash: fileHash,
       format: 'png',
       size: optimizedImage.length
     });

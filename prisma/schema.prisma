@@ -37,7 +37,7 @@ model Session {
 model User {
   id            String    @id @default(cuid())
   gameID        String    @unique @db.Text
-  images        Image[]
+  avatarVersion String?
   username      String?   @default("")
   approved      Boolean   @default(false)
   password      String    @default("default_Ann_password_value") @db.Char(60)
@@ -55,6 +55,7 @@ model User {
   player    Player?        @relation(fields: [gameID], references: [id])
 
   authenticators Authenticator[]
+  Image          Image[]
 }
 
 model UserTechSlot {

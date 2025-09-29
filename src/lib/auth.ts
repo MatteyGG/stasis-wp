@@ -25,6 +25,7 @@ declare module "next-auth" {
       id: string;
       email: string | null;
       username?: string | null;
+      avatarVersion?: string | null;
       role?: string | null;
       rank?: string | null;
       created_at?: Date | null;
@@ -39,13 +40,13 @@ declare module "next-auth" {
       }>;
     };
   }
-
 }
 
 declare module "next-auth/jwt" {
   interface JWT {
     credentials?: boolean;
     userId?: string;
+    avatarVersion?: string | null;
   }
 }
 
@@ -78,7 +79,9 @@ const authConfig: NextAuthConfig = {
           return null;
         }
 
-        const isPasswordValid = typeof password === "string" && await compare(password, user.password as string);
+        const isPasswordValid =
+          typeof password === "string" &&
+          (await compare(password, user.password as string));
 
         if (!isPasswordValid) {
           return null;
@@ -89,18 +92,19 @@ const authConfig: NextAuthConfig = {
           username: user.username ?? "",
           name: user.username ?? "",
           email: user.email,
+          avatarVersion: user.avatarVersion,
           role: user.role,
           rank: user.rank,
           created_at: user.created_at,
           approved: user.approved,
           gameID: user.gameID,
           tgref: user.tgref,
-          techSlots: user.techSlots.map(slot => ({
+          techSlots: user.techSlots.map((slot) => ({
             type: slot.type,
             slotIndex: slot.slotIndex,
             nation: slot.nation,
-            unit: slot.unit
-          }))
+            unit: slot.unit,
+          })),
         };
 
         return userData;
@@ -108,11 +112,26 @@ const authConfig: NextAuthConfig = {
     }),
   ],
   callbacks: {
-    async jwt({ token, user, account }) {
+    async jwt({ token, user, account, trigger, session }) {
+      // Обработка обновления сессии
+      if (trigger === "update" && session?.user?.avatarVersion) {
+        console.log(
+          "🔄 JWT update triggered with avatarVersion:",
+          session.user.avatarVersion
+        );
+        token.avatarVersion = session.user.avatarVersion;
+      }
+
       if (account?.provider === "credentials") {
         token.credentials = true;
         token.userId = (user as User).id;
+
+        // Сохраняем avatarVersion при первоначальной аутентификации
+        if (user) {
+          token.avatarVersion = (user as User).avatarVersion;
+        }
       }
+
       return token;
     },
     async session({ session, token }) {
@@ -127,30 +146,31 @@ const authConfig: NextAuthConfig = {
       if (userId) {
         const freshUser = await prisma.user.findUnique({
           where: { id: userId },
-          include: {
-            techSlots: true
-          }
+          include: { techSlots: true },
         });
 
         if (freshUser) {
           session.user.id = freshUser.id;
           session.user.email = freshUser.email || "default@mail.com";
           session.user.username = freshUser.username || "NoNick";
-          session.user.role = freshUser.role || "user"; 
+          // Safe access: use token data only if token exists
+          session.user.avatarVersion =
+            token?.avatarVersion || freshUser.avatarVersion;
+          session.user.role = token?.role || freshUser.role || "user";
           session.user.rank = freshUser.rank || "No rank";
           session.user.created_at = freshUser.created_at;
           session.user.approved = freshUser.approved;
           session.user.gameID = freshUser.gameID;
           session.user.tgref = freshUser.tgref || "";
-          session.user.techSlots = freshUser.techSlots.map(slot => ({
+          session.user.techSlots = freshUser.techSlots.map((slot) => ({
             type: slot.type,
             slotIndex: slot.slotIndex,
             nation: slot.nation,
-            unit: slot.unit
+            unit: slot.unit,
           }));
         }
       }
-      
+
       return session;
     },
   },

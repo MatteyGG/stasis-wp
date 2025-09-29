@@ -5,25 +5,22 @@ import { useState, useRef, ChangeEvent } from "react";
 import { toast } from "react-toastify";
 import UserAvatar from "@/components/UserAvatar";
 import { Button } from "@/components/ui/button";
-
+import { useSession } from "next-auth/react";
+import { useRouter } from 'next/navigation';
 interface AvatarUploadProps {
   userId: string;
   username?: string | null;
-  onAvatarUpdate?: (version: string) => void;
 }
 
 export default function AvatarUpload({ 
   userId, 
-  username, 
-  onAvatarUpdate 
+  username 
 }: AvatarUploadProps) {
   const [isUploading, setIsUploading] = useState(false);
-  const [avatarVersion, setAvatarVersion] = useState(Date.now().toString());
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const { data: session, update } = useSession();
 
-  const handleButtonClick = () => {
-    fileInputRef.current?.click();
-  };
+  const router = useRouter();
 
   const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -44,7 +41,6 @@ export default function AvatarUpload({
 
     const formData = new FormData();
     formData.append("file", file);
-    formData.append("userId", userId);
     formData.append("endPath", "userProfile");
 
     try {
@@ -54,25 +50,26 @@ export default function AvatarUpload({
       });
 
       if (!response.ok) {
-        const errorText = await response.text();
         throw new Error(`Ошибка загрузки: ${response.status}`);
       }
 
       const result = await response.json();
       
-      // Генерируем новую версию для избежания кэширования
-      const newVersion = Date.now().toString();
-      setAvatarVersion(newVersion);
-      
-      toast.success("Аватар успешно обновлен!");
-      
-      if (onAvatarUpdate) {
-        onAvatarUpdate(newVersion);
+      if (result.success) {
+        toast.success("Аватар успешно обновлен!");
+        router.refresh();
+        
+        await update({
+          user: {
+            ...session?.user,
+            avatarVersion: result.avatarVersion
+          }
+        });
+        
+        console.log("✅ Session updated with new avatar version:", result.avatarVersion);
+        
       } else {
-        // Используем версию для принудительного обновления
-        setTimeout(() => {
-          window.location.reload();
-        }, 1000);
+        throw new Error(result.error || "Unknown error");
       }
       
     } catch (error) {
@@ -80,7 +77,6 @@ export default function AvatarUpload({
       toast.error("Ошибка при загрузке аватара");
     } finally {
       setIsUploading(false);
-      // Сбрасываем значение input
       if (fileInputRef.current) {
         fileInputRef.current.value = "";
       }
@@ -93,8 +89,8 @@ export default function AvatarUpload({
         <UserAvatar 
           userId={userId} 
           username={username} 
+          version={session?.user?.avatarVersion}
           size="xxl" 
-          version={avatarVersion}
         />
       </div>
       
@@ -111,15 +107,16 @@ export default function AvatarUpload({
           variant="outline" 
           className="w-full text-xs md:text-sm py-1 md:py-2 h-auto"
           disabled={isUploading}
-          onClick={handleButtonClick}
+          onClick={() => fileInputRef.current?.click()}
         >
           {isUploading ? "Загрузка..." : "Сменить аватар"}
         </Button>
+        
         <p className="text-xs text-muted-foreground mt-1 md:mt-2 text-center">
           JPG, PNG или GIF. Максимум 5MB.
         </p>
-        <p className="text-xs text-muted-foreground mt-1 md:mt-2 text-center">
-          Аватар будет обновлен в течение 5-10 минут.
+        <p className="text-xs text-muted-foreground text-center">
+          Аватар обновится автоматически во всем приложении.
         </p>
       </div>
     </div>

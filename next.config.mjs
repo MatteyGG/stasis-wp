@@ -1,3 +1,5 @@
+//next.config.mjs
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   // Recommended: this will reduce output
@@ -25,6 +27,8 @@ const nextConfig = {
         hostname: "www.s3.timeweb.cloud",
       },
     ],
+    minimumCacheTTL: 512,
+    
   },
 };
 

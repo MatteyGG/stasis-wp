@@ -6,6 +6,7 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import UpdateTech from '@/components/profile/UpdateTech';
 import AvatarUpload from '@/components/profile/AvatarUpload';
+import { SessionProvider } from 'next-auth/react';
 
 export default async function SettingsPage() {
   const session = await auth();
@@ -14,6 +15,7 @@ export default async function SettingsPage() {
     user: {
       id: session.user.id,
       username: session.user.username,
+      avatar: session.user.avatarVersion,
       techSlots: session.user.techSlots
     }
   } : 'No session');
@@ -36,10 +38,9 @@ export default async function SettingsPage() {
               <CardTitle className="text-base md:text-lg">Аватар профиля</CardTitle>
             </CardHeader>
             <CardContent>
-              <AvatarUpload
-                userId={user.id}
-                username={user.username}
-              />
+              <SessionProvider session={session}>
+              <AvatarUpload userId={user.id} username={user.username} />
+              </SessionProvider>
             </CardContent>
           </Card>
 
@@ -81,7 +82,6 @@ export default async function SettingsPage() {
             </CardHeader>
             <CardContent>
               <UpdateTech 
-              
                 initialTechSlots={user.techSlots || []} 
                 id={user.id} 
               />

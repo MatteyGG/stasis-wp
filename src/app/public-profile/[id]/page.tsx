@@ -9,7 +9,6 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { prisma } from '@/lib/prisma';
 import { getMapValue } from '@/constants/maps';
-import { Label } from '@radix-ui/react-dropdown-menu';
 
 interface C4Data {
   id: string;
