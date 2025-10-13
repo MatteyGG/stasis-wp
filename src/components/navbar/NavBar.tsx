@@ -61,6 +61,8 @@ export default function NavBar({ user }: NavBarProps) {
         <nav className="hidden lg:flex items-center gap-6 ml-4">
           <Link href="/wiki" className="hover:text-primary font-medium">Вики</Link>
           <Link href="/about" className="hover:text-primary font-medium">О нас</Link>
+          <Link href="/c4" className="hover:text-primary font-medium">Сражения</Link>
+          <Link href="/statistics" className="hover:text-primary font-medium">Статистика 130 сервера</Link>
         </nav>
 
         <div className="flex-1 flex items-center gap-2 justify-end">

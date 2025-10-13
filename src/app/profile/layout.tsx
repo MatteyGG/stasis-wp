@@ -27,11 +27,22 @@ export default async function ProfileLayout({
 
   return (
     <>
-      <div className="flex min-h-screen">
+      <div className="flex">
         <ProfileSidebar />
-        <main className="flex-1 p-6">{children}</main>
+        <main>{children}</main>
       </div>
-      <ToastContainer />
+      <ToastContainer
+        position="bottom-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
     </>
   );
 }

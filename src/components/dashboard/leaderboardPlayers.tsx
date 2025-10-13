@@ -16,6 +16,10 @@ interface Player {
   die: number;
   kd: number;
 }
+interface LeaderboardProps {
+  players: WarpathPlayer[];
+}
+
 
 export default function PlayersLeaderboard() {
   const [users, setUsers] = useState<Player[]>([]);

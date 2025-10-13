@@ -38,7 +38,7 @@ export default async function NotificationsPage() {
   });
 
   return (
-    <div className="flex flex-col p-4 md:p-6 max-w-4xl mx-auto">
+    <div className="flex flex-col p-1 md:p-6 max-w-4xl mx-auto">
       <div className=" justify-between items-center mb-6">
         <h1 className="text-xl md:text-2xl font-bold mb-2">Уведомления</h1>
         <NotificationActions />

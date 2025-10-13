@@ -3,7 +3,11 @@ import { NextResponse } from "next/server";
 export async function GET() {
   const url =
     "https://yx.dmzgame.com/intl_warpath/guild_detail?gid=2645296&page=1&perPage=1";
-  const response = await fetch(url);
+  const response = await fetch(url, {
+    next: {
+      revalidate: 43200, // 12 часов в секундах
+    },
+  });
   const data = await response.json();
 
   const result = data.Data.map(

@@ -25,12 +25,12 @@ export default function AllyWidget() {
   if (!allyData) return null;
 
   return (
-    <ul className="h-64">
+    <ul>
       {Object.values(allyData).map((guild, index) => {
         console.log(guild);
         return (
           <li
-            className="flex flex-col h-64 text-left bg-[url('/source/icon/allyinfo.png')]  bg-no-repeat items-center"
+            className="flex flex-col text-left bg-[url('/source/icon/allyinfo.png')]  bg-no-repeat items-center"
             key={index}
           >
             <span className=" w-full inline-flex items-center">
