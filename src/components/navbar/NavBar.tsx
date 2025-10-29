@@ -11,18 +11,13 @@ import MobileMenu from './MobileMenu';
 import SearchBar from './SearchBar';
 import NotificationDropdown from './NotificationDropdown';
 import UserMenu from './UserMenu';
+import { Session } from '@/lib/auth';
 
 interface NavBarProps {
-  user?: {
-    id?: string | null;
-    name?: string | null;
-    email?: string | null;
-    image?: string | null;
-    role?: string | null;
-  };
+  user: Session["user"];
 }
 
-export default function NavBar({ user }: NavBarProps) {
+export default function NavBar({ user }: NavBarProps ) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   return (

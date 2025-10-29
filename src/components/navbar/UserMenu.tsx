@@ -1,27 +1,22 @@
 // components/navbar/UserMenu.tsx
-'use client';
+"use client";
 
-import { Button } from '@/components/ui/button';
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-  DropdownMenuSeparator
-} from '@/components/ui/dropdown-menu';
-import { User, Settings, LogOut } from 'lucide-react';
-import Link from 'next/link';
+  DropdownMenuSeparator,
+} from "@/components/ui/dropdown-menu";
+import { User, Settings, LogOut, PhoneCall } from "lucide-react";
+import Link from "next/link";
 import { signOut } from "next-auth/react";
-import UserAvatar from '../UserAvatar';
+import UserAvatar from "../UserAvatar";
+import { Session } from "@/lib/auth";
 
 interface UserMenuProps {
-  user?: {
-    id?: string | null;
-    name?: string | null;
-    email?: string | null;
-    avatarVersion?: string | null;
-    role?: string | null;
-  };
+  user: Session["user"];
 }
 
 export default function UserMenu({ user }: UserMenuProps) {
@@ -38,16 +33,22 @@ export default function UserMenu({ user }: UserMenuProps) {
     );
   }
 
+  let VideoCallString = `https://rtc.stasis-wp.ru/join?room=stasiswp&roomPassword=false&audio=0&video=0&name=${user.username}&avatar=https://s3.timeweb.cloud/576b093c-bf65d329-1603-4121-b476-e46d7ce3cb2a/userProfile/${user.id}.png?v=${user.avatarVersion}`;
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="rounded-full p-0 h-8 w-8">
-          <UserAvatar userId={user.id || ''} username={user.name} version={user.avatarVersion} />
+          <UserAvatar
+            userId={user.id || ""}
+            username={user.username}
+            version={user.avatarVersion}
+          />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="rounded-2xl w-56">
         <div className="p-2">
-          <p className="font-medium">{user.name || 'Пользователь'}</p>
+          <p className="font-medium">{user.username || "Пользователь"}</p>
           <p className="text-sm text-muted-foreground truncate">{user.email}</p>
         </div>
         <DropdownMenuSeparator />
@@ -57,7 +58,17 @@ export default function UserMenu({ user }: UserMenuProps) {
             <span>Профиль</span>
           </Link>
         </DropdownMenuItem>
-        {user.role?.includes('admin') && (
+        <DropdownMenuItem asChild>
+          <a
+            target="_blank"
+            href={VideoCallString}
+            rel="noopener noreferrer"
+          >
+            <PhoneCall className="mr-2 h-4 w-4" />
+            <span>Голосовой чат</span>
+          </a>
+        </DropdownMenuItem>
+        {user.role?.includes("admin") && (
           <DropdownMenuItem asChild>
             <Link href="/dashboard" className="cursor-pointer">
               <Settings className="mr-2 h-4 w-4" />
