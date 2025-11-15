@@ -177,7 +177,7 @@ export default async function ProfilePage() {
 
 
   return (
-    <div className="flex flex-col p-0 md:p-6 max-w-full overflow-x-hidden">
+    <div className="flex flex-col p-3 sm:p-4 md:p-6  mx-auto space-y-4 md:space-y-6">
       <div className="flex justify-between items-center mb-4 md:mb-6">
         <h1 className="text-xl md:text-2xl font-bold">Профиль пользователя</h1>
         <ShareProfileButton userId={fullUser.id} />

@@ -2,6 +2,7 @@
 
 import { lastDate } from "@/lib/getDate";
 import { prisma } from "@/lib/prisma";
+import { sendTextByTelegram } from "@/lib/sendTextByTelegram";
 import { WarpathPlayer } from "@/lib/types";
 import { Player } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
@@ -46,9 +47,9 @@ export async function POST(req: NextRequest) {
     const snapshots = await Promise.all(
       stPlayers.map(async (player: Player) => {
         const existingPlayer = await prisma.player.findUnique({
-          where: { warpathId: player!.warpathId ?? undefined, },
+          where: { warpathId: player!.warpathId ?? undefined },
         });
-    
+
         if (player!.warpathId !== null) {
           return prisma.playerSnapshot.create({
             data: {
@@ -138,6 +139,14 @@ export async function POST(req: NextRequest) {
     await prisma.playerSnapshot.deleteMany({
       where: { c4Id: activeC4.id },
     });
+    const c4Link = `https://stasis-wp.ru/c4/c4_${activeC4.id}`;
+    const resultText = finishedC4.result === "win" ? "Победа 🎉" : "Поражение ⚔️";
+
+    await sendTextByTelegram(
+      `🎯 <b>C4 завершён</b>\n\n` +
+        `Результат: <b>${resultText}</b>\n\n` +
+        `📊 <a href="${c4Link}">Отчёт по C4</a>`
+    );
 
     return NextResponse.json({
       ...finishedC4,
@@ -145,7 +154,7 @@ export async function POST(req: NextRequest) {
     });
   } catch (error: unknown) {
     return NextResponse.json(
-      { error: "Failed to start C4: " + (error as Error).message },
+      { error: "Failed to finish C4: " + (error as Error).message },
       { status: 500 }
     );
   }

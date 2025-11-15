@@ -10,33 +10,29 @@ const types: { [key: string]: string } = {
   success: "поощрение",
 };
 
- const sendText = async (chatId: string, text: string) => {
-   const data = {
-     method: "sendMessage",
-     chat_id: chatId,
-     text: text,
-     parse_mode: "HTML",
-   };
+const sendText = async (chatId: string, text: string) => {
+  try {
+    const response = await fetch(
+      `https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}/sendMessage`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          chat_id: chatId,
+          text,
+          parse_mode: "HTML",
+        }),
+      }
+    );
 
-   const options: RequestInit = {
-     method: "POST",
-     headers: {
-       "Content-Type": "application/json",
-     },
-     body: JSON.stringify(data),
-   };
-
-   try {
-     const response = await fetch(
-       `https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}`,
-       options
-     );
-     const data = await response.json();
-     console.log("Message sent:", data);
-   } catch (error) {
-     console.error("Error sending message:", error);
-   }
- };
+    const data = await response.json();
+    console.log("Message sent:", data);
+  } catch (error) {
+    console.error("Error sending message:", error);
+  }
+};
 
 export async function POST(req: NextRequest) {
   try {
@@ -51,7 +47,7 @@ export async function POST(req: NextRequest) {
       users = [userId];
       const userinfo = await prisma.user.findUnique({
         where: {
-          id: userId
+          id: userId,
         },
         select: {
           id: true,
@@ -60,19 +56,17 @@ export async function POST(req: NextRequest) {
         },
       });
       if (!userinfo) {
-        return NextResponse.json(
-          { error: "User not found" },
-          { status: 404 }
-        );
+        return NextResponse.json({ error: "User not found" }, { status: 404 });
       }
       sendText(
-        "-1002488337672",
-        `${userinfo.tgref ? `@${userinfo.tgref.split("/").pop()}` : ""} \nИгрок ${
-          userinfo.username
-        } получил ${types[type] || "сообщение"}: ${message}`
+        process.env.TELEGRAM_CHAT_ID || "",
+        `${
+          userinfo.tgref ? `@${userinfo.tgref.split("/").pop()}` : ""
+        } \nИгрок ${userinfo.username} получил ${
+          types[type] || "сообщение"
+        }: ${message}`
       );
     }
-
 
     const newAlerts = await prisma.alert.createMany({
       data: users.map((userId) => ({

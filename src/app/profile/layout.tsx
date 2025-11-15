@@ -29,7 +29,7 @@ export default async function ProfileLayout({
     <>
       <div className="flex">
         <ProfileSidebar />
-        <main>{children}</main>
+        <main className="flex-1 px-4">{children}</main>
       </div>
       <ToastContainer
         position="bottom-right"

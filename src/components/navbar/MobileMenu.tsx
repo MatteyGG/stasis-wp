@@ -11,6 +11,8 @@ import {
   User,
   Settings,
   LogOut,
+  Swords,
+  Gift,
 } from 'lucide-react';
 import { signOut } from "next-auth/react";
 
@@ -71,9 +73,21 @@ export default function MobileMenu({ user, onClose }: MobileMenuProps) {
             </Link>
           </li>
           <li>
-            <Link href="/event/c4_1755603629732" className="flex items-center gap-2 p-2 rounded-lg hover:bg-accent" onClick={handleLinkClick}>
+            <Link href="/c4" className="flex items-center gap-2 p-2 rounded-lg hover:bg-accent" onClick={handleLinkClick}>
+              <Swords className="h-4 w-4"/>
+              <span>Сражения</span>
+            </Link>
+          </li>
+          <li>
+            <Link href="/statistics" className="flex items-center gap-2 p-2 rounded-lg hover:bg-accent" onClick={handleLinkClick}>
               <ChartColumnIcon className="h-4 w-4" />
               <span>Статистика</span>
+            </Link>
+          </li>
+          <li>
+            <Link href="/promocodes" className="flex items-center gap-2 p-2 rounded-lg hover:bg-accent" onClick={handleLinkClick}>
+             <Gift className="h-4 w-4"/>
+              <span>Промокоды</span>
             </Link>
           </li>
         </ul>
