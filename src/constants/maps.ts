@@ -11,6 +11,7 @@ export const maps = {
     chicago: "Чикаго",
     sanfrancisco: "Сан-Франциско",
     iceland: "Исландия",
+    hawaii: "Гавайи"
 };
 
 // Функция для безопасного получения значения

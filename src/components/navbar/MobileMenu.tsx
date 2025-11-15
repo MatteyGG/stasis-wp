@@ -15,13 +15,13 @@ import {
 import { signOut } from "next-auth/react";
 
 interface MobileMenuProps {
-  user?: {
+  user: {
     id?: string | null;
     name?: string | null;
     email?: string | null;
     image?: string | null;
     role?: string | null;
-  };
+  } | null;
   onClose: () => void;
 }
 

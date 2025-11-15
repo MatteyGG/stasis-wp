@@ -14,7 +14,7 @@ import UserMenu from './UserMenu';
 import { Session } from '@/lib/auth';
 
 interface NavBarProps {
-  user: Session["user"];
+  user: Session["user"] | null;
 }
 
 export default function NavBar({ user }: NavBarProps ) {
@@ -58,6 +58,7 @@ export default function NavBar({ user }: NavBarProps ) {
           <Link href="/about" className="hover:text-primary font-medium">О нас</Link>
           <Link href="/c4" className="hover:text-primary font-medium">Сражения</Link>
           <Link href="/statistics" className="hover:text-primary font-medium">Статистика 130 сервера</Link>
+          <Link href="/promocodes" className="hover:text-primary font-medium">Промокоды</Link>
         </nav>
 
         <div className="flex-1 flex items-center gap-2 justify-end">

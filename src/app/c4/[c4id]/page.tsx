@@ -6,6 +6,7 @@ import Link from "next/link";
 import { calculateMvpData } from "@/lib/mvpUtils";
 import MvpCarousel from "@/components/mvpCards/MvpCarousel";
 import { getMapValue } from "@/constants/maps";
+import { Badge } from "@/components/ui/badge";
 
 export default async function C4StatsPage(props: {
   params: Promise<{ c4id: string }>;
@@ -50,8 +51,7 @@ export default async function C4StatsPage(props: {
     <div className="container mx-auto px-4 py-8 max-w-6xl">
       {/* Хлебные крошки */}
       <nav className="mb-6">
-        {/* TODO: Возрат к статистике по с4 */}
-        <Link href="/" className="text-blue-500 hover:text-blue-700">
+        <Link href="/c4" className="text-blue-500 hover:text-blue-700">
           ← Назад
         </Link>
       </nav>
@@ -94,7 +94,7 @@ export default async function C4StatsPage(props: {
             </p>
           </div>
         </div>
-             
+
         {/* Агрегированная статистика */}
         {c4.status === "finished" && (
           <div className="bg-blue-50 p-4 rounded border border-blue-200">
@@ -149,25 +149,25 @@ export default async function C4StatsPage(props: {
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">
                   ID
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">
                   Игрок
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">
                   Начальная сила
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">
                   Прирост силы
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">
                   Прирост убийств
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">
                   Прирост смертей
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">
                   Прирост K/D
                 </th>
               </tr>
@@ -183,17 +183,27 @@ export default async function C4StatsPage(props: {
                     <div className="flex items-center">
                       <div className="ml-4">
                         <div className="text-sm font-medium text-gray-900">
-                          {stat.player?.ally || `ID: ${stat.warpathId}`}
+                          <Badge
+                            className="rounded-xl text-xs md:text-sm"
+                            variant={"outline"}
+                          >
+                            {stat.player?.ally || `ID: ${stat.warpathId}`}
+                          </Badge>
                         </div>
                       </div>
                     </div>
                   </td>
 
                   {/* Имя пользователя */}
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {stat.player?.username ||
-                      stat.username ||
-                      `Игрок ${stat.warpathId}`}
+                  <td className="px-6 py-4 whitespace-nowrap text-sm  text-gray-900">
+                    <Badge
+                      className="rounded-xl text-xs md:text-sm"
+                      variant={"outline"}
+                    >
+                      {stat.player?.username ||
+                        stat.username ||
+                        `Игрок ${stat.warpathId}`}
+                    </Badge>
                   </td>
 
                   {/* Начальная сила */}

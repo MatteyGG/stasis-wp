@@ -16,7 +16,7 @@ import UserAvatar from "../UserAvatar";
 import { Session } from "@/lib/auth";
 
 interface UserMenuProps {
-  user: Session["user"];
+  user: Session["user"] | null;
 }
 
 export default function UserMenu({ user }: UserMenuProps) {
@@ -33,7 +33,7 @@ export default function UserMenu({ user }: UserMenuProps) {
     );
   }
 
-  let VideoCallString = `https://rtc.stasis-wp.ru/join?room=stasiswp&roomPassword=false&audio=0&video=0&name=${user.username}&avatar=https://s3.timeweb.cloud/576b093c-bf65d329-1603-4121-b476-e46d7ce3cb2a/userProfile/${user.id}.png?v=${user.avatarVersion}`;
+  const VideoCallString = `https://rtc.stasis-wp.ru/join?room=stasiswp&roomPassword=false&audio=0&video=0&name=${user.username}&avatar=https://s3.timeweb.cloud/576b093c-bf65d329-1603-4121-b476-e46d7ce3cb2a/userProfile/${user.id}.png?v=${user.avatarVersion}`;
 
   return (
     <DropdownMenu>

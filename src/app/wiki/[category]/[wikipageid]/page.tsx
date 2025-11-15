@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { prisma } from "@/lib/prisma";
-import { MDXRemote } from 'next-mdx-remote/rsc';
+import { MDXRemote } from "next-mdx-remote/rsc";
 import remarkGfm from "remark-gfm";
 import remarkToc from "remark-toc";
 import remarkFlexibleContainers from "remark-flexible-containers";
@@ -9,7 +9,7 @@ import Breadcrumbs from "@/components/wiki/Breadcrumbs";
 import ArticleTags from "@/components/wiki/ArticleTags";
 import { ViewCounter } from "@/components/wiki/ViewCounter";
 import { RecentViewers } from "@/components/wiki/RecentViewers";
-import { auth } from '@/lib/auth';
+import { auth } from "@/lib/auth";
 import Link from "next/link";
 
 const options = {
@@ -24,7 +24,9 @@ const options = {
   },
 };
 
-export default async function WikiPage(props: { params: Promise<{ category: string; wikipageid: string }> }) {
+export default async function WikiPage(props: {
+  params: Promise<{ category: string; wikipageid: string }>;
+}) {
   const params = await props.params;
   const session = await auth();
   const article = await prisma.wiki.findUnique({
@@ -39,8 +41,8 @@ export default async function WikiPage(props: { params: Promise<{ category: stri
       autor: true,
       views: true,
       likes: true,
-      createdAt: true
-    }
+      createdAt: true,
+    },
   });
 
   if (!article) {
@@ -66,22 +68,22 @@ export default async function WikiPage(props: { params: Promise<{ category: stri
   // Увеличиваем счетчик просмотров
   await prisma.wiki.update({
     where: { pageId: article.pageId },
-    data: { views: { increment: 1 } }
+    data: { views: { increment: 1 } },
   });
 
   // Записываем просмотр только для авторизованных пользователей
   if (session?.user) {
     // Проверяем, был ли недавний просмотр от этого пользователя (в течение 5 минут)
     const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
-    
+
     const recentView = await prisma.wikiView.findFirst({
-      where: { 
+      where: {
         wikiPageId: article.pageId,
         userId: session.user.id,
         viewedAt: {
-          gte: fiveMinutesAgo
-        }
-      }
+          gte: fiveMinutesAgo,
+        },
+      },
     });
 
     // Если не было просмотра в последние 5 минут, создаем новую запись
@@ -91,51 +93,68 @@ export default async function WikiPage(props: { params: Promise<{ category: stri
           wikiPageId: article.pageId,
           userId: session.user.id,
           username: session.user.username || "Пользователь",
-          viewedAt: new Date()
-        }
+          viewedAt: new Date(),
+        },
       });
     }
   }
 
   // Получаем последних просмотревших (только авторизованных пользователей)
   const recentViewers = await prisma.wikiView.findMany({
-    where: { 
+    where: {
       wikiPageId: article.pageId,
     },
-    orderBy: { viewedAt: 'desc' },
+    orderBy: { viewedAt: "desc" },
     take: 5,
     select: {
       id: true,
       userId: true,
       username: true,
       viewedAt: true,
-    }
+    },
   });
-
+  const isAdmin = !!session?.user?.role?.includes("admin");
   return (
     <div className="flex flex-col p-0 md:p-6 max-w-4xl mx-auto">
-      <Breadcrumbs category={article.category || ''} title={article.title || ''} />
+      <Breadcrumbs
+        category={article.category || ""}
+        title={article.title || ""}
+      />
 
       <Card className="rounded-2xl">
         <CardHeader>
-          <ArticleTags tags={article.tags || []} className="mb-4" />
-          <CardTitle className="text-2xl">{article.title}</CardTitle>
-          <div className="flex items-center gap-4 text-sm text-muted-foreground">
-            <ViewCounter views={article.views + 1} /> {/* +1 потому что мы уже увеличили счетчик */}
-            {article.autor && <span>Автор: {article.autor}</span>}
+          <div className="flex items-start justify-between gap-4">
+            <div className="flex-1">
+              <ArticleTags tags={article.tags || []} className="mb-4" />
+              <CardTitle className="text-2xl">{article.title}</CardTitle>
+              <div className="flex items-center gap-4 text-sm text-muted-foreground mt-2">
+                <ViewCounter views={article.views + 1} />
+                {article.autor && <span>Автор: {article.autor}</span>}
+              </div>
+            </div>
+
+            {isAdmin && (
+              <Link
+                href={`https://stasis-wp.ru/edit?pageid=${article.pageId}`}
+                className="inline-flex items-center rounded-md border px-3 py-1 text-sm font-medium hover:bg-muted"
+              >
+                Редактировать
+              </Link>
+            )}
           </div>
         </CardHeader>
+
         <CardContent>
           <div className="prose max-w-none">
-            <MDXRemote source={article.md || ''} options={options} />
+            <MDXRemote source={article.md || ""} options={options} />
           </div>
-          
-          {/* Блок с последними просмотревшими (только авторизованные) */}
+
           <RecentViewers viewers={recentViewers} />
-          
+
           <div className="flex items-center justify-between mt-8 pt-4 border-t">
             <div className="text-sm text-muted-foreground">
-              Опубликовано: {new Date(article.createdAt).toLocaleDateString('ru-RU')}
+              Опубликовано:{" "}
+              {new Date(article.createdAt).toLocaleDateString("ru-RU")}
             </div>
             <div className="text-sm text-muted-foreground">
               Лайков: {article.likes}
