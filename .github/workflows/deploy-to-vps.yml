@@ -177,12 +177,30 @@ jobs:
         run: |
           URL="https://stasis-wp.ru/api/health"
           echo "Checking $URL..."
-          STATUS=$(curl -s -o /dev/null -w "%{http_code}" "$URL")
 
-          echo "status=$STATUS" >> $GITHUB_OUTPUT
+          MAX_ATTEMPTS=10
+          SLEEP_SECONDS=5
+          attempt=1
+          STATUS=000
+
+          while [ $attempt -le $MAX_ATTEMPTS ]; do
+            STATUS=$(curl -s -o /dev/null -w "%{http_code}" "$URL" || echo "000")
+            echo "Attempt $attempt: HTTP $STATUS"
+
+            if [ "$STATUS" -ge 200 ] && [ "$STATUS" -lt 400 ]; then
+              echo "Healthcheck OK on attempt $attempt"
+              break
+            fi
+
+            attempt=$((attempt+1))
+            if [ $attempt -le $MAX_ATTEMPTS ]; then
+              echo "Waiting $SLEEP_SECONDS seconds before next attempt..."
+              sleep $SLEEP_SECONDS
+            fi
+          done
 
           if [ "$STATUS" -lt 200 ] || [ "$STATUS" -ge 400 ]; then
-            echo "Healthcheck failed: $STATUS"
+            echo "Healthcheck failed after $MAX_ATTEMPTS attempts, last status: $STATUS"
             exit 1
           fi
 
@@ -236,6 +254,9 @@ jobs:
       - name: Notify Telegram (success)
         if: success()
         run: |
+          set -e
           TEXT="✅ STASIS-web: успешный деплой%0AКоммит: $GITHUB_SHA%0Ahttps://stasis-wp.ru"
-          curl -s "https://api.telegram.org/bot${{ secrets.TG_BOT_TOKEN }}/sendMessage?chat_id=${{ secrets.TG_CHAT_ID }}&text=$TEXT" > /dev/null
+          echo "Sending Telegram message..."
+          RESPONSE=$(curl -s "https://api.telegram.org/bot${{ secrets.TG_BOT_TOKEN }}/sendMessage?chat_id=${{ secrets.TG_CHAT_ID }}&text=$TEXT")
+          echo "Telegram response: $RESPONSE"
 
