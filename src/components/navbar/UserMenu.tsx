@@ -13,14 +13,26 @@ import { User, Settings, LogOut, PhoneCall } from "lucide-react";
 import Link from "next/link";
 import { signOut } from "next-auth/react";
 import UserAvatar from "../UserAvatar";
-import { Session } from "@/lib/auth";
+
+const DEFAULT_USERNAME = 'Guest';
+const DEFAULT_USER_ID = '0';
+const DEFAULT_AVATAR_VERSION = 'ver';
 
 interface UserMenuProps {
-  user: Session["user"] | null;
+   user: {
+    id?: string | null;
+    name?: string | null;
+    email?: string | null;
+    image?: string | null;
+    role?: string | null;
+    avatarVersion?: string | null;
+    username?: string | null;
+  } | null;
 }
 
+
 export default function UserMenu({ user }: UserMenuProps) {
-  if (!user) {
+  if (!user || user==null) {
     return (
       <div className="md:flex gap-2">
         <Button asChild variant="ghost" size="sm">
@@ -32,8 +44,17 @@ export default function UserMenu({ user }: UserMenuProps) {
       </div>
     );
   }
+const fallbackUser = {
+  id: DEFAULT_USER_ID,
+  username: DEFAULT_USERNAME,
+  avatarVersion: DEFAULT_AVATAR_VERSION,
+};
 
-  const VideoCallString = `https://rtc.stasis-wp.ru/join?room=stasiswp&roomPassword=false&audio=0&video=0&name=${user.username}&avatar=https://s3.timeweb.cloud/576b093c-bf65d329-1603-4121-b476-e46d7ce3cb2a/userProfile/${user.id}.png?v=${user.avatarVersion}`;
+const safeUser = user ? { ...fallbackUser, ...user } : fallbackUser;
+
+const VideoCallString = `https://rtc.stasis-wp.ru/join?room=stasiswp&roomPassword=false&audio=0&video=0&name=${encodeURIComponent(
+  safeUser.username || "",
+)}&avatar=https://s3.timeweb.cloud/576b093c-bf65d329-1603-4121-b476-e46d7ce3cb2a/userProfile/${safeUser.id}.png?v=${safeUser.avatarVersion}`;
 
   return (
     <DropdownMenu>
@@ -41,8 +62,8 @@ export default function UserMenu({ user }: UserMenuProps) {
         <Button variant="ghost" className="rounded-full p-0 h-8 w-8">
           <UserAvatar
             userId={user.id || ""}
-            username={user.username}
-            version={user.avatarVersion}
+            username={user.username || ""}
+            version={user.avatarVersion || ""}
           />
         </Button>
       </DropdownMenuTrigger>

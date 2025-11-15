@@ -31,7 +31,7 @@ export default function NavBar({ user }: NavBarProps ) {
             </Button>
           </SheetTrigger>
           <SheetContent side="left" className="w-64 rounded-r-md">
-            <MobileMenu user={user} onClose={() => setIsMobileMenuOpen(false)} />
+            <MobileMenu user={user ?? null} onClose={() => setIsMobileMenuOpen(false)} />
           </SheetContent>
         </Sheet>
 
@@ -69,7 +69,7 @@ export default function NavBar({ user }: NavBarProps ) {
           {user && <NotificationDropdown userId={user.id!} />}
 
           {/* Профиль пользователя */}
-          <UserMenu user={user} />
+          <UserMenu user={user ?? null} />
         </div>
       </div>
     </header>

@@ -1,13 +1,8 @@
-import Leaderboard from "../../components/statistic/leaderboard";
-import AllyWidget from "../../components/allyWid";
-import { lastDate } from "@/lib/getDate";
 import { WarpathPlayer } from "@/lib/types";
-import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -35,7 +30,7 @@ interface C4Data {
 }
 
 interface c4HistoryData {
-  c4: C4;
+  c4?: C4;
   id: string;
   map: string;
   status: string;
@@ -49,7 +44,7 @@ interface c4HistoryData {
   avgKdGain: number | null;
   avgResourceGain: number | null;
   totalPlayers: number | null;
-  statistics: WarpathPlayer[];
+  statistics?: WarpathPlayer[];
 }
 export default async function C4page() {
 
