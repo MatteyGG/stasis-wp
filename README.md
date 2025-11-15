@@ -1,38 +1,78 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# STASIS-web
 
-## Getting Started
+[![Next.js](https://img.shields.io/badge/Next.js-000000?logo=nextdotjs&logoColor=white)](https://nextjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Prisma](https://img.shields.io/badge/Prisma-2D3748?logo=prisma&logoColor=white)](https://www.prisma.io/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?logo=postgresql&logoColor=white)](https://www.postgresql.org/)
+[![TailwindCSS](https://img.shields.io/badge/TailwindCSS-38BDF8?logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
+[![Telegram Bot](https://img.shields.io/badge/Telegram_Bot-26A5E4?logo=telegram&logoColor=white)](https://core.telegram.org/bots)
+[![wakatime](https://wakatime.com/badge/user/85043d71-6099-4bd2-af51-2c3525efd2b8/project/b9a8c787-2262-4969-ab3d-a58fa4dde13e.svg)](https://wakatime.com/badge/user/85043d71-6099-4bd2-af51-2c3525efd2b8/project/b9a8c787-2262-4969-ab3d-a58fa4dde13e)
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## 🎯 О проекте
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+**STASIS-web** — веб-платформа альянса **STASIS (ST)** из игры *Warpath*.  
+Проект объединяет инструменты для:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- 📚 **Wiki / база знаний**
+- ⚔️ **Статистика и аналитика C4**
+- 👤 **Профили участников**
+- 🤖 **Telegram-уведомления**
+- 🧩 **Интеграция с внутриигровыми данными Warpath**
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Платформа работает на Next.js и предназначена для внутренних нужд альянса.
 
-## Learn More
+---
 
-To learn more about Next.js, take a look at the following resources:
+## 🚀 Основные возможности
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### 📚 Wiki
+- MDX-статьи с категориями и тегами  
+- Поддержка форматирования, таблиц, кода, видео  
+- Просмотры, статистика активности  
+- Лёгкий редактор и система публикаций  
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### ⚔️ C4 аналитика
+- Автоматический сбор данных игроков через Warpath API  
+- Стартовые / финальные показатели:
+  - Power
+  - Kills
+  - Deaths
+  - KD
+  - Сбор ресурсов  
+- Полный отчёт по C4 + уведомление в Telegram  
 
-## Deploy on Vercel
+### 👤 Профили игроков
+- Синхронизация с игровыми данными  
+- Настраиваемый профиль пользователя  
+- Ранг, роль, Telegram-связка  
+- Публичная страница игрока  
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### 🤖 Telegram-уведомления
+- Уведомления о:
+  - завершении C4  
+  - новых статьях  
+  - предупреждениях  
+  - массовых сообщениях  
+- Поддержка фото + HTML-текста  
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
 
-docker buildx build --platform linux/amd64 -t ghcr.io/matteygg/stasis-web:latest --load  .
+## 🛠 Технологии
+
+- **Next.js 14+ (App Router)**
+- **React 19**
+- **TypeScript**
+- **TailwindCSS / shadcn/ui / Radix UI**
+- **Prisma ORM**
+- **PostgreSQL**
+- **NextAuth (Discord OAuth + Credentials)**
+- **AWS S3**
+- **Telegram Bot API**
+- **Docker**
+
+---
+
+## 📁 Структура проекта
+
