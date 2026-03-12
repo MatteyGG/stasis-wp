@@ -139,7 +139,7 @@ export async function POST(req: NextRequest) {
     await prisma.playerSnapshot.deleteMany({
       where: { c4Id: activeC4.id },
     });
-    const c4Link = `https://stasis-wp.ru/c4/c4_${activeC4.id}`;
+    const c4Link = `https://stasis-wp.ru/c4/${activeC4.id}`;
     const resultText = finishedC4.result === "win" ? "Победа 🎉" : "Поражение ⚔️";
 
     await sendTextByTelegram(

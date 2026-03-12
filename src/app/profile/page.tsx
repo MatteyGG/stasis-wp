@@ -304,6 +304,7 @@ export default async function ProfilePage() {
               currentMxid={fullUser.matrixMxid}
               currentDisplayName={fullUser.matrixDisplayName}
               fallbackDisplayName={fullUser.username}
+              gameID={fullUser.gameID}
             />
           </CardContent>
         </Card>

@@ -5,17 +5,20 @@ import { toast } from "react-toastify";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Copy } from "lucide-react";
 
 type MatrixLinkCardProps = {
   currentMxid: string | null;
   currentDisplayName: string | null;
   fallbackDisplayName: string | null;
+  gameID: string | null;
 };
 
 export default function MatrixLinkCard({
   currentMxid,
   currentDisplayName,
   fallbackDisplayName,
+  gameID,
 }: MatrixLinkCardProps) {
   const matrixBaseUrl =
     (process.env.NEXT_PUBLIC_MATRIX_WEB_URL || "https://matrix.stasis-wp.ru").replace(
@@ -34,9 +37,28 @@ export default function MatrixLinkCard({
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const linked = Boolean(mxid);
+  const matrixServerName =
+    process.env.NEXT_PUBLIC_MATRIX_SERVER_NAME || "matrix.stasis-wp.ru";
+
+  const expectedMxid = (() => {
+    if (mxid) return mxid;
+    if (!gameID) return null;
+    const localpart = `wp_${gameID}`.toLowerCase().replace(/[^a-z0-9._=\\/-]/g, "");
+    return `@${localpart}:${matrixServerName}`;
+  })();
+
   const matrixProfileUrl = mxid
     ? `${matrixBaseUrl}/#/user/${encodeURIComponent(mxid)}`
     : null;
+
+  async function copyLogin(value: string) {
+    try {
+      await navigator.clipboard.writeText(value);
+      toast.success("Логин Matrix скопирован");
+    } catch {
+      toast.error("Не удалось скопировать логин");
+    }
+  }
 
   async function submit() {
     if (!displayName.trim()) {
@@ -105,6 +127,20 @@ export default function MatrixLinkCard({
             <span className="text-muted-foreground">MXID: </span>
             <span className="font-mono">{mxid}</span>
           </div>
+          <div className="flex items-center gap-2 flex-wrap">
+            <span className="text-muted-foreground">Логин для входа: </span>
+            <span className="font-mono">{mxid}</span>
+            <Button
+              type="button"
+              variant="outline"
+              className="rounded-xl h-7 w-7 p-0"
+              onClick={() => copyLogin(mxid)}
+              title="Скопировать логин Matrix"
+              aria-label="Скопировать логин Matrix"
+            >
+              <Copy className="h-3.5 w-3.5" />
+            </Button>
+          </div>
           <div>
             <span className="text-muted-foreground">Отображаемое имя: </span>
             <span>{displayName || "-"}</span>
@@ -132,6 +168,29 @@ export default function MatrixLinkCard({
           <div className="w-full max-w-md rounded-xl bg-white p-5 shadow-xl space-y-4">
             <div className="text-lg font-semibold">
               {linked ? "Обновить Matrix" : "Подключить Matrix"}
+            </div>
+            <div className="rounded-md border border-blue-200 bg-blue-50 p-3 text-sm text-blue-900 space-y-1">
+              <div>
+                Логин для входа в Matrix:
+                <span className="ml-1 font-mono">
+                  {expectedMxid || "появится после привязки"}
+                </span>
+                {expectedMxid && (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="ml-2 rounded-xl h-7 w-7 p-0"
+                    onClick={() => copyLogin(expectedMxid)}
+                    title="Скопировать логин Matrix"
+                    aria-label="Скопировать логин Matrix"
+                  >
+                    <Copy className="h-3.5 w-3.5" />
+                  </Button>
+                )}
+              </div>
+              <div>
+                Пароль для входа в Matrix: тот, который вы задаёте ниже.
+              </div>
             </div>
 
             <div className="space-y-2">

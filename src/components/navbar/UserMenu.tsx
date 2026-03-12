@@ -9,14 +9,10 @@ import {
   DropdownMenuTrigger,
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
-import { User, Settings, LogOut, PhoneCall } from "lucide-react";
+import { User, Settings, LogOut, MessageCircle } from "lucide-react";
 import Link from "next/link";
 import { signOut } from "next-auth/react";
 import UserAvatar from "../UserAvatar";
-
-const DEFAULT_USERNAME = 'Guest';
-const DEFAULT_USER_ID = '0';
-const DEFAULT_AVATAR_VERSION = 'ver';
 
 interface UserMenuProps {
    user: {
@@ -27,6 +23,7 @@ interface UserMenuProps {
     role?: string | null;
     avatarVersion?: string | null;
     username?: string | null;
+    matrixMxid?: string | null;
   } | null;
 }
 
@@ -44,17 +41,8 @@ export default function UserMenu({ user }: UserMenuProps) {
       </div>
     );
   }
-const fallbackUser = {
-  id: DEFAULT_USER_ID,
-  username: DEFAULT_USERNAME,
-  avatarVersion: DEFAULT_AVATAR_VERSION,
-};
-
-const safeUser = user ? { ...fallbackUser, ...user } : fallbackUser;
-
-const VideoCallString = `https://rtc.stasis-wp.ru/join?room=stasiswp&roomPassword=false&audio=0&video=0&name=${encodeURIComponent(
-  safeUser.username || "",
-)}&avatar=https://s3.timeweb.cloud/576b093c-bf65d329-1603-4121-b476-e46d7ce3cb2a/userProfile/${safeUser.id}.png?v=${safeUser.avatarVersion}`;
+const matrixWebUrl = process.env.NEXT_PUBLIC_MATRIX_WEB_URL || "https://matrix.stasis-wp.ru";
+const hasMatrixAccount = Boolean(user?.matrixMxid);
 
   return (
     <DropdownMenu>
@@ -79,16 +67,18 @@ const VideoCallString = `https://rtc.stasis-wp.ru/join?room=stasiswp&roomPasswor
             <span>Профиль</span>
           </Link>
         </DropdownMenuItem>
-        <DropdownMenuItem asChild>
-          <a
-            target="_blank"
-            href={VideoCallString}
-            rel="noopener noreferrer"
-          >
-            <PhoneCall className="mr-2 h-4 w-4" />
-            <span>Голосовой чат</span>
-          </a>
-        </DropdownMenuItem>
+        {hasMatrixAccount && (
+          <DropdownMenuItem asChild>
+            <a
+              target="_blank"
+              href={matrixWebUrl}
+              rel="noopener noreferrer"
+            >
+              <MessageCircle className="mr-2 h-4 w-4" />
+              <span>Открыть Matrix</span>
+            </a>
+          </DropdownMenuItem>
+        )}
         {user.role?.includes("admin") && (
           <DropdownMenuItem asChild>
             <Link href="/dashboard" className="cursor-pointer">
