@@ -29,6 +29,7 @@ import { prisma } from "@/lib/prisma";
 import { getMapValue } from "@/constants/maps";
 import UpdatePlayerButton from "@/components/profile/UpdatePlayerDataButton";
 import UserAvatar from "@/components/UserAvatar";
+import MatrixLinkCard from "@/components/profile/MatrixLinkCard";
 
 interface C4Data {
   id: string;
@@ -299,6 +300,11 @@ export default async function ProfilePage() {
           </CardHeader>
           <CardContent className="grid gap-4">
             <NotificationButtons userId={fullUser.id} />
+            <MatrixLinkCard
+              currentMxid={fullUser.matrixMxid}
+              currentDisplayName={fullUser.matrixDisplayName}
+              fallbackDisplayName={fullUser.username}
+            />
           </CardContent>
         </Card>
         <Card className="min-h-[250px] md:min-h-[300px] bg-white rounded-md">

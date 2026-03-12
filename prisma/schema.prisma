@@ -44,6 +44,10 @@ model User {
   email         String?   @unique
   emailVerified DateTime?
   tgref         String?   @default("")
+  matrixMxid    String?   @unique
+  matrixDisplayName String?
+  matrixLinkedAt DateTime?
+  matrixProvisionStatus String? @default("not_linked")
   role          String?   @default("user")
   rank          String?   @default("R1")
   created_at    DateTime  @default(now())
