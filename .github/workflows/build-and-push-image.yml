@@ -20,7 +20,8 @@ jobs:
       - name: Set image tags
         id: vars
         run: |
-          IMAGE="ghcr.io/${{ github.repository_owner }}/stasis-web"
+          OWNER_LC="$(echo '${{ github.repository_owner }}' | tr '[:upper:]' '[:lower:]')"
+          IMAGE="ghcr.io/${OWNER_LC}/stasis-web"
           SHA_TAG="${GITHUB_SHA::7}"
           if [ "${GITHUB_REF_NAME}" = "main" ]; then
             echo "tags=${IMAGE}:latest,${IMAGE}:main-${SHA_TAG}" >> "$GITHUB_OUTPUT"
