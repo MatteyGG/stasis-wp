@@ -1,6 +1,9 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { ensureMatrixUserForSiteUser } from "@/lib/matrix-registration";
+import {
+  ensureMatrixUserForSiteUser,
+  inviteMatrixUserToDefaultSpace,
+} from "@/lib/matrix-registration";
 import { NextRequest } from "next/server";
 
 function validatePassword(password: string): string | null {
@@ -70,11 +73,17 @@ export async function POST(req: NextRequest) {
     },
   });
 
+  const inviteResult = await inviteMatrixUserToDefaultSpace(provision.mxid);
+
   return Response.json({
     message: user.matrixMxid
       ? "Параметры Matrix обновлены"
       : "Matrix успешно подключен",
     mxid: provision.mxid,
     displayName,
+    invitedToSpace: inviteResult.success,
+    inviteWarning: inviteResult.success
+      ? null
+      : inviteResult.reason || "invite_failed",
   });
 }

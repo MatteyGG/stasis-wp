@@ -17,6 +17,11 @@ export default function MatrixLinkCard({
   currentDisplayName,
   fallbackDisplayName,
 }: MatrixLinkCardProps) {
+  const matrixBaseUrl =
+    (process.env.NEXT_PUBLIC_MATRIX_WEB_URL || "https://matrix.stasis-wp.ru").replace(
+      /\/$/,
+      ""
+    );
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [mxid, setMxid] = useState<string | null>(currentMxid);
@@ -25,8 +30,13 @@ export default function MatrixLinkCard({
   );
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const linked = Boolean(mxid);
+  const matrixProfileUrl = mxid
+    ? `${matrixBaseUrl}/#/user/${encodeURIComponent(mxid)}`
+    : null;
 
   async function submit() {
     if (!displayName.trim()) {
@@ -96,9 +106,24 @@ export default function MatrixLinkCard({
             <span className="font-mono">{mxid}</span>
           </div>
           <div>
-            <span className="text-muted-foreground">Display name: </span>
+            <span className="text-muted-foreground">Отображаемое имя: </span>
             <span>{displayName || "-"}</span>
           </div>
+          <div className="text-xs text-muted-foreground">
+            Пароль Matrix управляется отдельно от пароля сайта.
+          </div>
+          {matrixProfileUrl && (
+            <div className="pt-2">
+              <a
+                href={matrixProfileUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex rounded-xl border px-3 py-2 text-sm hover:bg-muted"
+              >
+                Открыть профиль в Matrix
+              </a>
+            </div>
+          )}
         </div>
       )}
 
@@ -121,24 +146,44 @@ export default function MatrixLinkCard({
 
             <div className="space-y-2">
               <Label htmlFor="mx-password">Пароль Matrix</Label>
-              <Input
-                id="mx-password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Минимум 8 символов"
-              />
+              <div className="flex gap-2">
+                <Input
+                  id="mx-password"
+                  type={showPassword ? "text" : "password"}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Минимум 8 символов"
+                />
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="rounded-xl"
+                  onClick={() => setShowPassword((v) => !v)}
+                >
+                  {showPassword ? "Скрыть" : "Показать"}
+                </Button>
+              </div>
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="mx-password-confirm">Подтверждение пароля</Label>
-              <Input
-                id="mx-password-confirm"
-                type="password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                placeholder="Повторите пароль Matrix"
-              />
+              <div className="flex gap-2">
+                <Input
+                  id="mx-password-confirm"
+                  type={showConfirmPassword ? "text" : "password"}
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  placeholder="Повторите пароль Matrix"
+                />
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="rounded-xl"
+                  onClick={() => setShowConfirmPassword((v) => !v)}
+                >
+                  {showConfirmPassword ? "Скрыть" : "Показать"}
+                </Button>
+              </div>
             </div>
 
             <div className="flex justify-end gap-2 pt-2">

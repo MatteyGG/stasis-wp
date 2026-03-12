@@ -1,34 +1,32 @@
-# Build stage
-FROM node:22-alpine AS build
-
+FROM node:22-alpine AS base
 WORKDIR /src
-COPY package.json .
+ENV NEXT_TELEMETRY_DISABLED=1
 
-RUN apk add --no-cache openssl3   # or the equivalent OpenSSL package for your Alpine version
+FROM base AS deps
+RUN apk add --no-cache openssl3 libc6-compat
+COPY package.json package-lock.json* ./
+RUN npm ci
 
-RUN openssl version
-
-RUN apk update
-RUN apk add --no-cache git
-CMD ["git","--version"]
-RUN npm install
-
-
+FROM base AS builder
+RUN apk add --no-cache openssl3 libc6-compat git
+COPY --from=deps /src/node_modules ./node_modules
 COPY . .
-
 RUN npx prisma generate
-
 RUN npm run build
+RUN npm prune --omit=dev
 
-# Production stage
-FROM build AS production
+FROM node:22-alpine AS runner
+WORKDIR /src
+ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
+RUN apk add --no-cache openssl3 libc6-compat
 
-COPY --from=build /src/.next ./.next
-COPY --from=build /src/node_modules ./node_modules
-COPY --from=build /src/package.json ./package.json
-COPY --from=build /src/next.config.mjs ./
-COPY --from=build /src/public ./public
-
+COPY --from=builder /src/public ./public
+COPY --from=builder /src/.next/standalone ./
+COPY --from=builder /src/.next/static ./.next/static
+COPY --from=builder /src/prisma ./prisma
+COPY --from=builder /src/node_modules/.prisma ./node_modules/.prisma
+COPY --from=builder /src/node_modules/@prisma ./node_modules/@prisma
 
 EXPOSE 3000
-CMD ["npm", "start"]
+CMD ["node", "server.js"]

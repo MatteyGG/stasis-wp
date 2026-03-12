@@ -4,12 +4,20 @@ type MatrixRegistrationConfig = {
   serverName: string;
   adminAccessToken: string;
   userPrefix: string;
+  autoInviteEnabled: boolean;
+  defaultSpaceId: string;
 };
 
 export type MatrixProvisionResult = {
   attempted: boolean;
   success: boolean;
   mxid?: string;
+  reason?: string;
+};
+
+export type MatrixInviteResult = {
+  attempted: boolean;
+  success: boolean;
   reason?: string;
 };
 
@@ -31,6 +39,8 @@ function readConfig(): MatrixRegistrationConfig {
     serverName: process.env.MATRIX_SERVER_NAME || derivedServerName,
     adminAccessToken: process.env.MATRIX_ADMIN_ACCESS_TOKEN || "",
     userPrefix: process.env.MATRIX_USER_PREFIX || "wp",
+    autoInviteEnabled: parseEnabled(process.env.MATRIX_AUTO_INVITE_ENABLED),
+    defaultSpaceId: (process.env.MATRIX_DEFAULT_SPACE_ID || "").trim(),
   };
 }
 
@@ -89,5 +99,46 @@ export async function ensureMatrixUserForSiteUser(params: {
     attempted: true,
     success: true,
     mxid,
+  };
+}
+
+export async function inviteMatrixUserToDefaultSpace(
+  mxid: string
+): Promise<MatrixInviteResult> {
+  const config = readConfig();
+
+  if (!config.enabled || !config.autoInviteEnabled) {
+    return { attempted: false, success: false, reason: "disabled" };
+  }
+
+  if (!config.homeserverUrl || !config.adminAccessToken || !config.defaultSpaceId) {
+    return { attempted: true, success: false, reason: "missing_config" };
+  }
+
+  const endpoint = `${config.homeserverUrl}/_matrix/client/v3/rooms/${encodeURIComponent(config.defaultSpaceId)}/invite`;
+  const response = await fetch(endpoint, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${config.adminAccessToken}`,
+    },
+    body: JSON.stringify({
+      user_id: mxid,
+    }),
+  });
+
+  if (response.ok) {
+    return { attempted: true, success: true };
+  }
+
+  const errorText = await response.text();
+  if (response.status === 403 && errorText.toLowerCase().includes("already")) {
+    return { attempted: true, success: true };
+  }
+
+  return {
+    attempted: true,
+    success: false,
+    reason: `http_${response.status}:${errorText.slice(0, 200)}`,
   };
 }

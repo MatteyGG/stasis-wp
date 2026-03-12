@@ -7,3 +7,6 @@ Dockerfile
 .env.*
 npm-debug.log*
 README.md
+matrix-stasis-deploy
+AGENTS.md
+task.md
