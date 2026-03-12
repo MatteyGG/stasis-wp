@@ -1,55 +1,71 @@
-IMAGE_NAME = stasis-web
-REGISTRY = ghcr.io/matteygg
+# ====== CONFIG ======
+LOCAL_IMAGE   ?= stasis-wp:local
+REGISTRY      ?= ghcr.io
+OWNER         ?= matteygg
+IMAGE_NAME    ?= stasis-web
+TAG           ?= latest
 
-# Цвета для красивого вывода
-RED := \033[0;31m
-GREEN := \033[0;32m
+REMOTE_IMAGE  := $(REGISTRY)/$(OWNER)/$(IMAGE_NAME):$(TAG)
+
+# ====== PRETTY OUTPUT ======
+RED    := \033[0;31m
+GREEN  := \033[0;32m
 YELLOW := \033[0;33m
-NC := \033[0m
+NC     := \033[0m
 
-menu:
-	@echo "$(GREEN)=== Docker Build Menu ===$(NC)"
-	@echo "1) Stage environment"
-	@echo "2) Production environment"  
-	@echo "3) Custom environment"
-	@echo "4) Auto-version from git"
-	@read -p "Select option [1-4]: " choice; \
-	case $$choice in \
-		1) $(MAKE) build-env ENV=stage;; \
-		2) $(MAKE) build-env ENV=production;; \
-		3) $(MAKE) custom-build;; \
-		4) $(MAKE) auto-build;; \
-		*) echo "$(RED)Invalid option$(NC)";; \
-	esac
+# ====== TARGETS ======
+.PHONY: help build tag push publish run login images clean
 
-build-env:
-	@read -p "Enter version for $(ENV) [current: v0.1.0]: " version; \
-	if [ -z "$$version" ]; then version="v0.1.0"; fi; \
-	echo "$(GREEN)Building for $(ENV), version $$version$(NC)"; \
-	docker build -t $(REGISTRY)/$(IMAGE_NAME):$$version-$(ENV) .
+help:
+	@echo "$(GREEN)=== Make targets ===$(NC)"
+	@echo "  make build        - build local image with buildx (--load) -> $(LOCAL_IMAGE)"
+	@echo "  make tag          - tag local image -> $(REMOTE_IMAGE)"
+	@echo "  make push         - push $(REMOTE_IMAGE) to GHCR"
+	@echo "  make publish      - build + tag + push"
+	@echo "  make run          - run $(REMOTE_IMAGE) locally (port 3000:3000)"
+	@echo "  make login        - login to ghcr.io using GHCR_USER + GHCR_TOKEN env vars"
+	@echo "  make images       - show relevant docker images"
+	@echo "  make clean        - remove local tags (does NOT delete remote)"
 
-custom-build:
-	@read -p "Enter environment: " env; \
-	read -p "Enter version: " version; \
-	echo "$(GREEN)Building for $$env, version $$version$(NC)"; \
-	docker build -t $(REGISTRY)/$(IMAGE_NAME):$$version-$$env .
+build:
+	@echo "$(YELLOW)Building: $(LOCAL_IMAGE)$(NC)"
+	docker buildx build --load -t $(LOCAL_IMAGE) .
 
-auto-build:
-	$(eval VERSION := v$(shell git describe --tags --always --abbrev=7))
-	$(eval COMMIT_HASH := $(shell git rev-parse --short HEAD))
-	@echo "$(YELLOW)Auto-detected: version $(VERSION), commit $(COMMIT_HASH)$(NC)"
-	@read -p "Enter environment [stage]: " env; \
-	if [ -z "$$env" ]; then env="stage"; fi; \
-	docker build -t $(REGISTRY)/$(IMAGE_NAME):$(VERSION)-$$env .
+tag:
+	@echo "$(YELLOW)Tagging: $(LOCAL_IMAGE) -> $(REMOTE_IMAGE)$(NC)"
+	docker tag $(LOCAL_IMAGE) $(REMOTE_IMAGE)
 
-# Пуш с подтверждением
-push-with-confirm:
-	@docker images | grep $(IMAGE_NAME)
-	@read -p "$(RED)Push these images? [y/N]: $(NC)" confirm; \
-	if [ "$$confirm" = "y" ] || [ "$$confirm" = "Y" ]; then \
-		$(MAKE) push; \
-	else \
-		echo "Push cancelled"; \
+push:
+	@echo "$(YELLOW)Pushing: $(REMOTE_IMAGE)$(NC)"
+	docker push $(REMOTE_IMAGE)
+
+publish: build tag push
+	@echo "$(GREEN)Done: published $(REMOTE_IMAGE)$(NC)"
+
+run:
+	@echo "$(YELLOW)Running: $(REMOTE_IMAGE) on http://localhost:3000$(NC)"
+	docker run --rm -p 3000:3000 $(REMOTE_IMAGE)
+
+login:
+	@if [ -z "$(GHCR_USER)" ] || [ -z "$(GHCR_TOKEN)" ]; then \
+		echo "$(RED)Set GHCR_USER and GHCR_TOKEN env vars first.$(NC)"; \
+		echo "Example (PowerShell):"; \
+		echo "  $$env:GHCR_USER=\"matteygg\"; $$env:GHCR_TOKEN=\"<token>\""; \
+		exit 1; \
 	fi
+	@echo "$(YELLOW)Logging in to $(REGISTRY) as $(GHCR_USER)$(NC)"
+	@echo "$(GHCR_TOKEN)" | docker login $(REGISTRY) -u "$(GHCR_USER)" --password-stdin
 
-.PHONY: menu build-env custom-build auto-build push-with-confirm
+images:
+	@docker images | grep -E "stasis-wp|$(IMAGE_NAME)" || true
+
+clean:
+	@echo "$(YELLOW)Removing local tags:$(NC) $(LOCAL_IMAGE) and $(REMOTE_IMAGE)"
+	-@docker rmi $(REMOTE_IMAGE) 2>/dev/null || true
+	-@docker rmi $(LOCAL_IMAGE) 2>/dev/null || true
+
+
+# $env:GHCR_USER="matteygg"
+# $env:GHCR_TOKEN="...PAT..."
+# make login
+# make publish

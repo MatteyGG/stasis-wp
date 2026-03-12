@@ -32,6 +32,8 @@ declare module "next-auth" {
       approved?: boolean | null;
       gameID?: string | null;
       tgref?: string | null;
+      matrixMxid?: string | null;
+      matrixDisplayName?: string | null;
       techSlots?: Array<{
         type: string;
         slotIndex: number;
@@ -162,6 +164,8 @@ const authConfig: NextAuthConfig = {
           session.user.approved = freshUser.approved;
           session.user.gameID = freshUser.gameID;
           session.user.tgref = freshUser.tgref || "";
+          session.user.matrixMxid = freshUser.matrixMxid;
+          session.user.matrixDisplayName = freshUser.matrixDisplayName;
           session.user.techSlots = freshUser.techSlots.map((slot) => ({
             type: slot.type,
             slotIndex: slot.slotIndex,
