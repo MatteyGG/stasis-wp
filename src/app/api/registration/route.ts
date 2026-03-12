@@ -78,7 +78,7 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    // Создаем пользователя
+    // Создаем пользователя сайта
     const hashedPassword = await hash(password, 10);
     const newUser = await prisma.user.create({
       data: {
@@ -89,10 +89,10 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    return Response.json(
-      { user: newUser, message: "Пользователь успешно создан" },
-      { status: 201 }
-    );
+    return Response.json({
+      user: newUser,
+      message: "Пользователь успешно создан",
+    }, { status: 201 });
   } catch (error) {
     console.error("Registration error:", error);
     return Response.json(
