@@ -34,6 +34,7 @@ declare module "next-auth" {
       tgref?: string | null;
       matrixMxid?: string | null;
       matrixDisplayName?: string | null;
+      mustChangePassword?: boolean;
       techSlots?: Array<{
         type: string;
         slotIndex: number;
@@ -49,6 +50,7 @@ declare module "next-auth/jwt" {
     credentials?: boolean;
     userId?: string;
     avatarVersion?: string | null;
+    mustChangePassword?: boolean;
   }
 }
 
@@ -101,6 +103,7 @@ const authConfig: NextAuthConfig = {
           approved: user.approved,
           gameID: user.gameID,
           tgref: user.tgref,
+          mustChangePassword: user.mustChangePassword,
           techSlots: user.techSlots.map((slot) => ({
             type: slot.type,
             slotIndex: slot.slotIndex,
@@ -114,6 +117,15 @@ const authConfig: NextAuthConfig = {
     }),
   ],
   callbacks: {
+    async signIn({ user, account }) {
+      if (
+        account?.provider === "credentials" &&
+        (user as User | undefined)?.mustChangePassword
+      ) {
+        return "/profile/password";
+      }
+      return true;
+    },
     async jwt({ token, user, account, trigger, session }) {
       // Обработка обновления сессии
       if (trigger === "update" && session?.user?.avatarVersion) {
@@ -131,6 +143,7 @@ const authConfig: NextAuthConfig = {
         // Сохраняем avatarVersion при первоначальной аутентификации
         if (user) {
           token.avatarVersion = (user as User).avatarVersion;
+          token.mustChangePassword = Boolean((user as User).mustChangePassword);
         }
       }
 
@@ -166,6 +179,7 @@ const authConfig: NextAuthConfig = {
           session.user.tgref = freshUser.tgref || "";
           session.user.matrixMxid = freshUser.matrixMxid;
           session.user.matrixDisplayName = freshUser.matrixDisplayName;
+          session.user.mustChangePassword = freshUser.mustChangePassword;
           session.user.techSlots = freshUser.techSlots.map((slot) => ({
             type: slot.type,
             slotIndex: slot.slotIndex,

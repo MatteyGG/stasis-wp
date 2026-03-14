@@ -56,7 +56,10 @@ export async function changePassword(prevState: ActionState, formData: FormData)
     // Обновляем пароль
     await prisma.user.update({
       where: { id: session.user.id },
-      data: { password: hashedNewPassword },
+      data: {
+        password: hashedNewPassword,
+        mustChangePassword: false,
+      },
     });
 
     revalidatePath("/profile");

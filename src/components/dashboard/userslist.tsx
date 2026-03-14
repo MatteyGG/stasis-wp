@@ -10,7 +10,7 @@ import "react-toastify/dist/ReactToastify.css";
 
 interface User {
   id: string;
-  gameID: number;
+  gameID: string;
   username: string;
   email: string;
   created_at: Date;
@@ -105,6 +105,46 @@ export default function Userlist() {
     } catch (error) {
       console.error("Error banning user:", error);
       notifyError("Error banning user");
+    }
+  };
+
+  const handleResetPassword = async (userId: string, username: string) => {
+    const confirmed = window.confirm(
+      `Сбросить пароль для ${username || "пользователя"}? Будет выдан временный пароль и включена обязательная смена при входе.`
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
+    try {
+      const response = await fetch("/api/admin/users/reset-password", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ userId }),
+      });
+
+      const data = await response.json();
+      if (!response.ok) {
+        notifyError(data.error || "Не удалось сбросить пароль");
+        return;
+      }
+
+      const temporaryPassword = data.temporaryPassword as string;
+      const copied = await navigator.clipboard
+        .writeText(temporaryPassword)
+        .then(() => true)
+        .catch(() => false);
+
+      window.alert(
+        `Временный пароль: ${temporaryPassword}\n${copied ? "Скопировано в буфер обмена." : "Скопируйте пароль вручную."}`
+      );
+      notifySuccess(`Пароль для ${username || "пользователя"} сброшен`);
+    } catch (error) {
+      console.error("Error resetting password:", error);
+      notifyError("Ошибка при сбросе пароля");
     }
   };
 
@@ -223,26 +263,35 @@ export default function Userlist() {
                   )}
                 </div>
                 <div className="place-self-start p-2 py-0">
-                  <button
-                    className="inline-flex items-center bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-xl"
-                    onClick={() => handleBan(user.gameID)}
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-6 w-6"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
+                  <div className="flex flex-col gap-2">
+                    <button
+                      type="button"
+                      className="inline-flex items-center bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-xl text-xs"
+                      onClick={() => handleResetPassword(user.id, user.username)}
                     >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                      />
-                    </svg>
-
-                  </button>
+                      Сбросить пароль
+                    </button>
+                    <button
+                      type="button"
+                      className="inline-flex items-center bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-xl"
+                      onClick={() => handleBan(Number(user.gameID))}
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-6 w-6"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                        />
+                      </svg>
+                    </button>
+                  </div>
                 </div>
               </div>
 

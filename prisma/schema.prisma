@@ -44,6 +44,7 @@ model User {
   email         String?   @unique
   emailVerified DateTime?
   tgref         String?   @default("")
+  mustChangePassword Boolean @default(false)
   matrixMxid    String?   @unique
   matrixDisplayName String?
   matrixLinkedAt DateTime?
@@ -60,6 +61,18 @@ model User {
 
   authenticators Authenticator[]
   Image          Image[]
+}
+
+model AdminAuditLog {
+  id           String   @id @default(cuid())
+  adminUserId  String
+  targetUserId String?
+  action       String
+  details      Json?
+  createdAt    DateTime @default(now())
+
+  @@index([adminUserId, createdAt])
+  @@index([targetUserId, createdAt])
 }
 
 model UserTechSlot {

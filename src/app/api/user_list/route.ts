@@ -1,14 +1,35 @@
 import { NextResponse } from "next/server";
 import { prisma } from "../../../lib/prisma";
+import { requireAdminSession } from "@/lib/admin-auth";
 
 
 export async function GET() {
-    const user_array = await prisma.user.findMany();
+    const guard = await requireAdminSession();
+    if ("error" in guard) {
+      return NextResponse.json({ error: guard.error }, { status: guard.status });
+    }
+
+    const user_array = await prisma.user.findMany({
+      select: {
+        id: true,
+        gameID: true,
+        username: true,
+        email: true,
+        created_at: true,
+        rank: true,
+        approved: true,
+      },
+    });
   return NextResponse.json({ users: user_array });
 }
 
 export const POST = async (req: Request) => {
   try {
+    const guard = await requireAdminSession();
+    if ("error" in guard) {
+      return NextResponse.json({ error: guard.error }, { status: guard.status });
+    }
+
     const { id, gameID, ...data } = await req.json();
     console.log(id, gameID, data);
     const response = await prisma.user.updateMany({
@@ -35,6 +56,11 @@ export const POST = async (req: Request) => {
 export const DELETE = async (req: Request) => {
   console.log("DELETE request received");
   try {
+    const guard = await requireAdminSession();
+    if ("error" in guard) {
+      return NextResponse.json({ error: guard.error }, { status: guard.status });
+    }
+
     const { GameId } = await req.json();
     console.log("Parsed GameId:", GameId);
     
