@@ -63,6 +63,9 @@ export default function WarpathOps() {
   const [alliances, setAlliances] = useState<SurfacedAlliance[]>([]);
   const [gnickByGid, setGnickByGid] = useState<Map<number, string>>(new Map());
   const [selected, setSelected] = useState<number[]>([]);
+  const [trackPlayerWid, setTrackPlayerWid] = useState(130);
+  const [trackPlayerPid, setTrackPlayerPid] = useState(0);
+  const [trackPlayerNote, setTrackPlayerNote] = useState("");
 
   const refreshCatalog = async () => {
     try {
@@ -139,6 +142,25 @@ export default function WarpathOps() {
     setSelected((prev) => (prev.includes(gid) ? prev.filter((x) => x !== gid) : [...prev, gid]));
   };
 
+  const trackPlayer = async () => {
+    if (!Number.isInteger(trackPlayerWid) || !Number.isInteger(trackPlayerPid) || trackPlayerPid <= 0) {
+      setStatus({ loading: false, message: "", error: "Укажите корректные wid и pid" });
+      return;
+    }
+    setStatus({ loading: true, message: "", error: "" });
+    const out = await postJson({
+      action: "trackPlayer",
+      wid: trackPlayerWid,
+      pid: trackPlayerPid,
+      note: trackPlayerNote.trim() || undefined,
+    });
+    if (!out.ok) {
+      setStatus({ loading: false, message: "", error: `Track player error: ${JSON.stringify(out.data).slice(0, 280)}` });
+      return;
+    }
+    setStatus({ loading: false, message: "Игрок добавлен в tracking. Запущен sync latest по его серверу.", error: "" });
+  };
+
   return (
     <div className="mx-auto w-full max-w-5xl space-y-4 rounded-xl border border-slate-200 bg-white p-4 text-left shadow-sm">
       <h2 className="text-xl font-bold text-slate-900">Warpath Stats Ops</h2>
@@ -212,6 +234,29 @@ export default function WarpathOps() {
               </label>
             );
           })}
+        </div>
+      </div>
+
+      <div className="rounded border border-slate-200 p-3">
+        <p className="mb-2 text-sm font-semibold text-slate-800">Трекинг отдельного игрока</p>
+        <div className="grid grid-cols-1 gap-2 md:grid-cols-4">
+          <label className="text-sm">
+            <span className="mb-1 block text-slate-600">wid</span>
+            <input className="w-full rounded border border-slate-300 px-2 py-1" type="number" value={trackPlayerWid} onChange={(e) => setTrackPlayerWid(Number(e.target.value) || 0)} />
+          </label>
+          <label className="text-sm">
+            <span className="mb-1 block text-slate-600">pid</span>
+            <input className="w-full rounded border border-slate-300 px-2 py-1" type="number" value={trackPlayerPid} onChange={(e) => setTrackPlayerPid(Number(e.target.value) || 0)} />
+          </label>
+          <label className="text-sm md:col-span-2">
+            <span className="mb-1 block text-slate-600">note (опционально)</span>
+            <input className="w-full rounded border border-slate-300 px-2 py-1" value={trackPlayerNote} onChange={(e) => setTrackPlayerNote(e.target.value)} />
+          </label>
+        </div>
+        <div className="mt-2">
+          <button className="rounded bg-cyan-700 px-3 py-2 text-sm font-semibold text-white hover:bg-cyan-800 disabled:opacity-60" disabled={status.loading} onClick={trackPlayer}>
+            Добавить игрока в tracking
+          </button>
         </div>
       </div>
 

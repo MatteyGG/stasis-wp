@@ -66,15 +66,25 @@ export default async function PlayerProfilePage({ params, searchParams }: PagePr
   if (!full.series.length) {
     return <div className="p-6 text-sm text-slate-600">Нет данных за выбранный диапазон.</div>;
   }
+  const absoluteFirstDay = full.series[0].day;
   const absoluteLastDay = full.series[full.series.length - 1].day;
   const window = sp.window === "7d" || sp.window === "30d" || sp.window === "3m" ? sp.window : "30d";
-  const toDay = toInt(sp.to) ?? inputDateToDayInt(typeof sp.to === "string" ? sp.to : undefined) ?? absoluteLastDay;
-  const fromByWindow = window === "7d" ? addDays(toDay, -7) : window === "3m" ? addDays(toDay, -90) : addDays(toDay, -30);
-  const fromDay = toInt(sp.from) ?? inputDateToDayInt(typeof sp.from === "string" ? sp.from : undefined) ?? fromByWindow;
-  const safeFrom = Math.min(fromDay, toDay);
-  const safeTo = Math.max(fromDay, toDay);
+  const reqTo = toInt(sp.to) ?? inputDateToDayInt(typeof sp.to === "string" ? sp.to : undefined) ?? absoluteLastDay;
+  const fromByWindow = window === "7d" ? addDays(reqTo, -7) : window === "3m" ? addDays(reqTo, -90) : addDays(reqTo, -30);
+  const reqFrom = toInt(sp.from) ?? inputDateToDayInt(typeof sp.from === "string" ? sp.from : undefined) ?? fromByWindow;
+  const safeFrom = Math.min(reqFrom, reqTo);
+  const safeTo = Math.max(reqFrom, reqTo);
+  const clampedFrom = Math.max(safeFrom, absoluteFirstDay);
+  const clampedTo = Math.min(safeTo, absoluteLastDay);
+  if (clampedFrom > clampedTo) {
+    return (
+      <div className="p-6 text-sm text-slate-600">
+        Нет данных в этом диапазоне. Доступно: {formatDay(absoluteFirstDay)} - {formatDay(absoluteLastDay)}.
+      </div>
+    );
+  }
 
-  const [dataset, mode] = await Promise.all([getPlayerDataset(wid, pid, safeFrom, safeTo), getWorldMode(wid)]);
+  const [dataset, mode] = await Promise.all([getPlayerDataset(wid, pid, clampedFrom, clampedTo), getWorldMode(wid)]);
   if (!dataset.series.length) {
     return <div className="p-6 text-sm text-slate-600">Нет данных за выбранный диапазон.</div>;
   }
@@ -187,7 +197,7 @@ export default async function PlayerProfilePage({ params, searchParams }: PagePr
               <input
                 type="date"
                 name="from"
-                defaultValue={dayIntToInputDate(safeFrom)}
+                defaultValue={dayIntToInputDate(clampedFrom)}
                 className="ml-1 rounded border border-slate-300 px-2 py-1 text-xs"
               />
             </label>
@@ -196,7 +206,7 @@ export default async function PlayerProfilePage({ params, searchParams }: PagePr
               <input
                 type="date"
                 name="to"
-                defaultValue={dayIntToInputDate(safeTo)}
+                defaultValue={dayIntToInputDate(clampedTo)}
                 className="ml-1 rounded border border-slate-300 px-2 py-1 text-xs"
               />
             </label>

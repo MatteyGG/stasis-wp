@@ -6,7 +6,8 @@ type ActionBody =
   | { action: "refreshCities" }
   | { action: "serverScan"; wid: number; dayInt: number; page?: number; perPage?: number }
   | { action: "serverBackfill"; wid: number; fromDayInt: number; toDayInt: number; page?: number; perPage?: number }
-  | { action: "trackAlliances"; wid: number; gids: number[] };
+  | { action: "trackAlliances"; wid: number; gids: number[] }
+  | { action: "trackPlayer"; wid: number; pid: number; note?: string };
 
 const BASE_URL =
   process.env.WARPATH_STATS_API_URL ||
@@ -49,12 +50,13 @@ export async function GET(req: NextRequest) {
 
   const widParam = req.nextUrl.searchParams.get("wid");
   const wid = widParam && Number.isInteger(Number(widParam)) ? Number(widParam) : 130;
-  const [health, worlds, cities, surfacedAlliances, trackedAlliances] = await Promise.all([
+  const [health, worlds, cities, surfacedAlliances, trackedAlliances, trackedPlayers] = await Promise.all([
     callWarpath("/health"),
     callWarpath("/api/v1/worlds"),
     callWarpath("/reference/cities"),
     callWarpath(`/api/v1/alliances?wid=${wid}&page=1&pageSize=200`),
     callWarpath("/alliances"),
+    callWarpath("/tracked-players"),
   ]);
 
   return NextResponse.json({
@@ -64,6 +66,7 @@ export async function GET(req: NextRequest) {
     cities,
     surfacedAlliances,
     trackedAlliances,
+    trackedPlayers,
   });
 }
 
@@ -152,6 +155,22 @@ export async function POST(req: NextRequest) {
       success: results.filter((r) => r.ok).length,
       results,
     });
+  }
+
+  if (body.action === "trackPlayer") {
+    if (!isInt(body.wid) || !isInt(body.pid) || body.pid <= 0) {
+      return NextResponse.json({ error: "wid and pid are required integers" }, { status: 400 });
+    }
+    const out = await callWarpath("/tracked-players", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        wid: body.wid,
+        pid: body.pid,
+        note: typeof body.note === "string" ? body.note : undefined,
+      }),
+    });
+    return NextResponse.json(out.body, { status: out.status });
   }
 
   return NextResponse.json({ error: "Unsupported action" }, { status: 400 });
