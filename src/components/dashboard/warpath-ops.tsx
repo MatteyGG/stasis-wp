@@ -14,6 +14,20 @@ type SurfacedAlliance = {
   current: { power: string; memberCount: number };
 };
 
+type TrackedAlliance = {
+  wid: number;
+  gid: number;
+  enabled?: boolean;
+  name?: string | null;
+};
+
+type TrackedPlayer = {
+  wid: number;
+  pid: number;
+  enabled?: boolean;
+  note?: string | null;
+};
+
 function todayDayInt() {
   const now = new Date();
   const y = now.getUTCFullYear();
@@ -66,6 +80,8 @@ export default function WarpathOps() {
   const [trackPlayerWid, setTrackPlayerWid] = useState(130);
   const [trackPlayerPid, setTrackPlayerPid] = useState(0);
   const [trackPlayerNote, setTrackPlayerNote] = useState("");
+  const [trackedAlliances, setTrackedAlliances] = useState<TrackedAlliance[]>([]);
+  const [trackedPlayers, setTrackedPlayers] = useState<TrackedPlayer[]>([]);
 
   const refreshCatalog = async () => {
     try {
@@ -74,6 +90,10 @@ export default function WarpathOps() {
       setHealth(ok ? "online" : `error (${parsed?.health?.status ?? "?"})`);
       const items = (parsed?.surfacedAlliances?.body?.data ?? []) as SurfacedAlliance[];
       setAlliances(items.filter((a) => Number(a.gid) > 0));
+      const trackedA = (parsed?.trackedAlliances?.body ?? []) as TrackedAlliance[];
+      const trackedP = (parsed?.trackedPlayers?.body ?? []) as TrackedPlayer[];
+      setTrackedAlliances(trackedA);
+      setTrackedPlayers(trackedP);
       const players = (parsed?.surfacedPlayers?.body?.data ?? []) as Array<{ currentAlliance?: { gid?: string | null; gnick?: string | null } }>;
       const map = new Map<number, string>();
       for (const p of players) {
@@ -88,6 +108,8 @@ export default function WarpathOps() {
     } catch {
       setHealth("offline");
       setAlliances([]);
+      setTrackedAlliances([]);
+      setTrackedPlayers([]);
       setSelected([]);
     }
   };
@@ -234,6 +256,32 @@ export default function WarpathOps() {
               </label>
             );
           })}
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+        <div className="rounded border border-slate-200 p-3">
+          <p className="mb-2 text-sm font-semibold text-slate-800">Отслеживаемые альянсы</p>
+          <div className="max-h-56 space-y-1 overflow-auto pr-1">
+            {trackedAlliances.length === 0 && <p className="text-xs text-slate-500">Пока пусто.</p>}
+            {trackedAlliances.map((a) => (
+              <div key={`${a.wid}-${a.gid}`} className="rounded border border-slate-200 px-2 py-1 text-sm">
+                <span className="font-semibold">W{a.wid}</span> • gid={a.gid} • {a.enabled === false ? "disabled" : "enabled"}
+              </div>
+            ))}
+          </div>
+        </div>
+        <div className="rounded border border-slate-200 p-3">
+          <p className="mb-2 text-sm font-semibold text-slate-800">Отслеживаемые игроки</p>
+          <div className="max-h-56 space-y-1 overflow-auto pr-1">
+            {trackedPlayers.length === 0 && <p className="text-xs text-slate-500">Пока пусто.</p>}
+            {trackedPlayers.map((p) => (
+              <div key={`${p.wid}-${p.pid}`} className="rounded border border-slate-200 px-2 py-1 text-sm">
+                <span className="font-semibold">W{p.wid}</span> • pid={p.pid} • {p.enabled === false ? "disabled" : "enabled"}
+                {p.note ? ` • ${p.note}` : ""}
+              </div>
+            ))}
+          </div>
         </div>
       </div>
 
