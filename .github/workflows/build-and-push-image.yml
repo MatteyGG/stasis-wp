@@ -50,24 +50,38 @@ jobs:
           cache-to: type=gha,mode=max
 
       - name: Notify Telegram (success)
-        if: success() && secrets.TG_BOT_TOKEN != '' && secrets.TG_CHAT_ID != ''
+        if: success()
+        env:
+          TG_BOT_TOKEN: ${{ secrets.TG_BOT_TOKEN }}
+          TG_CHAT_ID: ${{ secrets.TG_CHAT_ID }}
         run: |
+          if [ -z "${TG_BOT_TOKEN:-}" ] || [ -z "${TG_CHAT_ID:-}" ]; then
+            echo "TG secrets not set, skip"
+            exit 0
+          fi
           TEXT="✅ stasis-wp: новый образ опубликован
           branch: ${{ github.ref_name }}
           sha: ${{ github.sha }}
           tags: ${{ steps.vars.outputs.tags }}
           run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-          curl -sS -X POST "https://api.telegram.org/bot${{ secrets.TG_BOT_TOKEN }}/sendMessage" \
-            -d chat_id="${{ secrets.TG_CHAT_ID }}" \
+          curl -sS -X POST "https://api.telegram.org/bot${TG_BOT_TOKEN}/sendMessage" \
+            -d chat_id="${TG_CHAT_ID}" \
             --data-urlencode text="$TEXT" >/dev/null
 
       - name: Notify Telegram (failure)
-        if: failure() && secrets.TG_BOT_TOKEN != '' && secrets.TG_CHAT_ID != ''
+        if: failure()
+        env:
+          TG_BOT_TOKEN: ${{ secrets.TG_BOT_TOKEN }}
+          TG_CHAT_ID: ${{ secrets.TG_CHAT_ID }}
         run: |
+          if [ -z "${TG_BOT_TOKEN:-}" ] || [ -z "${TG_CHAT_ID:-}" ]; then
+            echo "TG secrets not set, skip"
+            exit 0
+          fi
           TEXT="❌ stasis-wp: ошибка сборки образа
           branch: ${{ github.ref_name }}
           sha: ${{ github.sha }}
           run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-          curl -sS -X POST "https://api.telegram.org/bot${{ secrets.TG_BOT_TOKEN }}/sendMessage" \
-            -d chat_id="${{ secrets.TG_CHAT_ID }}" \
+          curl -sS -X POST "https://api.telegram.org/bot${TG_BOT_TOKEN}/sendMessage" \
+            -d chat_id="${TG_CHAT_ID}" \
             --data-urlencode text="$TEXT" >/dev/null
