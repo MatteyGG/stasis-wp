@@ -32,6 +32,18 @@ function toInt(v: string | undefined): number | null {
   return Number.isInteger(n) ? n : null;
 }
 
+function dayIntToInputDate(dayInt: number): string {
+  const s = String(dayInt);
+  return `${s.slice(0, 4)}-${s.slice(4, 6)}-${s.slice(6, 8)}`;
+}
+
+function inputDateToDayInt(v: string | undefined): number | null {
+  if (!v) return null;
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(v.trim());
+  if (!m) return null;
+  return Number(`${m[1]}${m[2]}${m[3]}`);
+}
+
 function kd(kills: bigint, die: bigint): number | null {
   if (die === BigInt(0)) return null;
   return Number((kills * BigInt(100)) / die) / 100;
@@ -50,12 +62,19 @@ export default async function PlayerProfilePage({ params, searchParams }: PagePr
   if (!wid || !pid) notFound();
 
   const today = dateToDayInt(new Date());
-  const toDay = toInt(sp.to) ?? today;
+  const full = await getPlayerDataset(wid, pid, 20000101, today);
+  if (!full.series.length) {
+    return <div className="p-6 text-sm text-slate-600">Нет данных за выбранный диапазон.</div>;
+  }
+  const absoluteLastDay = full.series[full.series.length - 1].day;
   const window = sp.window === "7d" || sp.window === "30d" || sp.window === "3m" ? sp.window : "30d";
+  const toDay = toInt(sp.to) ?? inputDateToDayInt(typeof sp.to === "string" ? sp.to : undefined) ?? absoluteLastDay;
   const fromByWindow = window === "7d" ? addDays(toDay, -7) : window === "3m" ? addDays(toDay, -90) : addDays(toDay, -30);
-  const fromDay = toInt(sp.from) ?? fromByWindow;
+  const fromDay = toInt(sp.from) ?? inputDateToDayInt(typeof sp.from === "string" ? sp.from : undefined) ?? fromByWindow;
+  const safeFrom = Math.min(fromDay, toDay);
+  const safeTo = Math.max(fromDay, toDay);
 
-  const [dataset, mode] = await Promise.all([getPlayerDataset(wid, pid, fromDay, toDay), getWorldMode(wid)]);
+  const [dataset, mode] = await Promise.all([getPlayerDataset(wid, pid, safeFrom, safeTo), getWorldMode(wid)]);
   if (!dataset.series.length) {
     return <div className="p-6 text-sm text-slate-600">Нет данных за выбранный диапазон.</div>;
   }
@@ -162,10 +181,31 @@ export default async function PlayerProfilePage({ params, searchParams }: PagePr
           <p className="text-sm text-gray-600">
             Диапазон: {formatDay(first.day)} - {formatDay(last.day)} • точек: {series.length}
           </p>
+          <form className="mt-2 flex flex-wrap items-end gap-2">
+            <label className="text-xs text-slate-600">
+              From
+              <input
+                type="date"
+                name="from"
+                defaultValue={dayIntToInputDate(safeFrom)}
+                className="ml-1 rounded border border-slate-300 px-2 py-1 text-xs"
+              />
+            </label>
+            <label className="text-xs text-slate-600">
+              To
+              <input
+                type="date"
+                name="to"
+                defaultValue={dayIntToInputDate(safeTo)}
+                className="ml-1 rounded border border-slate-300 px-2 py-1 text-xs"
+              />
+            </label>
+            <button className="rounded bg-blue-600 px-2 py-1 text-xs font-semibold text-white hover:bg-blue-700">Применить</button>
+          </form>
           <div className="mt-2 flex flex-wrap gap-2 text-xs">
-            <Link href={`/statistics/player/${wid}/${pid}?window=7d&to=${toDay}`} className={`rounded px-2 py-1 ${window === "7d" ? "bg-slate-900 text-white" : "bg-slate-200 text-slate-700 hover:bg-slate-300"}`}>7д</Link>
-            <Link href={`/statistics/player/${wid}/${pid}?window=30d&to=${toDay}`} className={`rounded px-2 py-1 ${window === "30d" ? "bg-slate-900 text-white" : "bg-slate-200 text-slate-700 hover:bg-slate-300"}`}>30д</Link>
-            <Link href={`/statistics/player/${wid}/${pid}?window=3m&to=${toDay}`} className={`rounded px-2 py-1 ${window === "3m" ? "bg-slate-900 text-white" : "bg-slate-200 text-slate-700 hover:bg-slate-300"}`}>3м</Link>
+            <Link href={`/statistics/player/${wid}/${pid}?window=7d&to=${absoluteLastDay}`} className={`rounded px-2 py-1 ${window === "7d" ? "bg-slate-900 text-white" : "bg-slate-200 text-slate-700 hover:bg-slate-300"}`}>7д</Link>
+            <Link href={`/statistics/player/${wid}/${pid}?window=30d&to=${absoluteLastDay}`} className={`rounded px-2 py-1 ${window === "30d" ? "bg-slate-900 text-white" : "bg-slate-200 text-slate-700 hover:bg-slate-300"}`}>30д</Link>
+            <Link href={`/statistics/player/${wid}/${pid}?window=3m&to=${absoluteLastDay}`} className={`rounded px-2 py-1 ${window === "3m" ? "bg-slate-900 text-white" : "bg-slate-200 text-slate-700 hover:bg-slate-300"}`}>3м</Link>
           </div>
         </div>
         <div className="flex items-center gap-2">
