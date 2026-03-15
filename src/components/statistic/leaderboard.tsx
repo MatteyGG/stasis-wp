@@ -2,6 +2,7 @@
 "use client";
 import { WarpathPlayer } from "@/lib/types";
 import Image from "next/image";
+import Link from "next/link";
 import { useState, useMemo, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import ExtendedPlayerCard from "./PlayerCard";
@@ -198,8 +199,18 @@ const listItemVariants = {
                       [{user.gnick}] {user.nick}
                     </h1>
                   </div>
+
+                  <div className="col-span-1 row-span-2 flex items-center justify-end">
+                    <Link
+                      href={`/statistics/player/${user.wid}/${user.pid}`}
+                      onClick={(e) => e.stopPropagation()}
+                      className="rounded-md border border-blue-300 px-2 py-1 text-xs font-semibold text-blue-700 hover:bg-blue-50"
+                    >
+                      Профиль
+                    </Link>
+                  </div>
                   
-                  <div className="col-span-2 row-span-2 text-center flex flex-col justify-center">
+                  <div className="col-span-1 row-span-2 text-center flex flex-col justify-center">
                     <p className="text-nowrap text-xl font-bold text-blue-600">
                       {user.power.toLocaleString()}
                     </p>

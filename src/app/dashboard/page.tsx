@@ -11,6 +11,7 @@ import "react-toastify/dist/ReactToastify.css";
 import CategoryList from "../../components/dashboard/category";
 import C4ManagerDashboard from "../../components/dashboard/manage_c4";
 import PlayersLeaderboard from "../../components/dashboard/leaderboardPlayers";
+import WarpathOps from "../../components/dashboard/warpath-ops";
 
 const tabContents = [
   <Main key={0} />,
@@ -22,6 +23,7 @@ const tabContents = [
   <CategoryList key={6} />,
   <C4ManagerDashboard key={7} />,
   <PlayersLeaderboard key={8} />,
+  <WarpathOps key={9} />,
 
 ];
 
@@ -49,6 +51,7 @@ export default async function Dashboard() {
             "Категории",
             "New C4",
             "Игроки",
+            "Warpath Ops",
           ]}
           tabContents={tabContents}
         />
