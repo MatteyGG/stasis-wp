@@ -82,6 +82,7 @@ export default function WarpathOps() {
   const [trackPlayerNote, setTrackPlayerNote] = useState("");
   const [trackedAlliances, setTrackedAlliances] = useState<TrackedAlliance[]>([]);
   const [trackedPlayers, setTrackedPlayers] = useState<TrackedPlayer[]>([]);
+  const [trackedServerFilter, setTrackedServerFilter] = useState<number>(130);
 
   const refreshCatalog = async () => {
     try {
@@ -94,6 +95,7 @@ export default function WarpathOps() {
       const trackedP = (parsed?.trackedPlayers?.body ?? []) as TrackedPlayer[];
       setTrackedAlliances(trackedA);
       setTrackedPlayers(trackedP);
+      setTrackedServerFilter(wid);
       const players = (parsed?.surfacedPlayers?.body?.data ?? []) as Array<{ currentAlliance?: { gid?: string | null; gnick?: string | null } }>;
       const map = new Map<number, string>();
       for (const p of players) {
@@ -175,13 +177,18 @@ export default function WarpathOps() {
       wid: trackPlayerWid,
       pid: trackPlayerPid,
       note: trackPlayerNote.trim() || undefined,
+      fromDayInt,
+      toDayInt,
     });
     if (!out.ok) {
       setStatus({ loading: false, message: "", error: `Track player error: ${JSON.stringify(out.data).slice(0, 280)}` });
       return;
     }
-    setStatus({ loading: false, message: "Игрок добавлен в tracking. Запущен sync latest по его серверу.", error: "" });
+    setStatus({ loading: false, message: "Игрок добавлен в tracking. Запущен backfill по выбранному диапазону.", error: "" });
   };
+
+  const visibleTrackedAlliances = trackedAlliances.filter((a) => a.wid === trackedServerFilter);
+  const visibleTrackedPlayers = trackedPlayers.filter((p) => p.wid === trackedServerFilter);
 
   return (
     <div className="mx-auto w-full max-w-5xl space-y-4 rounded-xl border border-slate-200 bg-white p-4 text-left shadow-sm">
@@ -261,10 +268,21 @@ export default function WarpathOps() {
 
       <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
         <div className="rounded border border-slate-200 p-3">
-          <p className="mb-2 text-sm font-semibold text-slate-800">Отслеживаемые альянсы</p>
+          <div className="mb-2 flex items-center justify-between gap-2">
+            <p className="text-sm font-semibold text-slate-800">Отслеживаемые альянсы</p>
+            <label className="text-xs text-slate-600">
+              Сервер
+              <input
+                className="ml-1 w-20 rounded border border-slate-300 px-1 py-0.5"
+                type="number"
+                value={trackedServerFilter}
+                onChange={(e) => setTrackedServerFilter(Number(e.target.value) || 0)}
+              />
+            </label>
+          </div>
           <div className="max-h-56 space-y-1 overflow-auto pr-1">
-            {trackedAlliances.length === 0 && <p className="text-xs text-slate-500">Пока пусто.</p>}
-            {trackedAlliances.map((a) => (
+            {visibleTrackedAlliances.length === 0 && <p className="text-xs text-slate-500">Пока пусто.</p>}
+            {visibleTrackedAlliances.map((a) => (
               <div key={`${a.wid}-${a.gid}`} className="rounded border border-slate-200 px-2 py-1 text-sm">
                 <span className="font-semibold">W{a.wid}</span> • gid={a.gid} • {a.enabled === false ? "disabled" : "enabled"}
               </div>
@@ -274,8 +292,8 @@ export default function WarpathOps() {
         <div className="rounded border border-slate-200 p-3">
           <p className="mb-2 text-sm font-semibold text-slate-800">Отслеживаемые игроки</p>
           <div className="max-h-56 space-y-1 overflow-auto pr-1">
-            {trackedPlayers.length === 0 && <p className="text-xs text-slate-500">Пока пусто.</p>}
-            {trackedPlayers.map((p) => (
+            {visibleTrackedPlayers.length === 0 && <p className="text-xs text-slate-500">Пока пусто.</p>}
+            {visibleTrackedPlayers.map((p) => (
               <div key={`${p.wid}-${p.pid}`} className="rounded border border-slate-200 px-2 py-1 text-sm">
                 <span className="font-semibold">W{p.wid}</span> • pid={p.pid} • {p.enabled === false ? "disabled" : "enabled"}
                 {p.note ? ` • ${p.note}` : ""}

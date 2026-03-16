@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client";
+import { compare } from "bcrypt-ts";
 
 export async function POST(req: Request) {
   const body = await req.json();
@@ -13,7 +14,12 @@ export async function POST(req: Request) {
       },
     });
 
-    if (!user || user.password !== body.password) {
+    const isValid =
+      Boolean(user?.password) &&
+      typeof body.password === "string" &&
+      (await compare(body.password, String(user?.password ?? "")));
+
+    if (!user || !isValid) {
       // Handle invalid login
       return Response.json(
         { error: "Invalid email or password" },

@@ -7,7 +7,7 @@ type ActionBody =
   | { action: "serverScan"; wid: number; dayInt: number; page?: number; perPage?: number }
   | { action: "serverBackfill"; wid: number; fromDayInt: number; toDayInt: number; page?: number; perPage?: number }
   | { action: "trackAlliances"; wid: number; gids: number[] }
-  | { action: "trackPlayer"; wid: number; pid: number; note?: string };
+  | { action: "trackPlayer"; wid: number; pid: number; note?: string; fromDayInt?: number; toDayInt?: number; backfillDays?: number };
 
 const BASE_URL =
   process.env.WARPATH_STATS_API_URL ||
@@ -168,6 +168,9 @@ export async function POST(req: NextRequest) {
         wid: body.wid,
         pid: body.pid,
         note: typeof body.note === "string" ? body.note : undefined,
+        fromDayInt: isInt(body.fromDayInt) ? body.fromDayInt : undefined,
+        toDayInt: isInt(body.toDayInt) ? body.toDayInt : undefined,
+        backfillDays: isInt(body.backfillDays) ? body.backfillDays : undefined,
       }),
     });
     return NextResponse.json(out.body, { status: out.status });

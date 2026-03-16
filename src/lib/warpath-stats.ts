@@ -92,6 +92,13 @@ export type V1PlayerCard = {
   lastDayInt: number;
 };
 
+export type TrackedPlayerItem = {
+  wid: number;
+  pid: number;
+  note?: string | null;
+  enabled?: boolean;
+};
+
 const BASE_URL =
   process.env.WARPATH_STATS_API_URL ||
   process.env.NEXT_PUBLIC_WARPATH_STATS_API_URL ||
@@ -135,6 +142,10 @@ export async function getCityTrend(
 
 export async function getV1Worlds() {
   return fetchJson<{ data: Array<{ wid: number; label: string; lastDayInt: number | null; trackedAlliances: number }> }>(`/api/v1/worlds`, 120);
+}
+
+export async function getTrackedPlayers() {
+  return fetchJson<TrackedPlayerItem[]>(`/tracked-players`, 30);
 }
 
 export async function getV1Alliances(

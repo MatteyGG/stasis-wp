@@ -33,7 +33,7 @@ export default function LoginPage() {
         toast.error("Неверные учетные данные");
       } else {
         toast.success("Вход выполнен успешно!");
-        router.push("/");
+        router.push(signInData?.url || "/");
         router.refresh();
       }
     } catch (error) {

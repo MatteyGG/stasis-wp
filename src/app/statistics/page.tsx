@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { auth } from "@/lib/auth";
-import { formatDay, getV1Players, getV1Worlds } from "@/lib/warpath-stats";
+import { formatDay, getTrackedPlayers, getV1Players, getV1Worlds } from "@/lib/warpath-stats";
 import { formatInt } from "@/lib/formatInt";
 
 export default async function StatisticsPage() {
@@ -11,11 +11,13 @@ export default async function StatisticsPage() {
   }
 
   const wid = 130;
-  const [worlds, players] = await Promise.all([
+  const [worlds, players, trackedPlayers] = await Promise.all([
     getV1Worlds(),
     getV1Players(wid, { page: 1, pageSize: 100, sort: "power:desc", window: "7d" }),
+    getTrackedPlayers(),
   ]);
   const latestDay = worlds.data.find((w) => w.wid === wid)?.lastDayInt ?? players.data[0]?.lastDayInt ?? null;
+  const trackedForWid = trackedPlayers.filter((p) => p.wid === wid);
 
   return (
     <div className="mx-auto max-w-7xl space-y-4 p-4 md:p-6">
@@ -79,6 +81,29 @@ export default async function StatisticsPage() {
               </tbody>
             </table>
           </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Отслеживаемые игроки (W{wid})</CardTitle>
+        </CardHeader>
+        <CardContent>
+          {trackedForWid.length === 0 ? (
+            <p className="text-sm text-slate-500">Пока нет отслеживаемых игроков для этого сервера.</p>
+          ) : (
+            <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
+              {trackedForWid.map((p) => (
+                <div key={`${p.wid}-${p.pid}`} className="rounded border border-slate-200 bg-slate-50 p-3 text-sm">
+                  <p className="font-semibold">PID {p.pid}</p>
+                  <p className="text-xs text-slate-500">{p.note ? p.note : "без заметки"}</p>
+                  <Link href={`/statistics/player/${p.wid}/${p.pid}`} className="mt-2 inline-block text-blue-700 hover:underline">
+                    Открыть профиль
+                  </Link>
+                </div>
+              ))}
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>

@@ -22,7 +22,7 @@ type PageProps = {
 
 type EventItem = {
   day: number;
-  type: "join" | "leave" | "switch" | "city_switch" | "inactive";
+  type: "join" | "leave" | "switch" | "city_switch" | "nick_switch" | "inactive";
   text: string;
 };
 
@@ -138,9 +138,11 @@ export default async function PlayerProfilePage({ params, searchParams }: PagePr
   const events: EventItem[] = [];
   let prevAlliance: string | null = null;
   let prevCity: number | null = null;
+  let prevNick: string | null = null;
   for (const point of series) {
     const curAlliance = point.gnick ?? null;
     const curCity = point.ccid ?? null;
+    const curNick = point.nick ?? null;
     if (prevAlliance === null && curAlliance !== null) {
       events.push({ day: point.day, type: "join", text: `Вступил в альянс [${curAlliance}]` });
     } else if (prevAlliance !== null && curAlliance === null) {
@@ -156,8 +158,17 @@ export default async function PlayerProfilePage({ params, searchParams }: PagePr
         text: `Смена города: ${cityMap.get(prevCity) ?? prevCity} → ${cityMap.get(curCity) ?? curCity}`,
       });
     }
+
+    if (prevNick !== null && curNick !== null && prevNick !== curNick) {
+      events.push({
+        day: point.day,
+        type: "nick_switch",
+        text: `Смена ника: ${prevNick} → ${curNick}`,
+      });
+    }
     prevAlliance = curAlliance;
     prevCity = curCity;
+    prevNick = curNick;
   }
 
   let inactiveDays = 0;
