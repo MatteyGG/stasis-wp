@@ -2,18 +2,26 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { auth } from "@/lib/auth";
-import { addDays, formatDay, getV1AllianceActions, getV1Alliances, getV1AllianceTransfers, getV1Players } from "@/lib/warpath-stats";
+import { addDays, formatDay, getV1AllianceActions, getV1Alliances, getV1AllianceTransfers, getV1Players, getWorldAllianceCityHeatmap } from "@/lib/warpath-stats";
 import { formatInt } from "@/lib/formatInt";
 
 type PageProps = {
   params: Promise<{ wid: string }>;
-  searchParams: Promise<{ q?: string; pid?: string }>;
+  searchParams: Promise<{ q?: string; pid?: string; heatFrom?: string; heatTo?: string; heatGids?: string }>;
 };
 
 function toInt(v: string | undefined): number | null {
   if (!v) return null;
   const n = Number(v);
   return Number.isInteger(n) ? n : null;
+}
+
+function parseGidsCsv(v: string | undefined): number[] {
+  if (!v) return [];
+  return v
+    .split(",")
+    .map((x) => Number(x.trim()))
+    .filter((x) => Number.isInteger(x) && x > 0);
 }
 
 export default async function ServerDashboardPage({ params, searchParams }: PageProps) {
@@ -45,6 +53,16 @@ export default async function ServerDashboardPage({ params, searchParams }: Page
     displayTag: a.gnick ?? gnickByGid.get(String(a.gid)) ?? `A${a.gid}`,
   }));
   const latestDay = top3Display[0]?.lastDayInt ?? playersGrowth.data[0]?.lastDayInt ?? null;
+  const defaultHeatGids = top3Display.map((a) => Number(a.gid)).filter((x) => Number.isInteger(x) && x > 0);
+  const selectedHeatGids = parseGidsCsv(typeof sp.heatGids === "string" ? sp.heatGids : undefined);
+  const heatGids = selectedHeatGids.length > 0 ? selectedHeatGids : defaultHeatGids;
+  const heatTo = toInt(typeof sp.heatTo === "string" ? sp.heatTo : undefined) ?? latestDay ?? 0;
+  const heatFrom = toInt(typeof sp.heatFrom === "string" ? sp.heatFrom : undefined) ?? addDays(heatTo, -1);
+  const safeHeatFrom = Math.min(heatFrom, heatTo);
+  const safeHeatTo = Math.max(heatFrom, heatTo);
+  const heatmap = latestDay && heatGids.length > 0
+    ? await getWorldAllianceCityHeatmap(wid, heatGids, safeHeatFrom, safeHeatTo)
+    : null;
 
   const feeds = await Promise.all(
     top3Display.map(async (a) => {
@@ -103,6 +121,60 @@ export default async function ServerDashboardPage({ params, searchParams }: Page
             <p className="text-xs text-slate-500">Топ прироста силы (7д)</p>
             <p className="text-lg font-bold">{playersGrowth.data.length}</p>
           </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Heatmap городов по выбранным альянсам</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          <form className="flex flex-wrap items-end gap-2">
+            <label className="text-xs text-slate-600">
+              fromDay
+              <input name="heatFrom" defaultValue={safeHeatFrom} className="ml-1 w-28 rounded border border-slate-300 px-2 py-1 text-xs" />
+            </label>
+            <label className="text-xs text-slate-600">
+              toDay
+              <input name="heatTo" defaultValue={safeHeatTo} className="ml-1 w-28 rounded border border-slate-300 px-2 py-1 text-xs" />
+            </label>
+            <label className="text-xs text-slate-600">
+              gid list (CSV)
+              <input name="heatGids" defaultValue={heatGids.join(",")} className="ml-1 w-64 rounded border border-slate-300 px-2 py-1 text-xs" />
+            </label>
+            <button className="rounded bg-slate-900 px-3 py-1.5 text-xs font-semibold text-white hover:bg-black">Применить</button>
+          </form>
+
+          {heatmap && (
+            <>
+              <div className="rounded bg-slate-100 p-3 text-xs text-slate-700">
+                <p>Диапазон: {formatDay(heatmap.fromDayInt)} - {formatDay(heatmap.toDayInt)}</p>
+                <p>Альянсы: {heatmap.alliances.map((a) => `[${a.gnick ?? `A${a.gid}`}]`).join(", ")}</p>
+                <p>Игроков: {heatmap.totals.fromPlayers} {"->"} {heatmap.totals.toPlayers}, перемещений: {heatmap.totals.movedPlayers}</p>
+              </div>
+
+              <div className="grid grid-cols-1 gap-2 md:grid-cols-2 xl:grid-cols-3">
+                {heatmap.cities.slice(0, 24).map((c) => (
+                  <div key={c.ccid} className="rounded border border-slate-200 p-2 text-xs">
+                    <p className="font-semibold text-slate-800">{c.name ?? `City ${c.ccid}`}</p>
+                    <p className="text-slate-600">{c.fromCount} {"->"} {c.toCount} ({c.delta >= 0 ? "+" : ""}{c.delta})</p>
+                  </div>
+                ))}
+              </div>
+
+              {safeHeatFrom !== safeHeatTo && (
+                <div className="rounded border border-slate-200 p-3">
+                  <p className="mb-2 text-sm font-semibold text-slate-800">Переходы между городами</p>
+                  {heatmap.transitions.length === 0 && <p className="text-xs text-slate-500">Нет переходов в выбранном диапазоне.</p>}
+                  {heatmap.transitions.slice(0, 30).map((t, idx) => (
+                    <p key={`${t.fromCcid}-${t.toCcid}-${idx}`} className="text-xs text-slate-700">
+                      {(t.fromName ?? `City ${t.fromCcid}`)} {"->"} {(t.toName ?? `City ${t.toCcid}`)}: {t.count}
+                    </p>
+                  ))}
+                </div>
+              )}
+            </>
+          )}
         </CardContent>
       </Card>
 

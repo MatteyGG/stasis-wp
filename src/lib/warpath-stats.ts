@@ -99,6 +99,17 @@ export type TrackedPlayerItem = {
   enabled?: boolean;
 };
 
+export type WorldAllianceCityHeatmap = {
+  wid: number;
+  mode: "16" | "80" | "unknown";
+  fromDayInt: number;
+  toDayInt: number;
+  alliances: Array<{ gid: number; gnick: string | null }>;
+  totals: { fromPlayers: number; toPlayers: number; movedPlayers: number };
+  cities: Array<{ ccid: number; name: string | null; fromCount: number; toCount: number; delta: number }>;
+  transitions: Array<{ fromCcid: number; toCcid: number; fromName: string | null; toName: string | null; count: number }>;
+};
+
 const BASE_URL =
   process.env.WARPATH_STATS_API_URL ||
   process.env.NEXT_PUBLIC_WARPATH_STATS_API_URL ||
@@ -146,6 +157,14 @@ export async function getV1Worlds() {
 
 export async function getTrackedPlayers() {
   return fetchJson<TrackedPlayerItem[]>(`/tracked-players`, 30);
+}
+
+export async function getWorldAllianceCityHeatmap(wid: number, gids: number[], fromDay: number, toDay: number) {
+  const gidsParam = gids.join(",");
+  return fetchJson<WorldAllianceCityHeatmap>(
+    `/views/worlds/${wid}/alliances/city-heatmap?gids=${encodeURIComponent(gidsParam)}&fromDay=${fromDay}&toDay=${toDay}`,
+    30
+  );
 }
 
 export async function getV1Alliances(
