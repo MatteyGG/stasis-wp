@@ -35,7 +35,7 @@ export default function AllianceCityHeatmap({ wid, data, options, selectedGids }
   const [fromDay, setFromDay] = useState<number>(data.fromDayInt);
   const [toDay, setToDay] = useState<number>(data.toDayInt);
   const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
-  const [dayPickMode, setDayPickMode] = useState<"from" | "to">("from");
+  const [pickStep, setPickStep] = useState<1 | 2>(1);
 
   const cityPoint = useMemo(() => {
     const m = new Map<number, { x: number; y: number }>();
@@ -48,6 +48,7 @@ export default function AllianceCityHeatmap({ wid, data, options, selectedGids }
   }, [data]);
 
   const maxCity = Math.max(1, ...data.cities.map((c) => Math.max(c.fromCount, c.toCount)));
+  const topTransitions = data.transitions.slice(0, 10);
 
   const apply = () => {
     const q = new URLSearchParams();
@@ -57,69 +58,84 @@ export default function AllianceCityHeatmap({ wid, data, options, selectedGids }
     router.replace(`/statistics/worlds/${wid}?${q.toString()}`);
   };
 
+  const onPickDay = (d: number) => {
+    if (pickStep === 1) {
+      setFromDay(d);
+      setToDay(d);
+      setPickStep(2);
+      return;
+    }
+    setToDay(d);
+    setPickStep(1);
+  };
+
   return (
     <div className="space-y-3">
       <div className="rounded border border-slate-200 bg-slate-50 p-3">
-        <p className="mb-2 text-sm font-semibold text-slate-800">Выбор альянсов</p>
-        <div className="grid grid-cols-2 gap-1 md:grid-cols-4">
-          {options.map((o) => (
-            <label key={o.gid} className="flex items-center gap-2 text-xs text-slate-700">
-              <input
-                type="checkbox"
-                checked={pickedGids.includes(o.gid)}
-                onChange={() =>
-                  setPickedGids((prev) =>
-                    prev.includes(o.gid) ? prev.filter((x) => x !== o.gid) : [...prev, o.gid]
-                  )
-                }
-              />
-              <span>{o.label}</span>
-            </label>
-          ))}
+        <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
+          <div className="text-sm">
+            <span className="font-semibold text-slate-900">dateFrom:</span>{" "}
+            <span className="rounded bg-orange-100 px-2 py-0.5 text-orange-800">{formatDay(Math.min(fromDay, toDay))}</span>
+            <span className="mx-2 font-semibold text-slate-700">dateTo:</span>
+            <span className="rounded bg-indigo-100 px-2 py-0.5 text-indigo-800">{formatDay(Math.max(fromDay, toDay))}</span>
+          </div>
+          <details className="group relative">
+            <summary className="cursor-pointer rounded border border-slate-300 bg-white px-3 py-1 text-xs text-slate-700 hover:bg-slate-100">
+              Альянсы ({pickedGids.length})
+            </summary>
+            <div className="absolute right-0 z-20 mt-1 max-h-64 w-64 overflow-auto rounded border border-slate-300 bg-white p-2 shadow-lg">
+              {options.map((o) => (
+                <label key={o.gid} className="mb-1 flex items-center gap-2 text-xs text-slate-700">
+                  <input
+                    type="checkbox"
+                    checked={pickedGids.includes(o.gid)}
+                    onChange={() =>
+                      setPickedGids((prev) =>
+                        prev.includes(o.gid) ? prev.filter((x) => x !== o.gid) : [...prev, o.gid]
+                      )
+                    }
+                  />
+                  <span>{o.label}</span>
+                </label>
+              ))}
+            </div>
+          </details>
         </div>
-      </div>
-
-      <div className="rounded border border-slate-200 bg-slate-50 p-3">
-        <p className="mb-2 text-sm font-semibold text-slate-800">Гребенка дат</p>
-        <div className="mb-2 flex gap-2 text-xs">
-          <button
-            className={`rounded px-2 py-1 ${dayPickMode === "from" ? "bg-slate-900 text-white" : "bg-slate-200 text-slate-700"}`}
-            onClick={() => setDayPickMode("from")}
-          >
-            Выбираю FROM
-          </button>
-          <button
-            className={`rounded px-2 py-1 ${dayPickMode === "to" ? "bg-slate-900 text-white" : "bg-slate-200 text-slate-700"}`}
-            onClick={() => setDayPickMode("to")}
-          >
-            Выбираю TO
-          </button>
+        <div className="mb-2 flex items-center gap-2 text-xs text-slate-600">
+          <span>Выбор дат:</span>
+          <span className="rounded bg-slate-200 px-2 py-0.5">
+            {pickStep === 1 ? "1-й клик: dateFrom" : "2-й клик: dateTo"}
+          </span>
           <button className="rounded bg-blue-600 px-2 py-1 text-white" onClick={apply}>
             Применить
           </button>
         </div>
-        <div className="flex gap-1 overflow-x-auto pb-1">
+        <div className="relative overflow-x-auto pb-2 pt-3">
+          <div className="absolute left-0 right-0 top-[22px] h-[2px] bg-slate-300" />
+          <div className="relative flex gap-1">
           {data.availableDays.map((d) => {
             const isFrom = d === fromDay;
             const isTo = d === toDay;
             return (
               <button
                 key={d}
-                className={`whitespace-nowrap rounded px-2 py-1 text-xs ${
+                className={`relative whitespace-nowrap rounded px-2 py-1 text-[11px] ${
                   isFrom && isTo
                     ? "bg-emerald-600 text-white"
                     : isFrom
                       ? "bg-orange-600 text-white"
                       : isTo
                         ? "bg-indigo-600 text-white"
-                        : "bg-slate-200 text-slate-700"
+                        : "bg-white text-slate-700 border border-slate-300"
                 }`}
-                onClick={() => (dayPickMode === "from" ? setFromDay(d) : setToDay(d))}
+                onClick={() => onPickDay(d)}
               >
+                <span className={`absolute left-1/2 top-[-7px] h-2 w-2 -translate-x-1/2 rounded-full ${isFrom || isTo ? "bg-slate-900" : "bg-slate-400"}`} />
                 {formatDay(d)}
               </button>
             );
           })}
+          </div>
         </div>
       </div>
 
@@ -135,19 +151,35 @@ export default function AllianceCityHeatmap({ wid, data, options, selectedGids }
             const b = cityPoint.get(t.toCcid);
             if (!a || !b) return null;
             const w = Math.max(1, Math.min(8, Math.round((t.count / Math.max(1, data.totals.movedPlayers)) * 30)));
+            const mx = (a.x + b.x) / 2;
+            const my = (a.y + b.y) / 2;
             return (
-              <line
-                key={`${t.fromCcid}-${t.toCcid}-${idx}`}
-                x1={a.x}
-                y1={a.y}
-                x2={b.x}
-                y2={b.y}
-                stroke={hoveredIdx === idx ? "#dc2626" : "#0ea5e9"}
-                strokeWidth={w}
-                strokeOpacity={hoveredIdx === idx ? 0.95 : 0.45}
-                onMouseEnter={() => setHoveredIdx(idx)}
-                onMouseLeave={() => setHoveredIdx(null)}
-              />
+              <g key={`${t.fromCcid}-${t.toCcid}-${idx}`}>
+                <line
+                  x1={a.x}
+                  y1={a.y}
+                  x2={b.x}
+                  y2={b.y}
+                  stroke={hoveredIdx === idx ? "#dc2626" : "#0ea5e9"}
+                  strokeWidth={w}
+                  strokeOpacity={hoveredIdx === idx ? 0.95 : 0.45}
+                />
+                <line
+                  x1={a.x}
+                  y1={a.y}
+                  x2={b.x}
+                  y2={b.y}
+                  stroke="transparent"
+                  strokeWidth={Math.max(10, w + 6)}
+                  onMouseEnter={() => setHoveredIdx(idx)}
+                  onMouseLeave={() => setHoveredIdx(null)}
+                />
+                {t.count >= 2 && (
+                  <text x={mx} y={my} fontSize="10" fill={hoveredIdx === idx ? "#991b1b" : "#0f172a"}>
+                    {t.count}
+                  </text>
+                )}
+              </g>
             );
           })}
 
@@ -186,6 +218,23 @@ export default function AllianceCityHeatmap({ wid, data, options, selectedGids }
           </div>
         </div>
       )}
+
+      <div className="rounded border border-slate-200 bg-white p-3">
+        <p className="mb-2 text-sm font-semibold text-slate-800">Топ переходов</p>
+        {topTransitions.length === 0 && <p className="text-xs text-slate-500">Нет переходов в выбранном диапазоне.</p>}
+        {topTransitions.map((t, i) => (
+          <button
+            key={`${t.fromCcid}-${t.toCcid}-${i}`}
+            className={`mb-1 block w-full rounded border px-2 py-1 text-left text-xs ${
+              hoveredIdx === i ? "border-rose-300 bg-rose-50" : "border-slate-200 bg-slate-50"
+            }`}
+            onMouseEnter={() => setHoveredIdx(i)}
+            onMouseLeave={() => setHoveredIdx(null)}
+          >
+            {(t.fromName ?? `City ${t.fromCcid}`)} {"->"} {(t.toName ?? `City ${t.toCcid}`)}: {t.count}
+          </button>
+        ))}
+      </div>
     </div>
   );
 }

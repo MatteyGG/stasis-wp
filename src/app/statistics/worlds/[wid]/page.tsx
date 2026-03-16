@@ -69,7 +69,7 @@ export default async function ServerDashboardPage({ params, searchParams }: Page
     .slice(0, 30)
     .map((a) => ({
       gid: Number(a.gid),
-      label: `[${a.gnick ?? gnickByGid.get(String(a.gid)) ?? `A${a.gid}`}] gid=${a.gid}`,
+      label: `[${a.gnick ?? gnickByGid.get(String(a.gid)) ?? `A${a.gid}`}]`,
     }));
 
   const feeds = await Promise.all(
