@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { auth } from "@/lib/auth";
 import { addDays, formatDay, getV1AllianceActions, getV1Alliances, getV1AllianceTransfers, getV1Players, getWorldAllianceCityHeatmap } from "@/lib/warpath-stats";
 import { formatInt } from "@/lib/formatInt";
+import AllianceCityHeatmap from "@/components/statistics/alliance-city-heatmap";
 
 type PageProps = {
   params: Promise<{ wid: string }>;
@@ -63,6 +64,13 @@ export default async function ServerDashboardPage({ params, searchParams }: Page
   const heatmap = latestDay && heatGids.length > 0
     ? await getWorldAllianceCityHeatmap(wid, heatGids, safeHeatFrom, safeHeatTo)
     : null;
+  const allianceOptions = alliances.data
+    .filter((a) => Number(a.gid) > 0)
+    .slice(0, 30)
+    .map((a) => ({
+      gid: Number(a.gid),
+      label: `[${a.gnick ?? gnickByGid.get(String(a.gid)) ?? `A${a.gid}`}] gid=${a.gid}`,
+    }));
 
   const feeds = await Promise.all(
     top3Display.map(async (a) => {
@@ -129,51 +137,10 @@ export default async function ServerDashboardPage({ params, searchParams }: Page
           <CardTitle>Heatmap городов по выбранным альянсам</CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
-          <form className="flex flex-wrap items-end gap-2">
-            <label className="text-xs text-slate-600">
-              fromDay
-              <input name="heatFrom" defaultValue={safeHeatFrom} className="ml-1 w-28 rounded border border-slate-300 px-2 py-1 text-xs" />
-            </label>
-            <label className="text-xs text-slate-600">
-              toDay
-              <input name="heatTo" defaultValue={safeHeatTo} className="ml-1 w-28 rounded border border-slate-300 px-2 py-1 text-xs" />
-            </label>
-            <label className="text-xs text-slate-600">
-              gid list (CSV)
-              <input name="heatGids" defaultValue={heatGids.join(",")} className="ml-1 w-64 rounded border border-slate-300 px-2 py-1 text-xs" />
-            </label>
-            <button className="rounded bg-slate-900 px-3 py-1.5 text-xs font-semibold text-white hover:bg-black">Применить</button>
-          </form>
-
-          {heatmap && (
-            <>
-              <div className="rounded bg-slate-100 p-3 text-xs text-slate-700">
-                <p>Диапазон: {formatDay(heatmap.fromDayInt)} - {formatDay(heatmap.toDayInt)}</p>
-                <p>Альянсы: {heatmap.alliances.map((a) => `[${a.gnick ?? `A${a.gid}`}]`).join(", ")}</p>
-                <p>Игроков: {heatmap.totals.fromPlayers} {"->"} {heatmap.totals.toPlayers}, перемещений: {heatmap.totals.movedPlayers}</p>
-              </div>
-
-              <div className="grid grid-cols-1 gap-2 md:grid-cols-2 xl:grid-cols-3">
-                {heatmap.cities.slice(0, 24).map((c) => (
-                  <div key={c.ccid} className="rounded border border-slate-200 p-2 text-xs">
-                    <p className="font-semibold text-slate-800">{c.name ?? `City ${c.ccid}`}</p>
-                    <p className="text-slate-600">{c.fromCount} {"->"} {c.toCount} ({c.delta >= 0 ? "+" : ""}{c.delta})</p>
-                  </div>
-                ))}
-              </div>
-
-              {safeHeatFrom !== safeHeatTo && (
-                <div className="rounded border border-slate-200 p-3">
-                  <p className="mb-2 text-sm font-semibold text-slate-800">Переходы между городами</p>
-                  {heatmap.transitions.length === 0 && <p className="text-xs text-slate-500">Нет переходов в выбранном диапазоне.</p>}
-                  {heatmap.transitions.slice(0, 30).map((t, idx) => (
-                    <p key={`${t.fromCcid}-${t.toCcid}-${idx}`} className="text-xs text-slate-700">
-                      {(t.fromName ?? `City ${t.fromCcid}`)} {"->"} {(t.toName ?? `City ${t.toCcid}`)}: {t.count}
-                    </p>
-                  ))}
-                </div>
-              )}
-            </>
+          {heatmap ? (
+            <AllianceCityHeatmap wid={wid} data={heatmap} options={allianceOptions} selectedGids={heatGids} />
+          ) : (
+            <p className="text-sm text-slate-500">Нет данных для heatmap.</p>
           )}
         </CardContent>
       </Card>

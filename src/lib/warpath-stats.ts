@@ -104,10 +104,18 @@ export type WorldAllianceCityHeatmap = {
   mode: "16" | "80" | "unknown";
   fromDayInt: number;
   toDayInt: number;
+  availableDays: number[];
   alliances: Array<{ gid: number; gnick: string | null }>;
   totals: { fromPlayers: number; toPlayers: number; movedPlayers: number };
   cities: Array<{ ccid: number; name: string | null; fromCount: number; toCount: number; delta: number }>;
-  transitions: Array<{ fromCcid: number; toCcid: number; fromName: string | null; toName: string | null; count: number }>;
+  transitions: Array<{
+    fromCcid: number;
+    toCcid: number;
+    fromName: string | null;
+    toName: string | null;
+    count: number;
+    players: Array<{ pid: number; nick: string | null }>;
+  }>;
 };
 
 const BASE_URL =
